@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import WorkoutModal from "../components/WorkoutModal";
@@ -8,10 +8,14 @@ import enrollmentService from "../services/enrollmentService";
 import { formatDuration } from "../utils/format";
 
 // Puerto de maquetas/assets/includes/steps.html + su modal de workout.
+// Con `?reproducir=1` (caso "1 sesión / 1 step" desde TrainingDetail) abre solo
+// el modal de video del primer step al cargar.
 const Steps = () => {
   const { trainingId, sessionId } = useParams();
+  const [searchParams] = useSearchParams();
   const [session, setSession] = useState(null);
   const [activeStepId, setActiveStepId] = useState(null);
+  const autoPlayedRef = useRef(false);
 
   useEffect(() => {
     sessionService.getSessionById(sessionId)
@@ -24,6 +28,17 @@ const Steps = () => {
     enrollmentService.completeSession(trainingId, sessionId, watchedSeconds)
       .catch((error) => console.log("No se pudo registrar el progreso", error));
   };
+
+  useEffect(() => {
+    if (autoPlayedRef.current) return;
+    if (searchParams.get("reproducir") !== "1") return;
+    if (!session?.steps?.length) return;
+    autoPlayedRef.current = true;
+    const first = [...session.steps].sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))[0];
+    setActiveStepId(first.id);
+    enrollmentService.completeSession(trainingId, sessionId, first.duration_seconds)
+      .catch((error) => console.log("No se pudo registrar el progreso", error));
+  }, [session, searchParams, trainingId, sessionId]);
 
   if (!session) {
     return (
@@ -58,7 +73,7 @@ const Steps = () => {
           </div>
 
           <div className="row">
-            <div className="col-12 col-lg-8">
+            <div className="col-12">
               <section className="training-description">
                 {session.description ? <p>{session.description}</p> : null}
                 <p className="training-recommendation">
@@ -67,21 +82,23 @@ const Steps = () => {
                 </p>
               </section>
             </div>
-            <div className="col-12 col-lg-4">
-              <div className="steps-module">
-                <h2>Steps</h2>
+          </div>
+
+          <div className="row pt-b-50">
+            <div className="col-12">
+              <div className="sessions-list">
                 {steps.map((step) => (
                   <button
                     key={step.id}
                     type="button"
-                    className="step"
+                    className="session-row"
                     onClick={() => {
                       setActiveStepId(step.id);
                       handleCompleteStep(step.id);
                     }}
                   >
-                    <div className="step-reps">{formatDuration(step.duration_seconds)}</div>
-                    <div className="step-description">{step.title}</div>
+                    <span>{step.title}</span>
+                    <span className="session-meta">{formatDuration(step.duration_seconds)}</span>
                   </button>
                 ))}
               </div>

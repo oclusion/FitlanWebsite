@@ -322,6 +322,15 @@ button.step {
     font: inherit;
 }
 
+/* Los steps de una sesión se muestran con el mismo estilo que el listado de
+   sesiones (.session-row), pero acá son <button> porque abren el modal. */
+button.session-row {
+    width: 100%;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+}
+
 .training-card-link {
     text-decoration: none;
     color: inherit;

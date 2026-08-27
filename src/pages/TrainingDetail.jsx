@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { IoShareOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -13,6 +13,12 @@ import { formatDifficulty, firstName, formatDuration } from "../utils/format";
 // quitaron: el arranque del entrenamiento se hace desde la lista de "Sesiones" y
 // no hay endpoint de entrenamiento personalizado en el backend. Las estrellas de
 // rating tampoco existen en el modelo de datos, se omiten.
+//
+// Según la forma del entrenamiento, esta pantalla se salta a sí misma:
+//   - 1 sesión con 1 (o 0) steps  -> directo a reproducir el video de la sesión
+//   - 1 sesión con 2+ steps       -> directo al listado de steps de esa sesión
+//   - 2+ sesiones                 -> se queda acá mostrando el listado de sesiones
+// (`GET /training/{id}` ya trae `sessions[]` con sus `steps[]` embebidos.)
 const TrainingDetail = () => {
   const { id } = useParams();
   const [training, setTraining] = useState(null);
@@ -65,6 +71,18 @@ const TrainingDetail = () => {
   }
 
   const sessions = [...(training.sessions ?? [])].sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
+
+  if (sessions.length === 1) {
+    const only = sessions[0];
+    const stepCount = only.steps?.length ?? 0;
+    const target = `/entrenamiento/${training.id}/sesion/${only.id}`;
+    return (
+      <Navigate
+        to={stepCount <= 1 ? { pathname: target, search: "?reproducir=1" } : target}
+        replace
+      />
+    );
+  }
 
   return (
     <div className="light">

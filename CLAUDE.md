@@ -43,6 +43,8 @@ Signature quirk: `get/post/put` take `(endpoint, body?, options?)` and JSON-stri
 
 **Static content pages** (`Privacy`, `Help`, `Faqs`, `About`) pull their body from the backend CMS via `contentService` (`GET /content/*`, public, no token).
 
+**Training → session → step navigation adapts to the training's shape.** `GET /training/{id}` returns `sessions[]` each with `steps[]` embedded, and `TrainingDetail` branches on that after load: **1 session / ≤1 step** → `<Navigate replace>` to `/entrenamiento/:id/sesion/:sid?reproducir=1` (the `Steps` page auto-opens the `WorkoutModal` video on the first step); **1 session / 2+ steps** → `<Navigate replace>` to the session's step list; **2+ sessions** → stay on `TrainingDetail` showing the session list (clicking a session then goes to its step list, no auto-play). `reproducir=1` is the only trigger for auto-play — entering a session any other way always shows the step list.
+
 ## Conventions specific to this repo
 
 - **This is a port of static mockups** in `../maquetas` (HTML/PHP + Bootstrap). Most components/pages carry a header comment naming the mockup file they came from and what changed. When the mockup had hardcoded data the backend doesn't provide (e.g. star ratings on training cards), the port **omits it rather than faking data** — keep this principle.
