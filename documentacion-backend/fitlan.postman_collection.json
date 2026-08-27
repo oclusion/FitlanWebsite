@@ -711,7 +711,8 @@
       "name": "4. Coaches",
       "item": [
         {
-          "name": "Listar coaches (user)",
+          "name": "Listar coaches (user — incluye is_following)",
+          "description": "Devuelve todos los coaches con sus trainings. Incluye is_following indicando si el usuario autenticado sigue a cada coach. También incluye profile_image_key y banner_image_key para caché.",
           "request": {
             "method": "GET",
             "url": "{{base_url}}/users/coaches",
@@ -724,7 +725,8 @@
           }
         },
         {
-          "name": "Obtener coach por id (user)",
+          "name": "Obtener coach por id (user — incluye is_following)",
+          "description": "Devuelve el perfil completo de un coach con sus trainings. Incluye is_following indicando si el usuario autenticado ya sigue a ese coach.",
           "request": {
             "method": "GET",
             "url": "{{base_url}}/users/coaches/3",
@@ -750,7 +752,7 @@
           }
         },
         {
-          "name": "Seguir coach (user) — is_following pasa a true en trainings",
+          "name": "Seguir coach (user) — is_following pasa a true en coaches y trainings",
           "request": {
             "method": "POST",
             "url": "{{base_url}}/users/coaches/3/follow",
@@ -789,7 +791,7 @@
           }
         },
         {
-          "name": "Dejar de seguir coach (user) — is_following pasa a false en trainings",
+          "name": "Dejar de seguir coach (user) — is_following pasa a false en coaches y trainings",
           "request": {
             "method": "DELETE",
             "url": "{{base_url}}/users/coaches/3/follow",

@@ -466,20 +466,24 @@ Authorization: Bearer <token>
     "name": "Juan Pérez",
     "description": "Entrenador especializado en yoga.",
     "profile_image_url": "https://...",
+    "profile_image_key": "uploads/abc123-avatar.jpg",
     "banner_image_url": "https://...",
+    "banner_image_key": "uploads/def456-banner.jpg",
     "instagram_url": "https://instagram.com/juanperez",
     "facebook_url": "https://facebook.com/juanperez",
     "tiktok_url": "https://tiktok.com/@juanperez",
+    "is_following": true,
     "trainings": [
       {
         "id": 1,
-        "title": "Yoga Vinyasa Nivel 1",
-        ...
+        "title": "Yoga Vinyasa Nivel 1"
       }
     ]
   }
 ]
 ```
+
+> `is_following` indica si el usuario autenticado ya sigue a ese coach.
 
 ---
 
@@ -491,7 +495,7 @@ GET /users/coaches/5
 Authorization: Bearer <token>
 ```
 
-**Response `200`:** misma estructura que el listado pero para un solo coach.
+**Response `200`:** misma estructura que el listado pero para un solo coach, incluyendo `is_following`.
 
 ---
 
@@ -503,7 +507,7 @@ Authorization: Bearer <token>
 **Response `200`:** sin body.
 
 > Si el usuario ya sigue al coach, la operación no tiene efecto. Si el `id` no corresponde a un usuario con `ROLE_COACH` devuelve `404`.
-> Tras hacer follow, los endpoints `GET /training`, `GET /training/{id}` y `GET /enrollments/me/recent` devolverán `is_following: true` en el objeto `coach` de ese entrenador.
+> Tras hacer follow, `GET /users/coaches`, `GET /users/coaches/{id}`, `GET /training`, `GET /training/{id}` y `GET /enrollments/me/recent` devolverán `is_following: true` para ese entrenador.
 
 ---
 
@@ -515,7 +519,7 @@ Authorization: Bearer <token>
 **Response `204`:** sin body.
 
 > Si el usuario no seguía al coach, la operación no tiene efecto.
-> Tras hacer unfollow, los endpoints de trainings devolverán `is_following: false` para ese coach.
+> Tras hacer unfollow, todos los endpoints anteriores devolverán `is_following: false` para ese coach.
 
 ---
 
