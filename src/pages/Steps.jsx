@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import WorkoutModal from "../components/WorkoutModal";
@@ -42,14 +42,6 @@ const Steps = () => {
       <Header />
       <main className="pt-b-108">
         <div className="container">
-          <div className="row">
-            <div className="col-12">
-              <Link to={`/entrenamiento/${trainingId}`} className="back-link">
-                ← regresar
-              </Link>
-            </div>
-          </div>
-
           <div className="row">
             <div className="col-12">
               <section className="training-hero">

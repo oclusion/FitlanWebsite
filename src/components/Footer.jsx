@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 // La maqueta original tenía columnas de relleno tipo Netflix (tarjetas de regalo,
 // relaciones con inversionistas, "XXXXXX"...) que no aplican a Fitlan — acá quedan
 // solo los links que realmente existen en la app/sitio.
 const Footer = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <footer>
       <div className="container">
@@ -22,12 +25,14 @@ const Footer = () => {
                 <li><Link to="/acerca-de">Acerca de Fitlán</Link></li>
               </ul>
             </article>
-            <article className="col-12 col-md-4">
-              <ul>
-                <li><Link to="/registro">Crear cuenta</Link></li>
-                <li><Link to="/login">Iniciar sesión</Link></li>
-              </ul>
-            </article>
+            {!isAuthenticated ? (
+              <article className="col-12 col-md-4">
+                <ul>
+                  <li><Link to="/registro">Crear cuenta</Link></li>
+                  <li><Link to="/login">Iniciar sesión</Link></li>
+                </ul>
+              </article>
+            ) : null}
           </div>
         </div>
       </div>

@@ -15,7 +15,6 @@ import CoachProfile from "./pages/CoachProfile";
 import Account from "./pages/Account";
 import MyTrainings from "./pages/MyTrainings";
 import Settings from "./pages/Settings";
-import PaymentMethods from "./pages/PaymentMethods";
 import Plans from "./pages/Plans";
 import Help from "./pages/Help";
 import Faqs from "./pages/Faqs";
@@ -40,14 +39,13 @@ function App() {
           <Route path="/ayuda" element={<Help />} />
 
           {/* Requieren sesión */}
-          <Route path="/inicio" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
+          <Route path="/entrenamientos" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
           <Route path="/entrenamiento/:id" element={<ProtectedRoute><TrainingDetail /></ProtectedRoute>} />
           <Route path="/entrenamiento/:trainingId/sesion/:sessionId" element={<ProtectedRoute><Steps /></ProtectedRoute>} />
           <Route path="/entrenador/:id" element={<ProtectedRoute><CoachProfile /></ProtectedRoute>} />
           <Route path="/cuenta" element={<ProtectedRoute><Account /></ProtectedRoute>} />
           <Route path="/mis-entrenamientos" element={<ProtectedRoute><MyTrainings /></ProtectedRoute>} />
           <Route path="/configuracion" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-          <Route path="/metodos-pago" element={<ProtectedRoute><PaymentMethods /></ProtectedRoute>} />
           <Route path="/planes" element={<ProtectedRoute><Plans /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>

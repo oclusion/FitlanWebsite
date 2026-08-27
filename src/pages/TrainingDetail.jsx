@@ -3,20 +3,19 @@ import { Link, useParams } from "react-router-dom";
 import { IoShareOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import TrainingCard from "../components/TrainingCard";
 import trainingService from "../services/trainingService";
 import enrollmentService from "../services/enrollmentService";
 import coachService from "../services/coachService";
 import { formatDifficulty, firstName, formatDuration } from "../utils/format";
 
-// Puerto de maquetas/assets/includes/training-detail.html. El botón "Solicitar
-// entrenamiento personalizado" de la maqueta no tiene endpoint en el backend
-// todavía — queda como mailto a soporte en vez de simular una función que no
-// existe. Las estrellas de rating tampoco existen en el modelo de datos, se omiten.
+// Puerto de maquetas/assets/includes/training-detail.html. Los botones "Comenzar
+// entrenamiento" y "Solicitar entrenamiento personalizado" de la maqueta se
+// quitaron: el arranque del entrenamiento se hace desde la lista de "Sesiones" y
+// no hay endpoint de entrenamiento personalizado en el backend. Las estrellas de
+// rating tampoco existen en el modelo de datos, se omiten.
 const TrainingDetail = () => {
   const { id } = useParams();
   const [training, setTraining] = useState(null);
-  const [suggested, setSuggested] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
 
@@ -28,12 +27,6 @@ const TrainingDetail = () => {
       })
       .catch((error) => console.log("No se pudo cargar el entrenamiento", error));
     enrollmentService.enrollInTraining(id).catch((error) => console.log("No se pudo inscribir", error));
-  }, [id]);
-
-  useEffect(() => {
-    trainingService.getTrainings()
-      .then((items) => setSuggested(items.filter((t) => String(t.id) !== String(id)).slice(0, 4)))
-      .catch((error) => console.log("No se pudieron cargar los sugeridos", error));
   }, [id]);
 
   const handleToggleFollow = async () => {
@@ -84,6 +77,14 @@ const TrainingDetail = () => {
                 {training.image_url ? (
                   <img src={training.image_url} alt={training.title} className="training-hero-image" />
                 ) : null}
+                <button
+                  className="share-button share-button--hero"
+                  type="button"
+                  onClick={handleShare}
+                  aria-label="Compartir"
+                >
+                  <IoShareOutline />
+                </button>
                 <div className="training-hero-overlay">
                   <div className="training-hero-content">
                     {training.description ? <p className="training-eyebrow">{training.description}</p> : null}
@@ -103,16 +104,13 @@ const TrainingDetail = () => {
                     <Link to={`/entrenador/${training.coach.id}`}>Entrena con {firstName(training.coach.name)}</Link>
                   </div>
                 ) : null}
-                <div className="training-actions">
-                  <button className="share-button" type="button" onClick={handleShare}>
-                    <IoShareOutline />
-                  </button>
-                  {training.coach ? (
+                {training.coach ? (
+                  <div className="training-actions">
                     <button className="follow-button" type="button" onClick={handleToggleFollow} disabled={followLoading}>
                       {isFollowing ? "Siguiendo" : "Follow"}
                     </button>
-                  ) : null}
-                </div>
+                  </div>
+                ) : null}
               </section>
             </div>
           </div>
@@ -121,16 +119,6 @@ const TrainingDetail = () => {
             <div className="col-12">
               <section className="training-description">
                 {training.description ? <p>{training.description}</p> : null}
-                <div className="training-buttons">
-                  {sessions.length > 0 ? (
-                    <Link to={`/entrenamiento/${training.id}/sesion/${sessions[0].id}`} className="btn-start">
-                      Comenzar entrenamiento
-                    </Link>
-                  ) : null}
-                  <a href="mailto:soporte@fitlanacademy.mx?subject=Entrenamiento personalizado" className="btn-custom">
-                    Solicitar entrenamiento personalizado
-                  </a>
-                </div>
               </section>
             </div>
           </div>
@@ -155,13 +143,6 @@ const TrainingDetail = () => {
                   ))}
                 </div>
               </div>
-            </div>
-          ) : null}
-
-          {suggested.length > 0 ? (
-            <div className="row g-3 suggested">
-              <h3>Te puede interesar</h3>
-              {suggested.map((t) => <TrainingCard key={t.id} training={t} />)}
             </div>
           ) : null}
         </div>

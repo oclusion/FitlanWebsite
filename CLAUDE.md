@@ -26,7 +26,9 @@ The full backend API contract is documented in `documentacion-backend/README.md`
 
 **API layer — `src/services/*.js`.** Nearly 1:1 ports of the mobile app's `../src/services/`. Each service is a thin object wrapping endpoint calls. The only file that meaningfully differs from mobile is `services/api.js`.
 
-`services/api.js` is the single choke point: one `request()` helper that injects `Authorization: Bearer <token>`, parses the response, and on **401 with an active token** clears the token and hard-redirects to `/login` (mobile resets a nav stack instead). It exports `api.get/post/put/patch/delete` plus `setToken/clearToken/getToken`. The in-memory `_token` is seeded from `localStorage` at module load. Errors are thrown as plain objects `{ status, ...body }`, not `Error` instances.
+`services/api.js` is the single choke point: one `request()` helper that injects `Authorization: Bearer <token>`, parses the response, and on **401 with an active token** clears the token and hard-redirects to `/login` unless already there (mobile resets a nav stack instead). It exports `api.get/post/put/patch/delete` plus `setToken/clearToken/getToken`. The in-memory `_token` is seeded from `localStorage` at module load. Errors are thrown as plain objects `{ status, ...body }`, not `Error` instances.
+
+Signature quirk: `get/post/put` take `(endpoint, body?, options?)` and JSON-stringify the body, but `patch(endpoint, options)` and `delete(endpoint, options)` take **only fetch options** — no body argument, no serialization. A PATCH with a payload must pass `{ body: JSON.stringify(...) }` explicitly.
 
 **Auth — `context/AuthContext.jsx` + `services/authService.js` + `components/ProtectedRoute.jsx`.**
 - `authService` persists three `localStorage` keys on login: `fitlan_token`, `fitlan_roles`, `fitlan_user_id`.
@@ -35,7 +37,7 @@ The full backend API contract is documented in `documentacion-backend/README.md`
 - `ProtectedRoute` redirects to `/login` purely off `isAuthenticated` from context.
 - Registration leaves the account `active=false` until email verification; the backend returns no token, so the user must log in after verifying.
 
-**Routing — `src/App.jsx`.** All routes are declared here in one `<Routes>`. Paths are in Spanish (`/registro`, `/inicio`, `/entrenamiento/:id`, `/entrenamiento/:trainingId/sesion/:sessionId`, `/configuracion`, etc.). Public: `/`, `/login`, `/registro`, `/verificar-email`, `/olvide-password`, `/restablecer-password`, `/faqs`, `/privacidad`, `/acerca-de`, `/ayuda`. Everything else is wrapped in `<ProtectedRoute>`.
+**Routing — `src/App.jsx`.** All routes are declared here in one `<Routes>`. Paths are in Spanish (`/registro`, `/entrenamientos`, `/entrenamiento/:id`, `/entrenamiento/:trainingId/sesion/:sessionId`, `/entrenador/:id`, `/configuracion`, etc.). Public: `/`, `/login`, `/registro`, `/verificar-email`, `/olvide-password`, `/restablecer-password`, `/faqs`, `/privacidad`, `/acerca-de`, `/ayuda`. Everything else (`/entrenamientos`, `/cuenta`, `/mis-entrenamientos`, `/planes`, the training/coach detail routes) is wrapped in `<ProtectedRoute>`.
 
 **Pages — `src/pages/`, one component per route.** Data fetching is done directly in `useEffect` with `.then/.catch`, errors logged via `console.log`, local `loading` state. No data-fetching library, no global store beyond `AuthContext`.
 
@@ -50,3 +52,6 @@ The full backend API contract is documented in `documentacion-backend/README.md`
 - `subscriptionService.getMySubscription()` returns **404 when the user has no subscription** — that is not an error, handle it explicitly in callers. `ACTIVE_SUBSCRIPTION_STATUSES` / `hasSubscriptionAccess()` in that file define which statuses still grant content access.
 - `trainingService.getTrainings()` returns a plain array normally, but a paginated `{ items, page, page_size, total_items, total_pages }` object when a `page` arg is passed.
 - Some services (`notificationService` device-token registration, Facebook login in the backend docs) are ports carried over from mobile and may not be wired into any web page.
+- **Shared helpers live in `src/utils/`** — `format.js` (`formatDifficulty` / `difficultyLabels` for `BEGINNER|INTERMEDIATE|ADVANCED`, `firstName`, `formatDuration` seconds→`"N min"`) and `initials.js` (`getInitials`). Reuse these rather than re-deriving label maps or name parsing per page.
+- Icons come from **`react-icons`** (e.g. `react-icons/io5`); there is no local icon component set.
+- `oxlint` config is `.oxlintrc.json`: `react/rules-of-hooks` is an error, `react/only-export-components` a warning (constant exports allowed). `npm run preview` needs a prior `npm run build`.

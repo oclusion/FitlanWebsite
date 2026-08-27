@@ -19,7 +19,7 @@ const Landing = () => {
 
   // Si ya hay sesión, no tiene sentido mostrar la landing de marketing — va
   // directo al feed, mismo criterio que ProtectedRoute pero al revés.
-  if (isAuthenticated) return <Navigate to="/inicio" replace />;
+  if (isAuthenticated) return <Navigate to="/entrenamientos" replace />;
 
   return (
     <div className="bg-landing dark">

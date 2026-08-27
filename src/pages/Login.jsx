@@ -25,7 +25,7 @@ const Login = () => {
     setError(null);
     try {
       await login(identifier, password);
-      navigate("/inicio");
+      navigate("/entrenamientos");
     } catch (err) {
       setError(err);
     } finally {
@@ -56,7 +56,7 @@ const Login = () => {
     return <div className="alert-box"><p>{message || "Credenciales inválidas"}</p></div>;
   };
 
-  if (isAuthenticated) return <Navigate to="/inicio" replace />;
+  if (isAuthenticated) return <Navigate to="/entrenamientos" replace />;
 
   return (
     <div className="bg-landing dark auth-screen">

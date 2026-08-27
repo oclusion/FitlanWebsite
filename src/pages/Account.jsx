@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import ConfirmModal from "../components/ConfirmModal";
 import userService from "../services/userService";
 import subscriptionService, { hasSubscriptionAccess } from "../services/subscriptionService";
 import { useAuth } from "../context/AuthContext";
@@ -11,6 +12,7 @@ const Account = () => {
   const { logout } = useAuth();
   const [user, setUser] = useState(null);
   const [subscription, setSubscription] = useState(null);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
     userService.getMe().then(setUser).catch((error) => console.log("No se pudo cargar el perfil", error));
@@ -28,12 +30,12 @@ const Account = () => {
     <div className="light">
       <Header />
       <main className="pt-b-108">
-        <div className="container">
-          <div className="profile-row align-items-center">
+        <div className="container account-page">
+          <div className="profile-row account-header">
             {user?.profile_image_url ? (
-              <img src={user.profile_image_url} alt={user.name} className="profile-photo" />
+              <img src={user.profile_image_url} alt={user.name} className="account-avatar" />
             ) : (
-              <div className="profile-photo profile-photo-placeholder">{getInitials(user?.name)}</div>
+              <div className="account-avatar profile-photo-placeholder">{getInitials(user?.name)}</div>
             )}
             <div>
               <h1 className="profile-name">{user?.name}</h1>
@@ -53,12 +55,23 @@ const Account = () => {
             </Link>
           </div>
 
-          <button type="button" className="btn btn-outline-danger" onClick={logout}>
+          <button type="button" className="btn btn-outline-danger" onClick={() => setShowLogoutConfirm(true)}>
             Cerrar sesión
           </button>
         </div>
       </main>
       <Footer />
+
+      {showLogoutConfirm ? (
+        <ConfirmModal
+          title="Cerrar sesión"
+          message="¿Seguro que deseas salir?"
+          confirmLabel="Cerrar sesión"
+          cancelLabel="Cancelar"
+          onConfirm={logout}
+          onCancel={() => setShowLogoutConfirm(false)}
+        />
+      ) : null}
     </div>
   );
 };

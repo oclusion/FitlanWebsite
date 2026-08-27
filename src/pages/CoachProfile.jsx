@@ -55,36 +55,26 @@ const CoachProfile = () => {
       <Header />
       <main className="pt-b-108">
         <div className="container">
-          <div className="row">
-            <div className="col-12">
-              <Link to="/inicio" className="back-link">← regresar</Link>
-            </div>
-          </div>
-
-          <div className="row align-items-start profile-row">
-            <div className="col-auto">
-              <div className="profile-photo-wrapper">
-                {coach.profile_image_url ? (
-                  <img src={coach.profile_image_url} alt={coach.name} className="profile-photo" />
-                ) : (
-                  <div className="profile-photo profile-photo-placeholder">{getInitials(coach.name)}</div>
-                )}
-              </div>
+          <div className="profile-row profile-row-centered">
+            <div className="profile-photo-wrapper">
+              {coach.profile_image_url ? (
+                <img src={coach.profile_image_url} alt={coach.name} className="profile-photo" />
+              ) : (
+                <div className="profile-photo profile-photo-placeholder">{getInitials(coach.name)}</div>
+              )}
             </div>
 
-            <div className="col">
-              <h1 className="profile-name">{coach.name}</h1>
-              {coach.description ? <p className="profile-text">{coach.description}</p> : null}
-              <button className="follow-button" type="button" onClick={handleToggleFollow} disabled={followLoading}>
-                {isFollowing ? "Siguiendo" : "Follow"}
-              </button>
-            </div>
+            <h1 className="profile-name">{coach.name}</h1>
+            {coach.description ? <p className="profile-text">{coach.description}</p> : null}
+            <button className="follow-button" type="button" onClick={handleToggleFollow} disabled={followLoading}>
+              {isFollowing ? "Siguiendo" : "Follow"}
+            </button>
           </div>
 
           {hasSocial ? (
-            <div className="profile-social">
+            <div className="profile-social profile-social-centered">
               <p className="profile-social-label">Sígueme en:</p>
-              <div className="d-flex gap-2">
+              <div className="d-flex gap-2 justify-content-center">
                 {coach.instagram_url ? (
                   <a href={coach.instagram_url} className="social-icon" target="_blank" rel="noreferrer"><IoLogoInstagram /></a>
                 ) : null}
@@ -99,7 +89,7 @@ const CoachProfile = () => {
           ) : null}
 
           {coach.trainings?.length ? (
-            <div className="row g-3 pt-b-50">
+            <div className="row g-3 pt-b-50 justify-content-center text-center">
               <h3>Entrenamientos</h3>
               {coach.trainings.map((training) => (
                 <div key={training.id} className="col-12 col-sm-6 col-lg-3">

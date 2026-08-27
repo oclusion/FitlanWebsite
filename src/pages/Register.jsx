@@ -38,7 +38,7 @@ const Register = () => {
     }
   };
 
-  if (isAuthenticated) return <Navigate to="/inicio" replace />;
+  if (isAuthenticated) return <Navigate to="/entrenamientos" replace />;
 
   if (done) {
     return (

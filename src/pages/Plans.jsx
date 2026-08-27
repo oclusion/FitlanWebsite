@@ -1,20 +1,30 @@
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import subscriptionService from "../services/subscriptionService";
+import subscriptionService, { hasSubscriptionAccess } from "../services/subscriptionService";
 
 // No existe todavía un endpoint de checkout/pago en el backend (solo GET
 // /subscriptions/plans y /subscriptions/me son de solo lectura) — esta pantalla
-// muestra los planes de forma informativa. Cuando exista el flujo de pago real,
-// el botón de cada plan se conecta ahí.
+// muestra los planes de forma informativa. El botón "Adquirir" todavía no hace
+// nada; queda inactivo en el plan que el usuario ya tiene. Cuando exista el flujo
+// de pago real se conecta ahí.
 const Plans = () => {
   const [plans, setPlans] = useState([]);
+  const [subscription, setSubscription] = useState(null);
 
   useEffect(() => {
     subscriptionService.getPlans()
       .then(setPlans)
       .catch((error) => console.log("No se pudieron cargar los planes", error));
+    subscriptionService.getMySubscription()
+      .then(setSubscription)
+      .catch((error) => {
+        if (error.status !== 404) console.log("No se pudo cargar la suscripción", error);
+        setSubscription(null);
+      });
   }, []);
+
+  const currentPlanId = hasSubscriptionAccess(subscription) ? subscription.plan : null;
 
   return (
     <div className="light">
@@ -32,9 +42,9 @@ const Plans = () => {
                     {plan.billing_cycle === "ANNUAL" ? "anual" : "mensual"}
                   </p>
                   <p className="plan-price">${plan.monthly_price.toFixed(2)}/mes</p>
-                  <a href="mailto:soporte@fitlanacademy.mx?subject=Quiero activar un plan" className="btn btn-primary">
-                    Contactar para activar
-                  </a>
+                  <button type="button" className="btn btn-primary" disabled={plan.id === currentPlanId}>
+                    {plan.id === currentPlanId ? "Plan actual" : "Adquirir"}
+                  </button>
                 </article>
               </div>
             ))}
