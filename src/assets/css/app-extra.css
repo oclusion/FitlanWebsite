@@ -388,6 +388,20 @@ button.step {
     text-align: center;
 }
 
+/* El hero de la ficha de entrenamiento / sesión: la maqueta dejaba la imagen en
+   `height: auto`, así que una foto vertical se veía gigante. Se acota a una
+   franja tipo header y se recorta con object-fit. */
+.training-hero {
+    max-height: 60vh;
+}
+
+.training-hero-image {
+    height: 60vh;
+    min-height: 320px;
+    max-height: 520px;
+    object-fit: cover;
+}
+
 /* El botón de compartir de la ficha de entrenamiento va sobre la imagen del
    hero, arriba a la derecha (antes vivía en .training-actions, debajo de la
    imagen, junto al botón de follow). */
