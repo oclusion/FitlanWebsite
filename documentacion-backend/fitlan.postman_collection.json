@@ -1,0 +1,2430 @@
+{
+  "info": {
+    "name": "Fitlan API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080/api/v1"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "user_token",
+      "value": ""
+    },
+    {
+      "key": "admin_user_id",
+      "value": ""
+    },
+    {
+      "key": "user_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "Login admin (guarda token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.access_token) {",
+                  "  pm.collectionVariables.set('token', json.access_token);",
+                  "  pm.collectionVariables.set('admin_user_id', json.user_id);",
+                  "  console.log('Admin logueado. user_id=' + json.user_id + ' username=' + json.username + ' roles=' + JSON.stringify(json.roles));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/login",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"admin\",\n  \"password\": \"admin1234\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login user (guarda user_token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.access_token) {",
+                  "  pm.collectionVariables.set('user_token', json.access_token);",
+                  "  pm.collectionVariables.set('user_id', json.user_id);",
+                  "  console.log('User logueado. user_id=' + json.user_id + ' username=' + json.username + ' roles=' + JSON.stringify(json.roles));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/login",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"user\",\n  \"password\": \"user1234\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login con email",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/login",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"admin@example.com\",\n  \"password\": \"admin1234\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login credenciales incorrectas (espera 401)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/login",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"admin\",\n  \"password\": \"wrongpassword\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login antes de verificar email (espera 401 — Cuenta no verificada)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/login",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"juanito\",\n  \"password\": \"12345678\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registro de usuario",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/register",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"juanito\",\n  \"password\": \"12345678\",\n  \"email\": \"juanito@mail.com\",\n  \"name\": \"Juan\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registro con email no verificado (reenvía email)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/register",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"juanito2\",\n  \"password\": \"otropass123\",\n  \"email\": \"juanito@mail.com\",\n  \"name\": \"Juan Actualizado\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registro con username duplicado (espera 400)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/register",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"12345678\",\n  \"email\": \"otro@mail.com\",\n  \"name\": \"Otro\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registro intentando asignar ROLE_ADMIN (debe ignorarlo)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/register",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"hacker\",\n  \"password\": \"hacker123\",\n  \"email\": \"hacker@mail.com\",\n  \"name\": \"Hacker\",\n  \"roles\": [\"ROLE_ADMIN\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Verificar email",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/auth/verify-email?token=PEGA_TOKEN_AQUI",
+              "query": [
+                {
+                  "key": "token",
+                  "value": "PEGA_TOKEN_AQUI"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Verificar email con token ya usado (espera 404)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/auth/verify-email?token=PEGA_TOKEN_YA_USADO",
+              "query": [
+                {
+                  "key": "token",
+                  "value": "PEGA_TOKEN_YA_USADO"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Forgot password",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/forgot-password",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"juanito@mail.com\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Forgot password email inexistente (espera 200 igualmente)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/forgot-password",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"noexiste@mail.com\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reset password",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/reset-password",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"PEGA_TOKEN_AQUI\",\n  \"new_password\": \"nuevapass123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reset password token inválido (espera 404)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/reset-password",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"token-invalido\",\n  \"new_password\": \"nuevapass123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login con Facebook",
+          "description": "Autentica al usuario usando el access_token que devuelve el SDK de Facebook en el dispositivo.\n\nFlujo:\n  1. La app obtiene el access_token del SDK de Facebook.\n  2. Lo envía a este endpoint.\n  3. El backend valida el token contra la Graph API de Facebook.\n  4. Si el FB ID ya está vinculado a una cuenta → login directo.\n  5. Si no está vinculado pero el email de Facebook coincide con una cuenta activa → se vincula el FB ID y se loguea.\n  6. Si no existe cuenta con ese email → 401 (el usuario debe registrarse en el sitio web y adquirir suscripción primero).\n\nEl response es idéntico al de POST /auth/login.\n\nErrores posibles:\n  401 — Token de Facebook inválido o expirado.\n  401 — No tienes una cuenta activa. Regístrate en el sitio web para obtener acceso.\n  401 — Tu cuenta no está activa. Contacta al soporte.\n  401 — Facebook no pudo compartir tu email. Verifica los permisos de la app en tu cuenta de Facebook.\n  400 — access_token es requerido.\n\nNota: la creación de cuentas no está disponible desde la app. Solo usuarios con suscripción activa pueden ingresar.\n\nRequisitos del lado de la app (Facebook Developers):\n  1. Crear app en developers.facebook.com con el producto 'Facebook Login'\n  2. Agregar plataformas iOS/Android con el bundle ID / package name\n  3. Solicitar permisos: public_profile + email (sin email el backend devuelve 401)\n  4. El SDK devuelve el access_token que se envía a este endpoint\n  El backend NO necesita API key ni secret de Facebook.\n\nIMPORTANTE — Modo desarrollo de Facebook:\n  Mientras la app esté en modo desarrollo en developers.facebook.com, solo los usuarios añadidos\n  como Testers o Developers en el panel pueden autenticarse. Cualquier otro usuario recibirá\n  error 190 'Cannot parse access token'. Para habilitar el acceso general, la app debe pasar\n  la revisión de Facebook y publicarse.",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/facebook",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"access_token\": \"<facebook_access_token_del_sdk>\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login con Apple",
+          "description": "Autentica al usuario usando el identity_token (JWT RS256) que devuelve el SDK de Sign In with Apple.\n\nFlujo interno:\n  1. Decodifica el header del JWT para obtener el kid.\n  2. Descarga las claves públicas de Apple (https://appleid.apple.com/auth/keys, JWKS/RS256) — se cachean 1 hora.\n  3. Verifica firma, iss == 'https://appleid.apple.com', aud == 'com.oclusion.fitlan', y que no esté expirado.\n  4. Extrae sub (identificador estable) y email del payload.\n  5. Si el sub ya está en user_social_accounts → login directo.\n  6. Si no está vinculado y el JWT trae email → busca cuenta activa con ese email → vincula sub y loguea.\n  7. Si no está vinculado y el JWT NO trae email (Apple solo lo comparte la primera vez) → 401.\n  8. Si el email no coincide con ninguna cuenta activa → 401.\n\nEl response es idéntico al de POST /auth/login.\n\nErrores posibles:\n  400 — identity_token es requerido.\n  401 — Token de Apple inválido.          → iss o aud del JWT no coinciden (iss esperado: https://appleid.apple.com, aud: com.oclusion.fitlan)\n  401 — Token de Apple inválido o expirado. → firma RS256 inválida, JWT vencido, o kid no encontrado en JWKS de Apple\n  401 — Token de Apple malformado.         → JWT sin los tres segmentos base64url\n  401 — No pudimos identificar tu cuenta de Apple. Inicia sesión una vez con usuario y contraseña para vincular Apple a tu cuenta.\n  401 — No tienes una cuenta activa. Regístrate en el sitio web para obtener acceso.\n  401 — Tu cuenta no está activa. Contacta al soporte.\n\nNota: la creación de cuentas no está disponible desde la app. Solo usuarios con suscripción activa pueden ingresar.\n\nRequisitos del lado de la app:\n  1. Agregar capability 'Sign In with Apple' en Xcode.\n  2. El aud que valida el backend es 'com.oclusion.fitlan' (debe coincidir con el bundle ID).\n  3. Solicitar siempre el scope email para que el JWT lo incluya en el primer login.\n  El backend NO necesita API key, secret ni credencial de Apple.",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/apple",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identity_token\": \"<identity_token_del_sdk_de_apple>\",\n  \"full_name\": \"Ricardo García Rodríguez\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Logout (invalida sesión actual)",
+          "description": "Invalida la sesión del token enviado. El token deja de funcionar de inmediato aunque criptográficamente siga siendo válido.\n\nNota: cada usuario puede tener hasta 2 sesiones activas simultáneas. Al hacer login en un 3° dispositivo, la sesión más antigua es eliminada automáticamente.\n\nIntegración frontend / app móvil:\n  1. Llamar a este endpoint ANTES de borrar el token local.\n  2. Agregar un interceptor de respuesta en axios que capture cualquier 401 (sesión expirada, desplazada o suspendida) y redirija al login limpiando el token local.\n\n     axios.interceptors.response.use(\n       res => res,\n       err => {\n         if (err.response?.status === 401) {\n           localStorage.removeItem('token'); // AsyncStorage en RN\n           window.location.href = '/login';  // navigation.replace('Login') en RN\n         }\n         return Promise.reject(err);\n       }\n     );",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/logout",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Archivos",
+      "item": [
+        {
+          "name": "Subir imagen (user)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/files/upload",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Subir imagen sin autenticar (espera 401)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/files/upload",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Usuarios",
+      "item": [
+        {
+          "name": "Obtener perfil propio (me)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/users/me",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Actualizar perfil propio (me)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/users/me",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Usuario Actualizado\",\n  \"username\": \"user_nuevo\",\n  \"description\": \"Mi descripción.\",\n  \"profile_image_url\": \"http://localhost:8080/uploads/foto.jpg\",\n  \"instagram_url\": \"https://instagram.com/user_nuevo\",\n  \"facebook_url\": \"https://facebook.com/user_nuevo\",\n  \"tiktok_url\": \"https://tiktok.com/@user_nuevo\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar todos los usuarios (admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/users",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Listar todos los usuarios sin ser admin (espera 403)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/users",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Crear usuario como ROLE_USER (admin)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/users",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"nuevousuario\",\n  \"password\": \"pass1234\",\n  \"email\": \"nuevo@mail.com\",\n  \"name\": \"Nuevo Usuario\",\n  \"profile_image_url\": \"http://localhost:8080/uploads/foto.jpg\",\n  \"instagram_url\": \"https://instagram.com/nuevousuario\",\n  \"facebook_url\": \"https://facebook.com/nuevousuario\",\n  \"tiktok_url\": \"https://tiktok.com/@nuevousuario\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear usuario como ROLE_COACH (admin)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/users",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"nuevocoach\",\n  \"password\": \"coach1234\",\n  \"email\": \"nuevocoach@mail.com\",\n  \"name\": \"Nuevo Coach\",\n  \"profile_image_url\": \"http://localhost:8080/uploads/coach.jpg\",\n  \"instagram_url\": \"https://instagram.com/nuevocoach\",\n  \"facebook_url\": \"https://facebook.com/nuevocoach\",\n  \"tiktok_url\": \"https://tiktok.com/@nuevocoach\",\n  \"roles\": [\"ROLE_USER\", \"ROLE_COACH\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear usuario con username duplicado (espera 409)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/users",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"pass1234\",\n  \"email\": \"otro@mail.com\",\n  \"name\": \"Duplicado\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear usuario sin ser admin (espera 403)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/users",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"hacker\",\n  \"password\": \"hack1234\",\n  \"email\": \"hacker@mail.com\",\n  \"name\": \"Hacker\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar usuario por id (admin)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/users/2",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Coach Actualizado\",\n  \"username\": \"coach_uno\",\n  \"description\": \"Entrenador especializado.\",\n  \"profile_image_url\": \"http://localhost:8080/uploads/coach.jpg\",\n  \"instagram_url\": \"https://instagram.com/coach_uno\",\n  \"facebook_url\": \"https://facebook.com/coach_uno\",\n  \"tiktok_url\": \"https://tiktok.com/@coach_uno\",\n  \"roles\": [\"ROLE_USER\", \"ROLE_COACH\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Borrar foto y redes sociales (admin) — enviar null",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/users/2",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"profile_image_url\": null,\n  \"instagram_url\": null,\n  \"facebook_url\": null,\n  \"tiktok_url\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar username duplicado (espera 409)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/users/2",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Intentar asignar ROLE_ADMIN (espera 404)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/users/2",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roles\": [\"ROLE_ADMIN\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar usuario sin ser admin (espera 403)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/users/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Intento fallido\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Suspender usuario (admin)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/users/2/suspend",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Activar usuario (admin)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/users/2/activate",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Suspender admin (espera 404)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/users/1/suspend",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Suspender sin ser admin (espera 403)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/users/2/suspend",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Coaches",
+      "item": [
+        {
+          "name": "Listar coaches (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/users/coaches",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Obtener coach por id (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/users/coaches/3",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Obtener usuario que no es coach (espera 404)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/users/coaches/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Seguir coach (user) — is_following pasa a true en trainings",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/users/coaches/3/follow",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Seguir coach que no existe (espera 404)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/users/coaches/999/follow",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Seguir usuario que no es coach (espera 404)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/users/coaches/1/follow",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Dejar de seguir coach (user) — is_following pasa a false en trainings",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/users/coaches/3/follow",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Categorías",
+      "item": [
+        {
+          "name": "Listar categorías (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/category",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Obtener categoría por id (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/category/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Trainings de una categoría (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/category/1/trainings",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Crear categoría (admin)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/category",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pilates\",\n  \"description\": \"Disciplina de fortalecimiento y flexibilidad.\",\n  \"image_url\": \"https://example.com/pilates.jpg\",\n  \"icon_url\": \"https://example.com/pilates-icon.png\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear categoría duplicada (espera 409)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/category",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pilates\",\n  \"description\": \"Duplicado.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear categoría sin ser admin (espera 403)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/category",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Prohibida\",\n  \"description\": \"No debería crearse.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Editar categoría (admin)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/category/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Box Actualizado\",\n  \"description\": \"Disciplina de boxeo actualizada.\",\n  \"image_url\": \"https://example.com/box.jpg\",\n  \"icon_url\": \"https://example.com/box-icon.png\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar categoría sin trainings (admin)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/category/16",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Trainings",
+      "item": [
+        {
+          "name": "Listar trainings (user — incluye is_following en coach)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/training",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Listar trainings filtrados por estado (PUBLISHED)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/training?status=PUBLISHED",
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PUBLISHED"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Listar trainings filtrados por estado (DRAFT)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/training?status=DRAFT",
+              "query": [
+                {
+                  "key": "status",
+                  "value": "DRAFT"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Listar trainings filtrados por categorías",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/training?category_ids=1,2",
+              "query": [
+                {
+                  "key": "category_ids",
+                  "value": "1,2"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Listar trainings por categorías y estado combinados",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/training?category_ids=1,2&status=PUBLISHED",
+              "query": [
+                {
+                  "key": "category_ids",
+                  "value": "1,2"
+                },
+                {
+                  "key": "status",
+                  "value": "PUBLISHED"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Listar trainings paginados (page=0, page_size=20)",
+          "description": "Devuelve un objeto paginado en lugar del array plano. page es base-0. Combinable con status y category_ids.\n\nOrdenamiento por relevancia: 1° inscritos DESC, 2° sesiones completadas DESC, 3° id ASC.\n\nResponse:\n{\n  \"items\": [ ... ],\n  \"page\": 0,\n  \"page_size\": 20,\n  \"total_items\": 134,\n  \"total_pages\": 7\n}\n\nSi se omite page, el endpoint devuelve el array plano completo (comportamiento original, no paginado).",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/training?page=0&page_size=20",
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "page_size", "value": "20" }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Listar trainings paginados con filtros (PUBLISHED, page=0)",
+          "description": "Igual que la versión sin filtros pero filtrando por status=PUBLISHED. Ordenamiento por relevancia: 1° inscritos DESC, 2° sesiones completadas DESC, 3° id ASC.",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/training?page=0&page_size=20&status=PUBLISHED",
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "page_size", "value": "20" },
+                { "key": "status", "value": "PUBLISHED" }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Buscar trainings por texto (search=yoga)",
+          "description": "Busca trainings cuyo título, descripción o tags contengan el texto indicado (case-insensitive, LIKE %yoga%). Siempre devuelve respuesta paginada. Si se omite page, se usa page=0 como default.\n\nCombinaciones posibles:\n  ?search=yoga\n  ?search=yoga&page=0&page_size=20\n  ?search=yoga&status=PUBLISHED\n  ?search=yoga&status=PUBLISHED&category_ids=1,2\n\nOrdenamiento por relevancia: 1° inscritos DESC, 2° sesiones completadas DESC, 3° id ASC.\n\nResponse:\n{\n  \"items\": [ ... ],\n  \"page\": 0,\n  \"page_size\": 20,\n  \"total_items\": 5,\n  \"total_pages\": 1\n}",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/training?search=yoga&page=0&page_size=20",
+              "query": [
+                { "key": "search", "value": "yoga" },
+                { "key": "page", "value": "0" },
+                { "key": "page_size", "value": "20" }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Buscar trainings por texto con filtros (PUBLISHED + categoría)",
+          "description": "Combina search con status y category_ids. Todos los parámetros son opcionales entre sí.",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/training?search=yoga&status=PUBLISHED&category_ids=1,2&page=0&page_size=20",
+              "query": [
+                { "key": "search", "value": "yoga" },
+                { "key": "status", "value": "PUBLISHED" },
+                { "key": "category_ids", "value": "1,2" },
+                { "key": "page", "value": "0" },
+                { "key": "page_size", "value": "20" }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Obtener training por id (user — incluye is_following en coach)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/training/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Crear training sin coach (admin)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/training",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Yoga Vinyasa Nivel 1\",\n  \"description\": \"Entrenamiento de flujo dinámico para principiantes.\",\n  \"difficulty_level\": \"BEGINNER\",\n  \"premium\": false,\n  \"price\": 0,\n  \"publish_status\": \"PUBLISHED\",\n  \"category_ids\": [2],\n  \"tags\": [\"yoga\", \"principiantes\", \"flexibilidad\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear training con coach (admin)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/training",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Box Avanzado\",\n  \"description\": \"Entrenamiento de boxeo de alto rendimiento.\",\n  \"difficulty_level\": \"ADVANCED\",\n  \"premium\": true,\n  \"price\": 19.99,\n  \"publish_status\": \"PUBLISHED\",\n  \"coach_id\": 3,\n  \"category_ids\": [1],\n  \"tags\": [\"boxeo\", \"avanzado\", \"cardio\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear training con category_id inexistente (espera 404)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/training",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Training inválido\",\n  \"description\": \"Categoría inexistente.\",\n  \"difficulty_level\": \"BEGINNER\",\n  \"premium\": false,\n  \"price\": 0,\n  \"publish_status\": \"DRAFT\",\n  \"category_ids\": [9999]\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear training con usuario que no es coach (espera 404)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/training",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Training inválido\",\n  \"description\": \"Coach inválido.\",\n  \"difficulty_level\": \"BEGINNER\",\n  \"premium\": false,\n  \"price\": 0,\n  \"publish_status\": \"DRAFT\",\n  \"coach_id\": 1,\n  \"category_ids\": [1]\n}"
+            }
+          }
+        },
+        {
+          "name": "Editar training (admin)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/training/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Yoga Vinyasa Actualizado\",\n  \"description\": \"Descripción actualizada.\",\n  \"difficulty_level\": \"INTERMEDIATE\",\n  \"premium\": false,\n  \"price\": 9.99,\n  \"publish_status\": \"PUBLISHED\",\n  \"category_ids\": [2],\n  \"tags\": [\"yoga\", \"intermedio\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar training (admin)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/training/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Sesiones",
+      "item": [
+        {
+          "name": "Listar sesiones (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/session",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Obtener sesión por id (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/session/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Crear sesión (admin)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/session",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Saludo al sol\",\n  \"description\": \"Secuencia de apertura de 15 minutos.\",\n  \"display_order\": 1,\n  \"duration_seconds\": 900,\n  \"training_id\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Editar sesión (admin)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/session/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Saludo al sol actualizado\",\n  \"description\": \"Descripción actualizada.\",\n  \"display_order\": 1,\n  \"duration_seconds\": 1200,\n  \"training_id\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar sesión (admin)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/session/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Steps",
+      "item": [
+        {
+          "name": "Listar steps (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/step",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Listar steps de una sesión (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/step/session/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Obtener step por id (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/step/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Crear step (admin)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/step",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Postura del perro boca abajo\",\n  \"description\": \"Mantén la posición 30 segundos.\",\n  \"exercises\": [\n    \"4 veces - Posición de piernas en L con piernas flexionadas a 60 grados\",\n    \"2 veces - Extensión de columna con respiración\"\n  ],\n  \"duration_seconds\": 30,\n  \"display_order\": 1,\n  \"session_id\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Editar step (admin)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/step/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Postura actualizada\",\n  \"description\": \"Descripción actualizada.\",\n  \"exercises\": [\n    \"3 veces - Postura actualizada con ajuste de respiración\"\n  ],\n  \"duration_seconds\": 45,\n  \"display_order\": 1,\n  \"session_id\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar step (admin)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/step/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Mensajería",
+      "description": "REST para conversaciones e historial. El envío en tiempo real usa WebSocket STOMP — ver README para ejemplos de código.\n\nEndpoints WebSocket:\n  Web/browser  → http://localhost:8080/ws  (SockJS)\n  React Native → ws://TU_IP:8080/ws-native (WebSocket nativo)\n\nPayload ENVIAR (/app/chat.send/{conversationId}):\n  { \"content\": \"Hola!\" }\n\nPayload RECIBIR (/user/queue/messages):\n  { \"id\": 5, \"conversation_id\": 1, \"sender_id\": 2, \"sender_username\": \"user1\", \"content\": \"Hola!\", \"sent_at\": \"2026-07-13T10:35:22\", \"read\": false }\n\nPaginación del historial (cursor-based):\n  ?before=<messageId>  → carga mensajes anteriores al id indicado (scroll hacia arriba)\n  ?limit=N             → cantidad de mensajes (default 50, max 100)\n  Fin del historial    → respuesta con menos elementos que limit\n\nPush notifications de chat (automático):\n  Cada vez que se envía un mensaje por WebSocket, el servidor envía automáticamente una push notification al destinatario.\n  Título: nombre del remitente\n  Cuerpo: preview del mensaje (hasta 100 caracteres)\n  data: { \"screen\": \"conversation\", \"conversation_id\": <id> }\n  ⚠ No se guarda en el historial de notificaciones (es transitorio, como WhatsApp)\n  ⚠ Si el destinatario está viendo la conversación, la app debe suprimir la navegación automática",
+      "item": [
+        {
+          "name": "Iniciar o retomar conversación (user → coach)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/conversations",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"other_user_id\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "Iniciar conversación (coach → user)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/conversations",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"other_user_id\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "Iniciar conversación coach → coach (espera 400)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/conversations",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"other_user_id\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "Iniciar conversación user → user (espera 400)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/conversations",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"other_user_id\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar mis conversaciones (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/conversations",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Listar mis conversaciones (coach)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/conversations",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Historial — primer load (últimos 50 mensajes)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/conversations/1/messages?limit=50",
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Cantidad de mensajes (default 50, max 100)"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Historial — scroll hacia arriba (?before=&limit=)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/conversations/1/messages?before=5&limit=50",
+              "query": [
+                {
+                  "key": "before",
+                  "value": "5",
+                  "description": "ID del mensaje más viejo que tenés en pantalla — trae los anteriores a él"
+                },
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Cantidad de mensajes (default 50, max 100)"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Historial de conversación ajena (espera 404)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/conversations/999/messages",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Marcar mensaje como leído",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/conversations/1/messages/1/read",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Push Notifications",
+      "description": "Gestión de Expo push tokens y envío de notificaciones.\n\nFlujo:\n  1. App móvil llama a POST /notifications/device-token después de cada login\n  2. Admin usa GET /admin/notifications/users para ver qué usuarios tienen token\n  3. Admin usa POST /admin/notifications/send para enviar (broadcast o seleccionados)\n\nAutenticación con Expo:\n  El backend llama a https://exp.host/--/api/v2/push/send SIN API key.\n  La API pública de Expo no requiere autenticación — la seguridad está en el token del dispositivo.\n  Para el tier pago (EAS) agregar: Authorization: Bearer <expo-access-token> y configurar expo.access-token en application.properties.\n\nLos tokens DeviceNotRegistered se eliminan automáticamente del servidor.\n\nPrerequisito iOS (solo una vez):\n  npm install -g eas-cli && eas login\n  eas build:configure   ← genera eas.json\n  eas credentials       ← iOS → Push Notifications → Set up Push Notifications Key\n  eas build --platform ios --profile development  ← reconstruir con credenciales\n\nError 'Could not find APNs credentials' en runtime:\n  → eas credentials no se completó, o la app corre en Expo Go (no soporta push).\n  → Expo Go no funciona con push notifications: usar siempre un development build.",
+      "item": [
+        {
+          "name": "Registrar token Expo (app móvil — login)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/notifications/device-token",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Desregistrar token Expo (app móvil — logout)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/notifications/device-token",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar templates de notificación (admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/admin/notifications/templates",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "description": "Devuelve los templates disponibles. Cada template incluye el campo `default_screen` que indica qué pantalla debe abrir la app al tocar la notificación:\n\n| Tipo | default_screen | Acción en la app |\n|---|---|---|\n| NEW_TRAINING | `training_detail` | Abre el entrenamiento (requiere `extra_data.training_id`) |\n| WEEKLY_ACHIEVEMENT | `null` | Solo abre la app |\n| DAILY_REMINDER | `home` | Abre la pantalla principal |\n| NEW_CATEGORY | `null` | Solo abre la app |\n| STREAK | `null` | Solo abre la app |\n| CUSTOM | `null` | Solo abre la app |"
+          }
+        },
+        {
+          "name": "Listar usuarios con info de tokens (admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/admin/notifications/users",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Listar horarios de tareas programadas (admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/notifications/schedule",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifications",
+                "schedule"
+              ]
+            },
+            "description": "Devuelve la configuración de horario para cada tarea programada: DAILY_REMINDER, WEEKLY_ACHIEVEMENT y STREAK.\n\nRespuesta: array de objetos con `task`, `label`, `frequency`, `hour`, `minute`, `enabled`.\n\nLas tareas automáticas también incluyen el campo `data` de deep link en el payload de Expo:\n\n| Tarea | `data` enviado a la app |\n|---|---|\n| DAILY_REMINDER | `{ screen: \"home\" }` |\n| WEEKLY_ACHIEVEMENT | _(sin data)_ |\n| STREAK | _(sin data)_ |"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar horario — Recordatorio diario (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hour\": 8,\n  \"minute\": 30,\n  \"enabled\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/notifications/schedule/DAILY_REMINDER",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifications",
+                "schedule",
+                "DAILY_REMINDER"
+              ]
+            },
+            "description": "Actualiza el horario de la tarea `DAILY_REMINDER`. El cambio se aplica de inmediato sin reiniciar el servidor.\n\nTareas válidas: `DAILY_REMINDER`, `WEEKLY_ACHIEVEMENT`, `STREAK`.\n\nCampos: `hour` (0–23), `minute` (0–59), `enabled` (boolean). Zona horaria: America/Mexico_City (CDMX).\n\n**Criterio de envío:** solo usuarios con actividad en los últimos 3 días. Si un usuario no completó ninguna sesión en ese período, no recibe nada.\n\n**Deep link:** `data: { screen: \"training_detail\", training_id: X }` apuntando al training de la sesión más reciente del usuario.\n\n**Importante:** `enabled: false` solo pausa el envío automático. El envío manual desde el CMS no se ve afectado."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar horario — Logro semanal (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hour\": 9,\n  \"minute\": 0,\n  \"enabled\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/notifications/schedule/WEEKLY_ACHIEVEMENT",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifications",
+                "schedule",
+                "WEEKLY_ACHIEVEMENT"
+              ]
+            },
+            "description": "Actualiza el horario de la tarea `WEEKLY_ACHIEVEMENT` (se ejecuta solo los lunes). Zona horaria: America/Mexico_City (CDMX).\n\n**Deep link:** ninguno — la app solo se abre sin navegar a ninguna pantalla específica.\n\n**Importante:** `enabled: false` solo pausa el envío automático. El envío manual desde `POST /admin/notifications/send` funciona siempre, independientemente de este flag."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar horario — Racha activa (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hour\": 8,\n  \"minute\": 0,\n  \"enabled\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/notifications/schedule/STREAK",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "notifications",
+                "schedule",
+                "STREAK"
+              ]
+            },
+            "description": "Actualiza el horario de la tarea `STREAK`. Con `enabled: false` se pausa la tarea sin borrar la configuración de hora. Zona horaria: America/Mexico_City.\n\n**Deep link:** ninguno — la app solo se abre sin navegar a ninguna pantalla específica.\n\n**Importante:** la pausa solo detiene el envío automático por cron. El envío manual desde `POST /admin/notifications/send` funciona siempre, independientemente de este flag."
+          },
+          "response": []
+        },
+        {
+          "name": "Enviar — Nuevo entrenamiento (broadcast, con tipo)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/admin/notifications/send",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Nuevo entrenamiento disponible\",\n  \"body\": \"Tenemos un nuevo entrenamiento para ti. ¡Entra a verlo!\",\n  \"target_type\": \"ALL\",\n  \"type\": \"NEW_TRAINING\",\n  \"extra_data\": {\n    \"training_id\": 1\n  }\n}"
+            },
+            "description": "Envío broadcast de tipo NEW_TRAINING. Incluye `extra_data.training_id` para que la app abra directamente la pantalla del entrenamiento al tocar la notificación.\n\n**Deep link:** la app recibe `data.screen = \"training_detail\"` y `data.training_id = <id>` en el payload de Expo.\n\n**¿Cómo obtener el ID?** Consulta los entrenamientos publicados:\n`GET /api/v1/training?status=PUBLISHED` (ver carpeta **6. Trainings**)\n\nEl CMS muestra un dropdown con los entrenamientos publicados — el `training_id` se envía automáticamente sin que el admin lo escriba.\n\nEl envío manual **no está afectado** por el estado `enabled` de las tareas programadas.\n\n**Regla — pantalla de video:** si el usuario está reproduciendo un video (`TrainingVideo` o equivalente), el tap a esta notificación debe ignorarse. La app verifica la pantalla activa antes de navegar."
+          }
+        },
+        {
+          "name": "Enviar — Logro semanal (seleccionados, con tipo)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/admin/notifications/send",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"WEEKLY_ACHIEVEMENT\",\n  \"title\": \"¡Felicitaciones!\",\n  \"body\": \"Completaste 5 sesiones esta semana. ¡Seguí así!\",\n  \"target_type\": \"SELECTED\",\n  \"user_ids\": [2, 3]\n}"
+            },
+            "description": "Envío a usuarios específicos de tipo WEEKLY_ACHIEVEMENT.\n\n**Deep link:** ninguno — la app solo se abre sin navegar a ninguna pantalla específica.\n\nFunciona aunque `WEEKLY_ACHIEVEMENT` esté pausada en el horario automático."
+          }
+        },
+        {
+          "name": "Enviar — Recordatorio diario (broadcast)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/admin/notifications/send",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"DAILY_REMINDER\",\n  \"title\": \"No olvides tu rutina de hoy\",\n  \"body\": \"Es hora de entrenar. ¡Tu cuerpo te lo va a agradecer!\",\n  \"target_type\": \"ALL\",\n  \"extra_data\": {\n    \"screen\": \"training_detail\",\n    \"training_id\": 1\n  }\n}"
+            },
+            "description": "Envío broadcast de tipo DAILY_REMINDER.\n\nEl CMS muestra un selector de entrenamiento (igual que NEW_TRAINING). Incluir `extra_data` para que la app abra ese entrenamiento al tocar:\n\n```json\n\"extra_data\": { \"screen\": \"training_detail\", \"training_id\": 1 }\n```\n\n**Comportamiento según `extra_data`:**\n\n| `extra_data` | `data` en la app | Pantalla destino |\n|---|---|---|\n| Con `training_id` | `{ screen: \"training_detail\", training_id: X }` | Detalle del entrenamiento |\n| Sin `extra_data` | `{ screen: \"home\" }` | Pantalla home |\n\n**Cron automático:** incluye el `training_id` del entrenamiento más reciente del usuario (últimos 30 días). Sin actividad reciente, navega al home.\n\n**Regla — pantalla de video:** si el usuario está reproduciendo un video, el tap debe ignorarse."
+          }
+        },
+        {
+          "name": "Enviar — Nueva categoría (broadcast)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/admin/notifications/send",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"NEW_CATEGORY\",\n  \"title\": \"Nueva categoría disponible\",\n  \"body\": \"Descubrí la nueva categoría Yoga en Fitlan.\",\n  \"target_type\": \"ALL\"\n}"
+            },
+            "description": "Envío broadcast de tipo NEW_CATEGORY.\n\n**Deep link:** ninguno — la app solo se abre sin navegar a ninguna pantalla específica."
+          }
+        },
+        {
+          "name": "Enviar — Racha activa (seleccionados)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/admin/notifications/send",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"STREAK\",\n  \"title\": \"¡Racha activa!\",\n  \"body\": \"Llevás 3 días consecutivos entrenando. ¡No pares ahora!\",\n  \"target_type\": \"SELECTED\",\n  \"user_ids\": [2]\n}"
+            },
+            "description": "Envío a usuarios específicos de tipo STREAK.\n\n**Deep link:** ninguno — la app solo se abre sin navegar a ninguna pantalla específica.\n\nFunciona aunque `STREAK` esté pausada en el horario automático."
+          }
+        },
+        {
+          "name": "Enviar — Personalizada sin tipo (broadcast)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/admin/notifications/send",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Mensaje especial\",\n  \"body\": \"Contenido personalizado sin tipo definido.\",\n  \"target_type\": \"ALL\"\n}"
+            },
+            "description": "Envío manual con tipo `CUSTOM` (sin template). El campo `type` va como `null`."
+          }
+        },
+        {
+          "name": "Historial de notificaciones (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/notifications",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ],
+            "description": "Devuelve el historial de notificaciones del usuario autenticado, ordenado de más reciente a más antiguo.\n\nEl campo `action_data` + `type` indica a la app qué hacer al tocar la notificación:\n\n| `type` | `action_data` | Pantalla destino |\n|---|---|---|\n| `NEW_TRAINING` | `{ \"training_id\": 42 }` | Detalle del entrenamiento |\n| `DAILY_REMINDER` | `{ \"training_id\": 42 }` o `null` | Training más reciente, o home si `action_data` es null |\n| Resto | `null` | Sin navegación |\n\n**Regla — pantalla de video:** si el usuario está reproduciendo un video, el tap a cualquier notificación debe ignorarse.\n\n**Nota:** para `DAILY_REMINDER` el cron automático incluye el `training_id` del entrenamiento más reciente del usuario (últimos 30 días). El envío manual desde el CMS no lo incluye salvo que se pase `extra_data: { training_id: X }` explícitamente."
+          },
+          "response": []
+        },
+        {
+          "name": "Cantidad de no leídas — badge (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/notifications/unread-count",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Marcar una notificación como leída (user)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/notifications/1/read",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Marcar todas como leídas (user)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/notifications/read-all",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Eliminar una notificación (user)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/notifications/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Eliminar todo el historial (user)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/notifications",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Enviar sin token de admin (espera 403)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/admin/notifications/send",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test\",\n  \"body\": \"No debería enviarse\",\n  \"target_type\": \"ALL\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Enviar SELECTED sin user_ids (espera 400)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/admin/notifications/send",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test\",\n  \"body\": \"Sin destinatarios\",\n  \"target_type\": \"SELECTED\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Inscripciones y Progreso",
+      "item": [
+        {
+          "name": "Inscribirse a un training (user)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/enrollments/training/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Inscribirse de nuevo (sin duplicado, espera misma inscripción)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/enrollments/training/1",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Inscribirse a training inexistente (espera 404)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/enrollments/training/999",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Mis inscripciones (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/enrollments/me",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Trainings recientes con actividad — incluye is_following (user)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/enrollments/me/recent",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Completar sesión con watchedSeconds (user)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/enrollments/training/1/session/1/complete",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"watched_seconds\": 845\n}"
+            }
+          }
+        },
+        {
+          "name": "Completar sesión segunda vez (acumula en historial)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/enrollments/training/1/session/1/complete",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"watched_seconds\": 900\n}"
+            }
+          }
+        },
+        {
+          "name": "Completar sesión sin body (user)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/enrollments/training/1/session/1/complete",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Completar sesión sin estar inscrito (espera 404)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/enrollments/training/2/session/1/complete",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"watched_seconds\": 300\n}"
+            }
+          }
+        },
+        {
+          "name": "Completar sesión de otro training (espera 404)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/enrollments/training/1/session/99/complete",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"watched_seconds\": 300\n}"
+            }
+          }
+        },
+        {
+          "name": "Métricas de training 1 (admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/enrollments/training/1/metrics",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Métricas de training sin ser admin (espera 403)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/enrollments/training/1/metrics",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Métricas de coach 3 (admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/enrollments/coach/3/metrics",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Métricas de coach sin ser admin (espera 403)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/enrollments/coach/3/metrics",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Métricas de todos los coaches (admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/enrollments/coaches/metrics",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Métricas de todos los coaches sin ser admin (espera 403)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/enrollments/coaches/metrics",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12. Suscripciones",
+      "item": [
+        {
+          "name": "Planes disponibles (público)",
+          "description": "Lista los 3 planes disponibles con su precio de referencia por mes, ciclo de facturación y compromiso mínimo.\n\nEndpoint PÚBLICO — no requiere Authorization. Útil para mostrar precios en el website o en la pantalla de onboarding antes del login.\n\nbilling_cycle: frecuencia de cobro (MONTHLY o ANNUAL).\ncommitment: compromiso mínimo (MONTHLY = cancela cuando quieras, ANNUAL = 12 meses).\nmonthly_price: precio de referencia por mes (en BASIC/PRO es el equivalente mensual del costo anual).\n\nPlanes:\n  LITE  — billing_cycle: MONTHLY, commitment: MONTHLY\n  BASIC — billing_cycle: MONTHLY, commitment: ANNUAL\n  PRO   — billing_cycle: ANNUAL,  commitment: ANNUAL",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/subscriptions/plans",
+            "header": []
+          }
+        },
+        {
+          "name": "Mi suscripción activa",
+          "description": "Devuelve la suscripción más reciente del usuario si ésta otorga acceso.\n404 si no otorga acceso o si el usuario nunca tuvo suscripción.\n\nRegla de acceso (misma que usa el login):\n  ACTIVE             — Pagada y al día. Tiene acceso.\n  TRIALING           — En periodo de prueba. Tiene acceso.\n  PAST_DUE           — Pago fallido; Stripe reintentando. Tiene acceso (periodo de gracia).\n  CANCELED           — Acceso vigente hasta current_period_end. Sin acceso si current_period_end está en el pasado.\n  UNPAID             — Stripe dejó de reintentar. Sin acceso → 404.\n  INCOMPLETE         — Pago inicial no completado. Sin acceso → 404.\n  INCOMPLETE_EXPIRED — INCOMPLETE que superó 23h. Estado terminal. Sin acceso → 404.\n  EXPIRED (legacy)   — Estado obsoleto en registros viejos de DB. Sin acceso → 404.\n\ncancel_at_period_end: true → el usuario canceló pero todavía tiene acceso hasta que venza el periodo.",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/subscriptions/me",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ]
+          }
+        },
+        {
+          "name": "Suscripciones activas (admin)",
+          "description": "Lista la suscripción más reciente de cada usuario, sin filtrar por estado.\nUsuarios que nunca tuvieron suscripción no aparecen — el frontend los muestra como 'Sin plan'.\nUsuarios con estado sin acceso (UNPAID, INCOMPLETE, INCOMPLETE_EXPIRED, EXPIRED legacy) también se muestran como 'Sin plan' en el panel.\n\nUsado por la página /subscriptions del panel admin para construir la tabla de usuarios + su estado de suscripción.\n\nEl response incluye user_id y username para que el frontend pueda cruzar la lista con /users.",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/admin/subscriptions",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        },
+        {
+          "name": "Asignar suscripción (admin)",
+          "description": "Crea una nueva entrada de suscripción para el usuario. Al ser la más reciente, reemplaza la vista en GET /admin/subscriptions y determina el acceso en login y GET /subscriptions/me.\n\nplan: LITE | BASIC | PRO\nstatus: ACTIVE | TRIALING | PAST_DUE | CANCELED | UNPAID | INCOMPLETE | INCOMPLETE_EXPIRED\nFechas en formato ISO 8601 sin zona horaria: yyyy-MM-ddTHH:mm:ss",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/admin/subscriptions",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 2,\n  \"plan\": \"PRO\",\n  \"status\": \"ACTIVE\",\n  \"current_period_start\": \"2026-08-13T00:00:00\",\n  \"current_period_end\": \"2027-08-13T00:00:00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Quitar suscripción (admin)",
+          "description": "Revoca el acceso inmediatamente enviando status CANCELED con current_period_end en el pasado (fecha de ayer).\nCANCELED solo da acceso cuando current_period_end > now — al usar una fecha pasada el acceso cae sin importar diferencias de zona horaria entre cliente y servidor.\n\nAl ser la entrada más reciente, el login y GET /subscriptions/me devuelven 401/404 de inmediato.\nEsto es lo que ejecuta el panel admin al seleccionar 'Sin suscripción' en el dialog de /subscriptions.\n\nPara restaurar el acceso, usar 'Asignar suscripción' con status ACTIVE.",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/admin/subscriptions",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 2,\n  \"plan\": \"LITE\",\n  \"status\": \"CANCELED\",\n  \"current_period_start\": \"2026-08-12T00:00:00\",\n  \"current_period_end\": \"2026-08-12T00:00:00\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

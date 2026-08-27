@@ -1,0 +1,1007 @@
+/* ======================================== FITLÁN ACADEMY MOBILE FIRST ======================================== */
+@font-face {
+    font-family: "Opening";
+    src: url("../fonts/opening-webfont.woff2") format("woff2"), url("../fonts/opening-webfont.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+/* ======================================== THEME — LIGHT ======================================== */
+.light {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f5;
+    --text-primary: #111111;
+    --text-secondary: #666666;
+    --accent: #000000;
+}
+
+/* ======================================== THEME — DARK ======================================== */
+
+.dark {
+    --bg-primary: #111111;
+    --bg-secondary: #1c1c1c;
+    --text-primary: #ffffff;
+    --text-secondary: #b5b5b5;
+    --accent: #ffffff;
+}
+
+/* ======================================== RESET / BASE ======================================== */
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    background-color: white;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: "Inter Tight", sans-serif;
+}
+
+h1,
+h2 {
+    color: var(--text-primary);
+    font-family: "Opening", sans-serif;
+    line-height: 90%;
+}
+
+h3,
+h4,
+h5,
+h6 {
+    color: var(--text-primary);
+    font-family: "Inter Tight", sans-serif;
+    line-height: 90%;
+}
+
+header {
+    width: 100%;
+    height: 88.5px;
+    margin: 0 auto;
+    padding: 20px;
+    position: fixed;
+    z-index: 999;
+    background-color: #ffffff;
+    -webkit-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.34);
+    box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.34);
+}
+.header-content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    width: 120px;
+    height: auto;
+    display: block;
+}
+
+.btn-menu {
+    cursor: pointer;
+    border: 0;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-menu:focus,
+.btn-menu:active {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+nav {
+    width: 220px;
+    position: absolute;
+    right: 30px;
+    top: 60px;
+    z-index: 999999999;
+    font-weight: 400;
+    padding: 20px;
+    background-color: #ffffff;
+    -webkit-box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.34);
+    box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.34);
+}
+
+nav ul {
+    width: 300px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+nav a {
+    text-decoration: none;
+    color: #000000;
+    transition: all 0.4s ease;
+}
+nav a:hover { color: #5670C9; }
+
+main {
+    width: 100%;
+    margin: 0 auto;
+}
+
+footer {
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px 20px;
+}
+
+.bg-landing div.content {
+    padding: 10vh 0;
+}
+
+.bg-landing div.content h1 {
+    text-transform: uppercase;
+    margin-bottom: 6vh;
+    font-size: 80px;
+}
+
+.bg-landing div.content h2 {
+    font-family: "Inter Tight", sans-serif;
+    line-height: 120%;
+}
+
+.btn-sesion {
+    background-color: #000000;
+    color: #ffffff;
+    border-color: #000000;
+}
+.btn { cursor: pointer; }
+
+.icn-nav {
+    font-size: 28px;
+    color: #000000;
+}
+.pt-b-108 {
+    padding-top: 108px;
+    padding-bottom: 108px;
+}
+.pt-b-50 {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.training-menu a {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000000;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.training-card {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: 0;
+    align-items: flex-start;
+    position: relative;
+    aspect-ratio: 3 / 4;
+}
+
+.training-card h2 { color: #ffffff; }
+
+.training-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    object-fit: cover;
+}
+
+.training-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 30px;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+    color: #fff;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.85),
+        rgba(0, 0, 0, 0.05)
+    );
+}
+.training-card-content a { margin: 12px 0; }
+.rating { color: #E2E24F; }
+
+/* ========================================
+   TRAINING DETAIL
+======================================== */
+
+.training-detail {
+    padding-bottom: 60px;
+}
+
+
+/* ========================================
+   BACK LINK
+======================================== */
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+
+    margin: 15px 0;
+
+    color: #111111;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.back-link ion-icon {
+    font-size: 20px;
+}
+
+
+/* ========================================
+   HERO
+======================================== */
+
+.training-hero {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.training-hero-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+.training-hero-overlay {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: flex-end;
+
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.85),
+        rgba(0, 0, 0, 0.05) 70%
+    );
+}
+
+.training-hero-content {
+    padding: 30px;
+    color: #ffffff;
+}
+
+.training-eyebrow {
+    margin: 0 0 10px;
+
+    font-family: "Inter Tight", sans-serif;
+    font-size: 16px;
+}
+
+.training-hero h1 {
+    margin: 0 0 25px;
+
+    color: #ffffff;
+    font-family: "Opening", sans-serif;
+    font-size: 48px;
+    line-height: 90%;
+    text-transform: uppercase;
+}
+
+.training-level {
+    margin: 0;
+
+    font-family: "Inter Tight", sans-serif;
+    font-size: 16px;
+}
+
+
+/* ========================================
+   META
+======================================== */
+
+.training-meta {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 25px 0;
+    background-color: #ffffff;
+}
+
+.training-instructor { flex: 1; }
+
+.training-instructor a {
+    color: #4f6ed8;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+
+/* ========================================
+   ACTIONS
+======================================== */
+
+.training-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.share-button {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 6px;
+
+    background-color: #000000;
+    color: #ffffff;
+
+    cursor: pointer;
+
+    transition: transform 0.3s ease;
+}
+
+.share-button ion-icon {
+    font-size: 22px;
+}
+
+.share-button:hover {
+    transform: scale(1.08);
+}
+
+
+.follow-button {
+    min-width: 95px;
+
+    padding: 8px 20px;
+
+    border: none;
+    border-radius: 50px;
+
+    background-color: #5872d1;
+    color: #ffffff;
+
+    font-family: "Inter Tight", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.3s ease,
+        transform 0.3s ease;
+}
+
+.follow-button:hover {
+    background-color: #405bc0;
+    transform: scale(1.03);
+}
+
+
+/* ========================================
+   RATING
+======================================== */
+
+.training-rating {
+    width: 100%;
+    margin-top: 10px;
+    color: #e8e000;
+    font-size: 32px;
+    line-height: 1;
+}
+
+.training-rating .empty { color: #e8e000; }
+
+/* ========================================
+   DESCRIPTION
+======================================== */
+
+.training-description { 
+    padding: 15px 0;
+}
+
+.training-description p {
+    margin: 0 0 25px;
+    color: #111111;
+    font-family: "Inter Tight", sans-serif;
+    font-size: 20px;
+    line-height: 1.35;
+}
+
+.training-description .training-recommendation { font-weight: 700; }
+
+
+/* ========================================
+   BUTTONS
+======================================== */
+
+.training-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 25px;
+    margin: 40px 0 60px 0;
+}
+
+.btn-start,
+.btn-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 8px 30px;
+    border-radius: 50px;
+    font-family: "Inter Tight", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+        background-color 0.3s ease,
+        transform 0.3s ease;
+}
+
+.btn-start {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+.btn-start:hover {
+    background-color: #333333;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+.btn-custom {
+    background-color: #d7d7d7;
+    color: #ffffff;
+}
+
+.btn-custom:hover {
+    background-color: #c8c8c8;
+    color: #ffffff;
+}
+
+.suggested h3 { margin-bottom: 20px; }
+
+
+/* =========================
+   STEPS MODULE
+========================= */
+
+.steps-module {
+    background-color: #f7f7f7;
+    padding: 40px;
+}
+
+/* Título */
+
+.steps-module h2 {
+    margin: 0 0 30px 0;
+    font-family: 'Outfit', sans-serif;
+    font-size: 38px;
+    line-height: 1;
+    font-weight: 700;
+    color: #1e1e1e;
+}
+
+
+/* Cada ejercicio */
+
+.step {
+    display: flex;
+    margin-bottom: 30px;
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Repeticiones */
+
+.step-reps {
+    flex: 0 0 95px;
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 500;
+    color: #4f71d0;
+}
+
+/* Descripción */
+.step-description {
+    font-size: 18px;
+    line-height: 1.25;
+    font-weight: 400;
+    color: #1e1e1e;
+}
+
+.course-info {
+    width: 100%;
+}
+
+/* Autor */
+
+.course-author {
+    margin-bottom: 36px;
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 500;
+    color: #4F71D0;
+}
+
+/* Información */
+.course-detail {
+    align-items: center;
+    margin-bottom: 24px;
+    align-items: center; /* centra icono grande y texto respecto al bloque completo */
+}
+
+/* Iconos */
+.course-detail-icon {
+    width: 40px;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    line-height: 1;
+    color: #1E1E1E;
+    flex-shrink: 0; /* evita que el icono se deforme si el texto ocupa varias líneas */
+    font-size: 1.2em; /* opcional, ajusta el tamaño del icono respecto al texto */
+}
+
+/* Texto */
+.course-detail-text {
+    font-size: 20px;
+    line-height: 1.15;
+    font-weight: 400;
+    color: #1E1E1E;
+    display: flex;
+    align-items: center; /* centra el ion-icon respecto al texto que lo acompaña */
+    gap: 8px;
+}
+
+/* Contenedor general del modal */
+.workout-modal-content {
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    border: none;
+    position: relative;
+    z-index: 9999;
+}
+
+/* Header con timer */
+.workout-header {
+    background-color: #1a1a1a;
+    padding: 1rem;
+    text-align: center;
+    position: relative;
+}
+
+.workout-timer {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: 'Courier New', monospace; /* similar al look "digital" */
+}
+
+.workout-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+/* Video */
+.workout-video-wrapper {
+    position: relative;
+    width: 100%;
+    background-color: #000;
+}
+
+.workout-video {
+    width: 100%;
+    display: block;
+    max-height: 500px;
+    object-fit: cover;
+}
+
+.workout-play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.workout-play-btn:hover {
+    transform: translate(-50%, -50%) scale(1.05);
+    background-color: #fff;
+}
+
+.workout-play-btn.hidden {
+    display: none;
+}
+
+/* Steps */
+.workout-steps {
+    background-color: #1a1a1a;
+    padding: 2rem;
+}
+
+.workout-steps-title {
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.workout-steps-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.workout-steps-list li {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.workout-steps-list li a.step-modal {
+    display: flex;
+    margin-bottom: 30px;
+    text-decoration: none;
+    color: inherit;
+}
+.workout-steps-list li a.step-modal:hover { color: #7b7fd4; }
+
+.step-count {
+    color: #fff;
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 60px;
+}
+
+.step-desc {
+    color: #fff;
+    opacity: 0.9;
+}
+
+/* Item destacado (el primero, en morado) */
+.step-highlight .step-count,
+.step-highlight .step-desc {
+    color: #7b7fd4; /* ajusta al morado exacto de tu marca */
+}
+
+/* Foto de perfil */
+.profile-row {
+    margin-bottom: 2.5rem;
+}
+
+.profile-photo-wrapper {
+    width: 225px;
+    height: 225px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Nombre */
+.profile-name {
+    font-family: "Opening", sans-serif;
+    font-size: 2.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #1a1a1a;
+    margin-bottom: 1.25rem;
+    text-transform: uppercase;
+}
+
+/* Texto descripción */
+.profile-text {
+    color: #1a1a1a;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    max-width: 650px;
+}
+
+/* Sección de redes sociales */
+.profile-social-label {
+    font-size: 1rem;
+    color: #1a1a1a;
+    margin-bottom: 0.75rem;
+}
+
+.social-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.social-icon:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+/* ======================================== MOBILE 0px → 575px ======================================== */
+
+.bg-landing {
+    background-image: url("../img/mobile-back-landing-fitlan.webp");
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    background-attachment: scroll;
+}
+
+.bg-landing .logo {
+    width: 120px;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 60px;
+}
+
+.info-slider-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+}
+
+.info-slider-track::-webkit-scrollbar {
+    display: none;
+}
+
+.info-block {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+}
+
+.info-block ul {
+    margin: 20px 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+}
+
+.info-dots {
+    margin: 20px 0;
+}
+
+.pricing {
+    color: #A0A0A0;
+    background-color: #ffffff;
+    border-radius: 8px;
+    font-weight: 800;
+    line-height: 120%;
+    margin: 40px 0;
+    padding: 20px 40px;
+}
+
+.plans {
+    display: flex;
+    gap: 20px;
+}
+
+.plans article {
+    flex: 1;
+    background-color: #ffffff;
+    color: #A0A0A0;
+    border: 2px solid #000000;
+    border-radius: 8px;
+    padding: 40px;
+}
+
+.plans article p.plan {
+    font-size: 24px;
+    font-weight: 800;
+    color: #151819;
+}
+
+.info {
+    padding: 20px 0;
+    margin-bottom: 80px;
+    text-align: left;
+    gap: 20px;
+}
+
+.info h3 {
+    margin-bottom: 40px;
+}
+
+.content-info {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.content-info article {
+    flex: 1;
+}
+
+.content-info article h4 {
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+.content-info article p {
+    font-size: 16px;
+}
+
+.training-menu {
+    display: flex;
+    gap: 3px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+    padding: 20px 0;
+}
+
+.training-menu::-webkit-scrollbar {
+    display: none;
+}
+
+.training-menu a {
+    width: 140px;
+    height: 100px;
+    flex: 0 0 140px;
+    padding: 15px;
+    box-sizing: border-box;
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+footer {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 80px 0;
+}
+
+footer div.footer {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+footer div.footer article {
+    flex: 1;
+}
+
+.footer article ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.footer article a {
+    color: #ffffff;
+    text-decoration: none;
+}
+.training-hero-content { padding: 12px; }
+.training-hero-content h1 { font-size: 24px; }
+
+.suggested h3 { margin-bottom: 10px; }
+
+.profile-photo-wrapper {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 40px;
+}
+
+/* ======================================== SM — SMALL DEVICES 576px+ ======================================== */
+
+@media (min-width: 576px) {
+
+
+
+}
+
+/* ======================================== MD — TABLETS 768px+ ======================================== */
+
+@media (min-width: 768px) {
+    .hero {
+        padding: 70px 40px;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+    }
+}
+
+/* ======================================== LG — DESKTOP 992px+ ======================================== */
+
+@media (min-width: 992px) {
+    .bg-landing {
+        background-image: url("../img/back-landing-fitlan.webp");
+        background-position: center top;
+        background-repeat: no-repeat;
+        background-size: 100% auto;
+        background-attachment: fixed;
+    }
+
+    .bg-landing .logo {
+        width: 130px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 60px;
+    }
+
+    .content-info {
+        flex-direction: row;
+        gap: 20px;
+    }
+
+    footer div.footer {
+        flex-direction: row;
+    }
+
+    .training-hero-content { padding: 40px; }
+    .training-hero h1 { font-size: 48px; }
+
+    .profile-photo-wrapper { margin-bottom: 0; }
+
+}
+
+/* ======================================== XL — LARGE DESKTOP 1200px+ ======================================== */
+
+@media (min-width: 1200px) {}
+
+/* ======================================== XXL — EXTRA LARGE DESKTOP 1400px+ ======================================== */
+
+@media (min-width: 1400px) {}
