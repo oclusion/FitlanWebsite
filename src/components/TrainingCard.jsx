@@ -14,7 +14,7 @@ const TrainingCard = ({ training }) => {
   );
 
   return (
-    <div className="col-12 col-sm-6 col-lg-3 d-flex">
+    <div className="col-6 col-md-4 col-lg-3 d-flex">
       <Link to={`/entrenamiento/${training.id}`} className="feed-card">
         {training.image_url ? (
           <img
