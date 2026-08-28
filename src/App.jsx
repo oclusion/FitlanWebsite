@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import SubscriptionRoute from "./components/SubscriptionRoute";
 
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -21,6 +22,7 @@ import Help from "./pages/Help";
 import Faqs from "./pages/Faqs";
 import Privacy from "./pages/Privacy";
 import About from "./pages/About";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -39,16 +41,20 @@ function App() {
           <Route path="/acerca-de" element={<About />} />
           <Route path="/ayuda" element={<Help />} />
 
-          {/* Requieren sesión */}
-          <Route path="/entrenamientos" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
-          <Route path="/entrenamiento/:id" element={<ProtectedRoute><TrainingDetail /></ProtectedRoute>} />
-          <Route path="/entrenamiento/:trainingId/sesion/:sessionId" element={<ProtectedRoute><Steps /></ProtectedRoute>} />
-          <Route path="/entrenamiento/:trainingId/sesion/:sessionId/step/:stepId" element={<ProtectedRoute><StepPlayer /></ProtectedRoute>} />
-          <Route path="/entrenador/:id" element={<ProtectedRoute><CoachProfile /></ProtectedRoute>} />
+          {/* Solo requieren sesión (cuenta activa) */}
           <Route path="/cuenta" element={<ProtectedRoute><Account /></ProtectedRoute>} />
-          <Route path="/mis-entrenamientos" element={<ProtectedRoute><MyTrainings /></ProtectedRoute>} />
           <Route path="/configuracion" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/planes" element={<ProtectedRoute><Plans /></ProtectedRoute>} />
+
+          {/* Requieren sesión + suscripción con acceso (si no, → /planes) */}
+          <Route path="/entrenamientos" element={<SubscriptionRoute><Feed /></SubscriptionRoute>} />
+          <Route path="/entrenamiento/:id" element={<SubscriptionRoute><TrainingDetail /></SubscriptionRoute>} />
+          <Route path="/entrenamiento/:trainingId/sesion/:sessionId" element={<SubscriptionRoute><Steps /></SubscriptionRoute>} />
+          <Route path="/entrenamiento/:trainingId/sesion/:sessionId/step/:stepId" element={<SubscriptionRoute><StepPlayer /></SubscriptionRoute>} />
+          <Route path="/entrenador/:id" element={<SubscriptionRoute><CoachProfile /></SubscriptionRoute>} />
+          <Route path="/mis-entrenamientos" element={<SubscriptionRoute><MyTrainings /></SubscriptionRoute>} />
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

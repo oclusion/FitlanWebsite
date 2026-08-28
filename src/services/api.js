@@ -3,6 +3,12 @@ import { BASE_URL, TOKEN_KEY } from "../config/api";
 // Mismo contrato que src/services/api.js de la app móvil (RN): un solo request()
 // que inyecta el token, y en 401 con token activo fuerza logout — acá redirigiendo
 // a /login en vez de resetear un stack de navegación nativo.
+//
+// `X-Fitlan-Client: web` identifica al cliente web. El backend lo usa (o lo usará)
+// para permitir el login sin suscripción activa SOLO desde la web — donde el
+// usuario sí puede adquirir un plan. Ver documentacion-backend/PROPUESTA-login-web-sin-suscripcion.md
+const CLIENT_HEADER = { "X-Fitlan-Client": "web" };
+
 let _token = localStorage.getItem(TOKEN_KEY);
 
 const setToken = (token) => {
@@ -18,6 +24,7 @@ const clearToken = () => {
 const request = async (endpoint, options = {}) => {
   const headers = {
     "Content-Type": "application/json",
+    ...CLIENT_HEADER,
     ...(_token ? { Authorization: `Bearer ${_token}` } : {}),
     ...options.headers,
   };

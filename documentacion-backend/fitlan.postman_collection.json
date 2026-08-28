@@ -145,6 +145,22 @@
           }
         },
         {
+          "name": "Login web sin suscripción (X-Fitlan-Client: web → 200)",
+          "description": "El website envía X-Fitlan-Client: web en todos sus requests. Con este header, el backend omite el check de suscripción y emite el token aunque el usuario no tenga plan activo.\n\nFlujo web post-login:\n  1. Login → 200 + token\n  2. GET /subscriptions/me → 200 (tiene suscripción) → acceso completo\n                          → 404 (sin suscripción) → redirigir a /planes\n\nSin este header (app móvil), un usuario sin suscripción recibiría 401.",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/login",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Fitlan-Client", "value": "web" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"user_sin_suscripcion\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
           "name": "Registro de usuario",
           "request": {
             "method": "POST",

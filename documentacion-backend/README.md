@@ -47,6 +47,13 @@ POST /auth/login
 }
 ```
 
+**Header de cliente (distingue app móvil de website):**
+
+| Header | Valor | Quién lo envía |
+|---|---|---|
+| `X-Fitlan-Client` | `web` | Website — permite login sin suscripción |
+| `X-Fitlan-Client` | `mobile` / ausente | App móvil — comportamiento actual |
+
 **Errores posibles:**
 
 | Código | Mensaje | Causa |
@@ -54,13 +61,15 @@ POST /auth/login
 | `401` | `"Credenciales incorrectas."` | Usuario o contraseña inválidos |
 | `401` | `"Cuenta no verificada. Revisa tu email."` | El usuario existe pero no verificó su email |
 | `401` | `"La cuenta está suspendida."` | El usuario fue suspendido por un admin |
-| `401` | `"No tienes una suscripción activa. Renueva tu plan en el sitio web."` | Usuario sin suscripción activa o vencida |
+| `401` | `"No tienes una suscripción activa. Renueva tu plan en el sitio web."` | Usuario sin suscripción — **solo cuando el cliente es móvil** |
 | `401` | `"La sesión ha expirado. Por favor inicia sesión nuevamente."` | Token expirado |
 | `401` | `"El token es inválido."` | Token malformado o con firma incorrecta |
 | `401` | `"No autorizado. Se requiere autenticación."` | Request sin token |
 | `401` | `"No autorizado. Se requiere autenticación."` | Token válido pero sesión cerrada o desplazada |
 
-> **Verificación de suscripción:** en cada login se evalúa la suscripción **más reciente** del usuario (sin importar el estado). Tiene acceso si su estado es `ACTIVE`, `TRIALING`, `PAST_DUE`, o `CANCELED` con `current_period_end` en el futuro. `UNPAID`, `INCOMPLETE` e `INCOMPLETE_EXPIRED` bloquean el login con `401`. Sin ninguna suscripción → `401`. Los usuarios con `ROLE_ADMIN` no están sujetos a esta verificación.
+> **Verificación de suscripción:** en cada login se evalúa la suscripción **más reciente** del usuario. Tiene acceso si su estado es `ACTIVE`, `TRIALING`, `PAST_DUE`, o `CANCELED` con `current_period_end` en el futuro. `UNPAID`, `INCOMPLETE` e `INCOMPLETE_EXPIRED` bloquean el login con `401`. Sin ninguna suscripción → `401`. Los usuarios con `ROLE_ADMIN` no están sujetos a esta verificación.
+>
+> **Excepción para el website:** si el request incluye `X-Fitlan-Client: web`, el check de suscripción se omite y se emite el token igualmente. El website luego llama a `GET /subscriptions/me` para verificar el estado y redirigir al usuario a la pantalla de planes si no tiene suscripción activa.
 
 > **Límite de sesiones:** cada usuario puede tener hasta **2 sesiones activas** simultáneamente (configurable con `app.auth.max-sessions`). Al hacer login en un 3° dispositivo, la sesión más antigua se elimina automáticamente y el token de ese dispositivo queda inválido en el próximo request.
 
@@ -102,7 +111,7 @@ POST /auth/facebook
 | `401` | `"Token de Facebook inválido o expirado."` | El SDK envió un token malo |
 | `401` | `"No tienes una cuenta activa. Regístrate en el sitio web..."` | Email de Facebook no registrado en el sistema |
 | `401` | `"Tu cuenta no está activa. Contacta al soporte."` | Cuenta existe pero `active=false` |
-| `401` | `"No tienes una suscripción activa. Renueva tu plan en el sitio web."` | Cuenta activa pero sin suscripción vigente |
+| `401` | `"No tienes una suscripción activa. Renueva tu plan en el sitio web."` | Cuenta activa pero sin suscripción vigente — **solo cliente móvil** |
 | `401` | `"Facebook no pudo compartir tu email..."` | Usuario no concedió permiso de email en Facebook |
 
 > **Nota:** el sistema soporta la tabla `user_social_accounts` preparada para Google y Apple (`provider`: `FACEBOOK` \| `GOOGLE` \| `APPLE`).
@@ -167,7 +176,7 @@ POST /auth/apple
 | `401` | `"No pudimos identificar tu cuenta de Apple. Inicia sesión..."` | Apple no incluyó `email` en el JWT y no hay vínculo `sub` previo |
 | `401` | `"No tienes una cuenta activa. Regístrate en el sitio web..."` | Email de Apple no registrado en el sistema |
 | `401` | `"Tu cuenta no está activa. Contacta al soporte."` | Cuenta existe pero `active=false` |
-| `401` | `"No tienes una suscripción activa. Renueva tu plan en el sitio web."` | Cuenta activa pero sin suscripción vigente |
+| `401` | `"No tienes una suscripción activa. Renueva tu plan en el sitio web."` | Cuenta activa pero sin suscripción vigente — **solo cliente móvil** |
 
 **Requisitos del lado de la app:**
 1. Agregar la capability **Sign In with Apple** en el target de Xcode

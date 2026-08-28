@@ -86,6 +86,24 @@ button.box.active {
     font-weight: bold;
 }
 
+/* ---------- 404 ---------- */
+.not-found {
+    padding-top: 40px;
+    padding-bottom: 60px;
+}
+
+.not-found-code {
+    margin: 0;
+    font-family: "Opening", sans-serif;
+    font-size: 5rem;
+    line-height: 1;
+    color: var(--text-secondary);
+}
+
+.not-found .btn {
+    margin-top: 16px;
+}
+
 /* ---------- Breadcrumb (sesión / step) ---------- */
 .breadcrumb-nav {
     display: flex;
