@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
-// Modal de confirmación custom (sin bootstrap JS), mismo patrón que WorkoutModal:
-// overlay con estado de React, clic en el backdrop o Escape para cancelar.
+// Modal de confirmación custom (sin bootstrap JS): overlay con estado de React,
+// clic en el backdrop o Escape para cancelar.
 const ConfirmModal = ({
   title,
   message,

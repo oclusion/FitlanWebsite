@@ -1,31 +1,42 @@
 import { Link } from "react-router-dom";
-import { formatDifficulty, firstName } from "../utils/format";
+import { formatDifficultyShort, formatDuration } from "../utils/format";
+import { assetUrl } from "../utils/assetUrl";
 
-// Puerto de la card de maquetas/assets/includes/feed-training.html. La maqueta
-// tenía estrellas de rating hardcodeadas — no existe ese campo en el backend
-// todavía, así que se omite en vez de inventar datos falsos.
-const TrainingCard = ({ training }) => (
-  <div className="col-12 col-sm-6 col-lg-3">
-    <article className="training-card">
-      <Link to={`/entrenamiento/${training.id}`}>
+// Card del feed (/entrenamientos). La imagen cubre todo el card; encima, sobre un
+// degradado: título, dificultad, una línea divisoria y el nº de sesiones + los
+// minutos totales (suma de la duración de todos los steps). `GET /training` ya
+// trae `sessions[]` con sus `steps[]`.
+const TrainingCard = ({ training }) => {
+  const sessionCount = training.sessions?.length ?? 0;
+  const totalSeconds = (training.sessions ?? []).reduce(
+    (acc, s) => acc + (s.steps ?? []).reduce((sum, st) => sum + (st.duration_seconds ?? 0), 0),
+    0,
+  );
+
+  return (
+    <div className="col-12 col-sm-6 col-lg-3 d-flex">
+      <Link to={`/entrenamiento/${training.id}`} className="feed-card">
         {training.image_url ? (
-          <img src={training.image_url} alt={training.title} />
+          <img
+            className="feed-card-img"
+            src={assetUrl(training.image_url, training.image_key)}
+            alt={training.title}
+          />
         ) : (
-          <div className="training-card-placeholder" />
+          <div className="feed-card-img feed-card-img--placeholder" />
         )}
+        <div className="feed-card-overlay">
+          <h2 className="feed-card-title">{training.title}</h2>
+          <span className="feed-card-difficulty">{formatDifficultyShort(training.difficulty_level)}</span>
+          <hr className="feed-card-divider" />
+          <span className="feed-card-meta">
+            {sessionCount} {sessionCount === 1 ? "sesión" : "sesiones"}
+            {totalSeconds ? ` · ${formatDuration(totalSeconds)}` : ""}
+          </span>
+        </div>
       </Link>
-      <div className="training-card-content">
-        {training.description ? <p>{training.description}</p> : null}
-        <h2><Link to={`/entrenamiento/${training.id}`}>{training.title}</Link></h2>
-        <span>{formatDifficulty(training.difficulty_level)}</span>
-        {training.coach ? (
-          <Link to={`/entrenador/${training.coach.id}`} className="btn btn-light">
-            Entrena con {firstName(training.coach.name)}
-          </Link>
-        ) : null}
-      </div>
-    </article>
-  </div>
-);
+    </div>
+  );
+};
 
 export default TrainingCard;

@@ -7,6 +7,7 @@ import trainingService from "../services/trainingService";
 import enrollmentService from "../services/enrollmentService";
 import coachService from "../services/coachService";
 import { formatDifficulty, firstName, formatDuration } from "../utils/format";
+import { assetUrl } from "../utils/assetUrl";
 
 // Puerto de maquetas/assets/includes/training-detail.html. Los botones "Comenzar
 // entrenamiento" y "Solicitar entrenamiento personalizado" de la maqueta se
@@ -15,9 +16,9 @@ import { formatDifficulty, firstName, formatDuration } from "../utils/format";
 // rating tampoco existen en el modelo de datos, se omiten.
 //
 // Según la forma del entrenamiento, esta pantalla se salta a sí misma:
-//   - 1 sesión con 1 (o 0) steps  -> directo a reproducir el video de la sesión
-//   - 1 sesión con 2+ steps       -> directo al listado de steps de esa sesión
-//   - 2+ sesiones                 -> se queda acá mostrando el listado de sesiones
+//   - 1 sesión con 1 step   -> directo al player de ese step
+//   - 1 sesión con 2+ steps -> directo al listado de steps de esa sesión
+//   - 2+ sesiones            -> se queda acá mostrando el listado de sesiones
 // (`GET /training/{id}` ya trae `sessions[]` con sus `steps[]` embebidos.)
 const TrainingDetail = () => {
   const { id } = useParams();
@@ -74,15 +75,20 @@ const TrainingDetail = () => {
 
   if (sessions.length === 1) {
     const only = sessions[0];
-    const stepCount = only.steps?.length ?? 0;
-    const target = `/entrenamiento/${training.id}/sesion/${only.id}`;
-    return (
-      <Navigate
-        to={stepCount <= 1 ? { pathname: target, search: "?reproducir=1" } : target}
-        replace
-      />
-    );
+    const orderedSteps = [...(only.steps ?? [])].sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
+    const base = `/entrenamiento/${training.id}/sesion/${only.id}`;
+    if (orderedSteps.length === 1) {
+      return <Navigate to={`${base}/step/${orderedSteps[0].id}`} replace />;
+    }
+    return <Navigate to={base} replace />;
   }
+
+  // Una sesión de 1 solo step lleva directo al player; con 2+ steps, a su listado.
+  const sessionTarget = (session) => {
+    const base = `/entrenamiento/${training.id}/sesion/${session.id}`;
+    const orderedSteps = [...(session.steps ?? [])].sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
+    return orderedSteps.length === 1 ? `${base}/step/${orderedSteps[0].id}` : base;
+  };
 
   return (
     <div className="light">
@@ -93,7 +99,11 @@ const TrainingDetail = () => {
             <div className="col-12">
               <section className="training-hero">
                 {training.image_url ? (
-                  <img src={training.image_url} alt={training.title} className="training-hero-image" />
+                  <img
+                    src={assetUrl(training.image_url, training.image_key)}
+                    alt={training.title}
+                    className="training-hero-image"
+                  />
                 ) : null}
                 <button
                   className="share-button share-button--hero"
@@ -147,15 +157,13 @@ const TrainingDetail = () => {
                 <h3>Sesiones</h3>
                 <div className="sessions-list">
                   {sessions.map((session) => (
-                    <Link
-                      key={session.id}
-                      to={`/entrenamiento/${training.id}/sesion/${session.id}`}
-                      className="session-row"
-                    >
+                    <Link key={session.id} to={sessionTarget(session)} className="session-row">
                       <span>{session.title}</span>
                       <span className="session-meta">
                         {formatDuration(session.duration_seconds)}
-                        {session.steps?.length ? ` · ${session.steps.length} ejercicios` : ""}
+                        {session.steps?.length
+                          ? ` · ${session.steps.length} ${session.steps.length === 1 ? "ejercicio" : "ejercicios"}`
+                          : ""}
                       </span>
                     </Link>
                   ))}

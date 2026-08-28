@@ -6,6 +6,15 @@ export const difficultyLabels = {
 
 export const formatDifficulty = (level) => difficultyLabels[level] ?? level;
 
+// Variante corta para las cards del feed ("Principiante" en vez de "Nivel Básico").
+export const difficultyShortLabels = {
+  BEGINNER: "Principiante",
+  INTERMEDIATE: "Medio",
+  ADVANCED: "Avanzado",
+};
+
+export const formatDifficultyShort = (level) => difficultyShortLabels[level] ?? level;
+
 export const firstName = (fullName) => fullName?.trim().split(/\s+/)[0] ?? "";
 
 export const formatDuration = (seconds) => {

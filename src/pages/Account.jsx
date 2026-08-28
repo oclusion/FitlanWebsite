@@ -7,6 +7,7 @@ import userService from "../services/userService";
 import subscriptionService, { hasSubscriptionAccess } from "../services/subscriptionService";
 import { useAuth } from "../context/AuthContext";
 import { getInitials } from "../utils/initials";
+import { assetUrl } from "../utils/assetUrl";
 
 const Account = () => {
   const { logout } = useAuth();
@@ -33,7 +34,11 @@ const Account = () => {
         <div className="container account-page">
           <div className="profile-row account-header">
             {user?.profile_image_url ? (
-              <img src={user.profile_image_url} alt={user.name} className="account-avatar" />
+              <img
+                src={assetUrl(user.profile_image_url, user.profile_image_key)}
+                alt={user.name}
+                className="account-avatar"
+              />
             ) : (
               <div className="account-avatar profile-photo-placeholder">{getInitials(user?.name)}</div>
             )}

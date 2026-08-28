@@ -11,6 +11,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Feed from "./pages/Feed";
 import TrainingDetail from "./pages/TrainingDetail";
 import Steps from "./pages/Steps";
+import StepPlayer from "./pages/StepPlayer";
 import CoachProfile from "./pages/CoachProfile";
 import Account from "./pages/Account";
 import MyTrainings from "./pages/MyTrainings";
@@ -42,6 +43,7 @@ function App() {
           <Route path="/entrenamientos" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
           <Route path="/entrenamiento/:id" element={<ProtectedRoute><TrainingDetail /></ProtectedRoute>} />
           <Route path="/entrenamiento/:trainingId/sesion/:sessionId" element={<ProtectedRoute><Steps /></ProtectedRoute>} />
+          <Route path="/entrenamiento/:trainingId/sesion/:sessionId/step/:stepId" element={<ProtectedRoute><StepPlayer /></ProtectedRoute>} />
           <Route path="/entrenador/:id" element={<ProtectedRoute><CoachProfile /></ProtectedRoute>} />
           <Route path="/cuenta" element={<ProtectedRoute><Account /></ProtectedRoute>} />
           <Route path="/mis-entrenamientos" element={<ProtectedRoute><MyTrainings /></ProtectedRoute>} />
