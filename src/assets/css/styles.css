@@ -776,6 +776,27 @@ footer {
     color: #fff;
 }
 
+.info-carousel {
+  overflow: hidden;
+  cursor: grab;
+}
+
+.info-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.info-track::-webkit-scrollbar {
+  display: none;
+}
+
+.info-block {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+}
+
 /* ======================================== MOBILE 0px → 575px ======================================== */
 
 .bg-landing {
@@ -809,6 +830,8 @@ footer {
 .info-block {
     flex: 0 0 100%;
     scroll-snap-align: start;
+    color: #ffffff;
+    font-size: 18px;
 }
 
 .info-block ul {
@@ -835,6 +858,7 @@ footer {
 .plans {
     display: flex;
     gap: 20px;
+    margin-top: 60px;
 }
 
 .plans article {
@@ -967,7 +991,7 @@ footer div.footer article {
 
 @media (min-width: 992px) {
     .bg-landing {
-        background-image: url("../img/back-landing-fitlan.webp");
+        background-image: url("../img/back-landing-fitlan.png");
         background-position: center top;
         background-repeat: no-repeat;
         background-size: 100% auto;
@@ -984,6 +1008,7 @@ footer div.footer article {
     .content-info {
         flex-direction: row;
         gap: 20px;
+        color: #FFFFFF;
     }
 
     footer div.footer {

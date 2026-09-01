@@ -34,17 +34,27 @@ const Landing = () => {
                   </div>
                   <h1>Entrena Diferente</h1>
                   <div className="col-12 col-md-4 mx-auto">
-                    <article className="info-block">
-                      <p>Accede a box, yoga, atletismo y más con una sola suscripción.</p>
-                    </article>
-                    <article className="info-block">
-                      <ul>
-                        <li>✓ Entrena cuando quieras</li>
-                        <li>✓ Instructores especializados</li>
-                        <li>✓ Variedad de entrenamientos</li>
-                        <li>✓ Cancela cuando quieras</li>
-                      </ul>
-                    </article>
+                    <div id="infoCarousel" className="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+                      <div className="carousel-inner">
+                        <div className="carousel-item active">
+                          <article className="info-block">
+                            <p>
+                              Accede a box, yoga, atletismo y más con una sola suscripción.
+                            </p>
+                          </article>
+                        </div>
+                        <div className="carousel-item">
+                          <article className="info-block">
+                            <ul>
+                              <li>✓ Entrena cuando quieras</li>
+                              <li>✓ Instructores especializados</li>
+                              <li>✓ Variedad de entrenamientos</li>
+                              <li>✓ Cancela cuando quieras</li>
+                            </ul>
+                          </article>
+                        </div>
+                      </div>
+                    </div>
                     <Link to="/login" className="btn btn-primary btn-sesion">Iniciar Sesión</Link>
                   </div>
 
