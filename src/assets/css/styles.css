@@ -800,11 +800,11 @@ footer {
 /* ======================================== MOBILE 0px → 575px ======================================== */
 
 .bg-landing {
-    background-image: url("../img/mobile-back-landing-fitlan.webp");
+    background-image: url("../img/mobile-back-landing-fitlan.png");
     background-position: center top;
     background-repeat: no-repeat;
     background-size: 100% auto;
-    background-attachment: scroll;
+    background-attachment: fixed;
 }
 
 .bg-landing .logo {
@@ -891,6 +891,7 @@ footer {
     display: flex;
     flex-direction: column;
     gap: 40px;
+    color: #FFFFFF;
 }
 
 .content-info article {
