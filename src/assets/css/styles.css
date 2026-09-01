@@ -32,6 +32,7 @@ html,
 body {
     margin: 0;
     padding: 0;
+    min-height: 100%;
 }
 
 body {
@@ -1012,9 +1013,23 @@ footer div.footer article {
         color: #FFFFFF;
     }
 
+    .page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    main {
+        flex: 1 0 auto;
+    }
+
+    footer {
+        flex-shrink: 0;
+    }
+
     footer div.footer {
         flex-direction: row;
     }
+
 
     .training-hero-content { padding: 40px; }
     .training-hero h1 { font-size: 48px; }

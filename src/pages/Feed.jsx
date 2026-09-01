@@ -61,7 +61,7 @@ const Feed = () => {
   };
 
   return (
-    <div className="light">
+    <div className="light page">
       <Header />
       <main className="pt-b-108">
         <div className="container">
