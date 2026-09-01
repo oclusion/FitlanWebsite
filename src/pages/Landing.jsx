@@ -90,9 +90,6 @@ const Landing = () => {
                     </div>
                   ) : null}
 
-                  <div className="pricing col-12 col-md-4 mx-auto text-center">
-                    <Link to="/registro" className="btn btn-primary">Comenzar ahora</Link>
-                  </div>
                 </div>
 
                 <div className="info col-12 col-md-12">

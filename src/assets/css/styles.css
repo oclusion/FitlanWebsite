@@ -1007,6 +1007,10 @@ footer div.footer article {
         margin-bottom: 60px;
     }
 
+    .carousel {
+        margin-bottom: 40px;
+    }
+
     .content-info {
         flex-direction: row;
         gap: 20px;
