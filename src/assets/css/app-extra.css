@@ -102,6 +102,48 @@ button.box.active {
     color: #922b21;
 }
 
+/* ---------- Carrusel de info de la landing ---------- */
+/* Alto fijo + contenido centrado verticalmente: sin esto cada slide tiene
+   distinta altura (párrafo vs lista de 4 ítems) y la página "salta" en cada
+   rotación del carrusel. El alto fijo va en .carousel-inner (no en .carousel)
+   para que los puntitos queden en una fila estática debajo. */
+#infoCarousel .carousel-inner,
+#infoCarousel .carousel-item {
+    height: 160px;
+}
+
+#infoCarousel .info-block {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#infoCarousel .info-block ul {
+    margin: 0;
+}
+
+#infoCarousel .carousel-indicators {
+    position: static;
+    margin: 12px 0 0;
+    gap: 8px;
+}
+
+#infoCarousel .carousel-indicators [data-bs-target] {
+    box-sizing: border-box;
+    width: 8px;
+    height: 8px;
+    margin: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.4);
+    opacity: 1;
+}
+
+#infoCarousel .carousel-indicators .active {
+    background-color: #ffffff;
+}
+
 /* ---------- 404 ---------- */
 .not-found {
     padding-top: 40px;

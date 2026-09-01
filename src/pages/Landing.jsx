@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
+import { Carousel } from "bootstrap";
 import Footer from "../components/Footer";
 import subscriptionService from "../services/subscriptionService";
 import { useAuth } from "../context/AuthContext";
@@ -7,14 +8,26 @@ import logoWhite from "../assets/img/fitlan-white.svg";
 
 // Puerto de maquetas/index.php — landing pública. Los planes se traen reales del
 // backend (GET /subscriptions/plans) en vez del "$$$$$" placeholder de la maqueta.
+// El carrusel usa el JS de Bootstrap (bootstrap se importa en main.jsx). Como el
+// DOM lo renderiza React, el auto-init de `data-bs-ride` no lo agarra: se
+// instancia a mano en un useEffect y se hace dispose al desmontar.
 const Landing = () => {
   const { isAuthenticated } = useAuth();
   const [plans, setPlans] = useState([]);
+  const carouselRef = useRef(null);
 
   useEffect(() => {
     subscriptionService.getPlans()
       .then(setPlans)
       .catch((error) => console.log("No se pudieron cargar los planes", error));
+  }, []);
+
+  useEffect(() => {
+    if (!carouselRef.current) return;
+    // `ride: "carousel"` = autoplay al montar; `.cycle()` por si acaso.
+    const carousel = new Carousel(carouselRef.current, { interval: 4000, ride: "carousel" });
+    carousel.cycle();
+    return () => carousel.dispose();
   }, []);
 
   // Si ya hay sesión, no tiene sentido mostrar la landing de marketing — va
@@ -34,7 +47,7 @@ const Landing = () => {
                   </div>
                   <h1>Entrena Diferente</h1>
                   <div className="col-12 col-md-4 mx-auto">
-                    <div id="infoCarousel" className="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+                    <div ref={carouselRef} id="infoCarousel" className="carousel slide">
                       <div className="carousel-inner">
                         <div className="carousel-item active">
                           <article className="info-block">
@@ -53,6 +66,10 @@ const Landing = () => {
                             </ul>
                           </article>
                         </div>
+                      </div>
+                      <div className="carousel-indicators">
+                        <button type="button" data-bs-target="#infoCarousel" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1" />
+                        <button type="button" data-bs-target="#infoCarousel" data-bs-slide-to="1" aria-label="Slide 2" />
                       </div>
                     </div>
                     <Link to="/login" className="btn btn-primary btn-sesion">Iniciar Sesión</Link>

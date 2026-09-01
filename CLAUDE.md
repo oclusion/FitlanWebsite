@@ -16,7 +16,7 @@ There is no test suite. `.env` is **committed** (it only holds `VITE_API_BASE_UR
 
 ## What this project is
 
-Public website for Fitlán Academy: a marketing landing plus a logged-in user area (training feed, training detail, workout steps with video, coach profiles, account/settings). React 19 + Vite SPA, `react-router-dom` v7, Bootstrap 5 CSS (no bootstrap JS — see Header note below).
+Public website for Fitlán Academy: a marketing landing plus a logged-in user area (training feed, training detail, workout steps with video, coach profiles, account/settings). React 19 + Vite SPA, `react-router-dom` v7, Bootstrap 5 (CSS + JS — but JS used sparingly, see Conventions).
 
 This is a sibling of a React Native/Expo mobile app (`rn-starter`, referenced as `../src`). Both hit the **same backend with the same API contract**. The web app is the only place a user can **register a new account and reset a password**; the mobile app is login-only. Differences from mobile: token stored in `localStorage` (not `expo-secure-store`), routing via react-router (not React Navigation).
 
@@ -48,7 +48,7 @@ Signature quirk: `get/post/put` take `(endpoint, body?, options?)` and JSON-stri
 ## Conventions specific to this repo
 
 - **This is a port of static mockups** in `../maquetas` (HTML/PHP + Bootstrap). Most components/pages carry a header comment naming the mockup file they came from and what changed. When the mockup had hardcoded data the backend doesn't provide (e.g. star ratings on training cards), the port **omits it rather than faking data** — keep this principle.
-- **Bootstrap CSS only, never bootstrap JS.** Interactive widgets (e.g. the mobile menu toggle in `components/Header.jsx`) are reimplemented with React state. Mixing `bootstrap.bundle.js`'s imperative DOM manipulation with React's virtual DOM causes desync.
+- **Bootstrap JS is imported in `main.jsx` (`import 'bootstrap'`), but use it sparingly.** The only component driven by it is the Landing info carousel (`Carousel` instantiated in a `useEffect` + `dispose()` on unmount, since `data-bs-ride` auto-init doesn't catch React-rendered DOM). For interactive widgets React re-renders, still reimplement with React state (e.g. the Header menu) — mixing Bootstrap's imperative DOM writes with React's virtual DOM causes desync. Rule of thumb: only reach for a Bootstrap JS component when its subtree is static after mount.
 - **CSS**: `src/assets/css/styles.css` is the original mockup stylesheet, copied verbatim — avoid editing it. New-screen styles (login, register, settings, my-trainings, plans, FAQs) go in `src/assets/css/app-extra.css`. Both are imported in `main.jsx` after `bootstrap.min.css`.
 - **No payment/checkout flow exists.** The backend only exposes read-only `GET /subscriptions/plans` and `/subscriptions/me`. The Plans page and "request personalized training" button route to email contact — do not build a simulated payment.
 - `subscriptionService.getMySubscription()` returns **404 when the user has no subscription** — that is not an error, handle it explicitly in callers. `ACTIVE_SUBSCRIPTION_STATUSES` / `hasSubscriptionAccess()` in that file define which statuses still grant content access.
