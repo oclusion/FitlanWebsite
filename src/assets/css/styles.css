@@ -1024,6 +1024,7 @@ footer div.footer article {
     }
     main {
         flex: 1 0 auto;
+        min-height: 824px;
     }
 
     footer {

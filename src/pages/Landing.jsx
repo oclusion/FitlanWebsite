@@ -85,6 +85,7 @@ const Landing = () => {
                             {" "}con facturación {plan.billing_cycle === "ANNUAL" ? "anual" : "mensual"}
                           </p>
                           <p>${plan.monthly_price.toFixed(2)}/mes</p>
+                          <Link to="/registro" className="btn btn-primary">Comenzar ahora</Link>
                         </article>
                       ))}
                     </div>
