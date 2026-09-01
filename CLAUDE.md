@@ -12,7 +12,7 @@ npm run preview   # serve the dist/ build locally
 npm run lint      # oxlint (not eslint)
 ```
 
-There is no test suite. Copy `.env.example` to `.env` to set `VITE_API_BASE_URL`; it defaults to the production backend (`https://fitlan-production.up.railway.app/api/v1`). If `VITE_API_BASE_URL` is unset entirely, `src/config/api.js` falls back to `http://localhost:8080/api/v1`.
+There is no test suite. `.env` is **committed** (it only holds `VITE_API_BASE_URL`, the public production backend URL — no secrets), so a fresh clone points at production out of the box. To target a local backend, create `.env.local` (gitignored) with `VITE_API_BASE_URL=http://localhost:8080/api/v1`. If `VITE_API_BASE_URL` is unset entirely, `src/config/api.js` falls back to `http://localhost:8080/api/v1`. Vite reads env files only at dev-server startup — restart after changing them.
 
 ## What this project is
 
