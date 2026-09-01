@@ -86,6 +86,22 @@ button.box.active {
     font-weight: bold;
 }
 
+/* "Cerrar sesión" del menú del header: <button> que se ve como los <a> de la
+   maqueta (nav a), alineado a la izquierda y sin fondo. */
+.menu-logout {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: #c0392b;
+    cursor: pointer;
+    transition: color 0.4s ease;
+}
+
+.menu-logout:hover {
+    color: #922b21;
+}
+
 /* ---------- 404 ---------- */
 .not-found {
     padding-top: 40px;
