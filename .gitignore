@@ -12,8 +12,11 @@ dist
 dist-ssr
 *.local
 
-# env
-.env
+# env — .env se versiona a propósito: solo tiene VITE_API_BASE_URL (URL pública
+# del backend, sin secretos). Para apuntar a un backend local, sobreescribir con
+# .env.local (ese sí ignorado por *.local).
+.env.*
+!.env.example
 
 # Editor directories and files
 .vscode/*
