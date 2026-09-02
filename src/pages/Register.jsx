@@ -19,7 +19,7 @@ const Register = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!form.name || !form.username || !form.email || !form.password) {
-      setError("Completá todos los campos");
+      setError("Completa todos los campos");
       return;
     }
     if (form.password.length < 8) {
@@ -46,8 +46,8 @@ const Register = () => {
         <div className="container">
           <div className="col-12 col-md-4 mx-auto text-center">
             <img src={logoWhite} className="logo" alt="Fitlan Academy" />
-            <h1>Revisá tu email</h1>
-            <p>Te mandamos un link para activar tu cuenta. Una vez que lo confirmes, ya podés iniciar sesión.</p>
+            <h1>Revisa tu email</h1>
+            <p>Te enviamos un link para activar tu cuenta. Una vez que lo confirmes, ya puedes iniciar sesión.</p>
             <Link to="/login" className="btn btn-primary btn-sesion">Ir a iniciar sesión</Link>
           </div>
         </div>
@@ -75,7 +75,7 @@ const Register = () => {
           </form>
 
           <p className="auth-switch">
-            ¿Ya tenés cuenta? <Link to="/login">Iniciar sesión</Link>
+            ¿Ya tienes cuenta? <Link to="/login">Iniciar sesión</Link>
           </p>
         </div>
       </div>

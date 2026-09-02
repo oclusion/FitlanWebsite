@@ -32,30 +32,32 @@ const ForgotPassword = () => {
 
           {sent ? (
             <>
-              <h1>Revisá tu email</h1>
-              <p>Si el correo existe, te llegó un link para restablecer tu contraseña (válido por 1 hora).</p>
+              <h1>Revisa tu email</h1>
+              <p>Si el correo existe, te enviamos un link para restablecer tu contraseña (válido por 1 hora).</p>
               <Link to="/login" className="btn btn-primary btn-sesion">Volver a iniciar sesión</Link>
             </>
           ) : (
-            <form onSubmit={handleSubmit} className="auth-form">
-              <p>Ingresá tu email y te mandamos un link para restablecer tu contraseña.</p>
-              <input
-                className="form-control"
-                type="email"
-                placeholder="Correo"
-                autoCapitalize="none"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <button className="btn btn-primary btn-sesion" type="submit" disabled={loading}>
-                {loading ? "Enviando..." : "Enviar link"}
-              </button>
-            </form>
-          )}
+            <>
+              <form onSubmit={handleSubmit} className="auth-form">
+                <p>Ingresa tu email y te enviaremos un link para restablecer tu contraseña.</p>
+                <input
+                  className="form-control"
+                  type="email"
+                  placeholder="Correo"
+                  autoCapitalize="none"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <button className="btn btn-primary btn-sesion" type="submit" disabled={loading}>
+                  {loading ? "Enviando..." : "Enviar link"}
+                </button>
+              </form>
 
-          <p className="auth-switch">
-            <Link to="/login">Volver a iniciar sesión</Link>
-          </p>
+              <p className="auth-switch">
+                <Link to="/login">Volver a iniciar sesión</Link>
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>

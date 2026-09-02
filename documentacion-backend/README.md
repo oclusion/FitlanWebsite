@@ -230,16 +230,21 @@ POST /auth/register
 GET /auth/verify-email?token=<uuid>
 ```
 
-El usuario recibe este link por email tras registrarse. Al hacer clic activa su cuenta.
+El usuario recibe este link por email tras registrarse. Al hacer clic activa su cuenta y es redirigido al frontend.
 
-**Response `200`:**
-```json
-{ "message": "Cuenta verificada. Ya puedes iniciar sesión." }
+**Response `302 Redirect`:**
+```
+Location: {APP_FRONTEND_URL}/login?verified=true
 ```
 
-| Código | Causa |
-|---|---|
-| `404` | Token inválido, ya usado o expirado |
+Si el token es inválido, ya fue usado o expiró:
+```
+Location: {APP_FRONTEND_URL}/login?verified=error
+```
+
+> El frontend debe leer el query param `verified` en `/login`:
+> - `true` → mostrar mensaje de cuenta activada
+> - `error` → mostrar mensaje de enlace inválido o expirado
 
 ---
 
@@ -252,7 +257,7 @@ POST /auth/forgot-password
 { "email": "juanito@mail.com" }
 ```
 
-> Siempre responde `200` aunque el email no exista — para no revelar qué emails están registrados. Si el email existe, se envía un link válido por 1 hora.
+> Siempre responde `200` aunque el email no exista — para no revelar qué emails están registrados. Si el email existe, se envía un link válido por 1 hora. El envío es **asíncrono** — la respuesta HTTP no espera a que el correo salga.
 
 **Response `200`:**
 ```json
@@ -262,7 +267,7 @@ POST /auth/forgot-password
 ---
 
 ### Restablecer contraseña
-El link del email lleva al usuario a la página web de reset (pendiente de implementar). Esa página muestra un formulario y llama a este endpoint con el token y la nueva contraseña.
+El link del email lleva al usuario a `{APP_FRONTEND_URL}/reset-password?token=<uuid>`. Esa página muestra un formulario y llama a este endpoint con el token y la nueva contraseña.
 
 ```
 POST /auth/reset-password
@@ -274,8 +279,6 @@ POST /auth/reset-password
   "new_password": "nuevapass123"
 }
 ```
-
-> Por ahora sin frontend, copiar el token de la URL del email y usarlo directamente en Postman.
 
 **Response `200`:**
 ```json
@@ -2058,6 +2061,23 @@ axios.interceptors.response.use(
 ```
 
 > Este interceptor cubre todos los casos de `401`: token expirado, sesión cerrada remotamente, cuenta suspendida, etc.
+
+---
+
+## Email
+
+El backend envía emails transaccionales vía **Mailtrap HTTP API** (sandbox para dev/testing). El envío es **asíncrono** — la respuesta HTTP nunca espera a que el correo salga.
+
+| Variable | Descripción |
+|---|---|
+| `MAILTRAP_API_TOKEN` | Token de API de Mailtrap (Settings → API Tokens) |
+| `MAILTRAP_INBOX_ID` | ID numérico del inbox (visible en la URL: `mailtrap.io/inboxes/{id}`) |
+| `APP_FRONTEND_URL` | URL base del website (ej. `https://mi-website.com`). Se usa para los links de verificación de email y reset de contraseña en los correos. |
+
+**Local (`application.properties`):** `mailtrap.api.token` y `mailtrap.api.inbox-id` directamente.
+**Prod (Railway):** variables de entorno `MAILTRAP_API_TOKEN`, `MAILTRAP_INBOX_ID` y `APP_FRONTEND_URL`.
+
+> El envío usa HTTPS (puerto 443) — no depende de puertos SMTP, por lo que funciona desde cualquier plataforma cloud.
 
 ---
 
