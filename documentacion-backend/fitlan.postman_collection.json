@@ -229,7 +229,8 @@
           }
         },
         {
-          "name": "Verificar email",
+          "name": "Verificar email (espera 302 → redirect a frontend)",
+          "description": "Al hacer clic en el link del email de verificación, el backend activa la cuenta y redirige al frontend.\n\nResponse: 302 Location: {APP_FRONTEND_URL}/login?verified=true\n\nSi el token es inválido o ya fue usado:\n302 Location: {APP_FRONTEND_URL}/login?verified=error\n\nNota: Postman sigue el redirect automáticamente. En un browser, el usuario aterriza directamente en la página de login del website con el parámetro ?verified=true.",
           "request": {
             "method": "GET",
             "url": {
@@ -244,7 +245,8 @@
           }
         },
         {
-          "name": "Verificar email con token ya usado (espera 404)",
+          "name": "Verificar email con token ya usado (espera redirect ?verified=error)",
+          "description": "Token inválido o ya usado → 302 redirect a {APP_FRONTEND_URL}/login?verified=error",
           "request": {
             "method": "GET",
             "url": {
@@ -260,6 +262,7 @@
         },
         {
           "name": "Forgot password",
+          "description": "Siempre responde 200 aunque el email no exista. Si el email existe, envía un link a {APP_FRONTEND_URL}/reset-password?token=<uuid> válido por 1 hora. El envío es asíncrono — la respuesta HTTP no espera a que el correo salga.",
           "request": {
             "method": "POST",
             "url": "{{base_url}}/auth/forgot-password",
@@ -294,6 +297,7 @@
         },
         {
           "name": "Reset password",
+          "description": "El link del email apunta a {APP_FRONTEND_URL}/reset-password?token=<uuid>. El frontend muestra el formulario y llama a este endpoint con el token y la nueva contraseña.",
           "request": {
             "method": "POST",
             "url": "{{base_url}}/auth/reset-password",

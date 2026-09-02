@@ -87,6 +87,11 @@ button.box.active {
     font-weight: bold;
 }
 
+.alert-box--success {
+    background-color: rgba(40, 167, 69, 0.18);
+    border-color: rgba(40, 167, 69, 0.55);
+}
+
 /* "Cerrar sesión" del menú del header: <button> que se ve como los <a> de la
    maqueta (nav a), alineado a la izquierda y sin fondo. */
 .menu-logout {

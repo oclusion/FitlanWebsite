@@ -60,7 +60,7 @@ const ResetPassword = () => {
           <div className="col-12 col-md-4 mx-auto text-center">
             <img src={logoWhite} className="logo" alt="Fitlan Academy" />
             <h1>Contraseña restablecida</h1>
-            <p>Ya podés iniciar sesión con tu nueva contraseña.</p>
+            <p>Ya puedes iniciar sesión con tu nueva contraseña.</p>
             <button className="btn btn-primary btn-sesion" type="button" onClick={() => navigate("/login")}>
               Iniciar sesión
             </button>

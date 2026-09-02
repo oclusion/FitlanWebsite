@@ -6,7 +6,6 @@ import SubscriptionRoute from "./components/SubscriptionRoute";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Feed from "./pages/Feed";
@@ -33,9 +32,8 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Register />} />
-          <Route path="/verificar-email" element={<VerifyEmail />} />
           <Route path="/olvide-password" element={<ForgotPassword />} />
-          <Route path="/restablecer-password" element={<ResetPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/faqs" element={<Faqs />} />
           <Route path="/privacidad" element={<Privacy />} />
           <Route path="/acerca-de" element={<About />} />
