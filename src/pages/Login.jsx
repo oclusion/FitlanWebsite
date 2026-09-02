@@ -69,7 +69,7 @@ const Login = () => {
     <div className="bg-landing auth-screen">
       <div className="container">
         <div className="col-12 col-md-4 mx-auto text-center">
-          <img src={logoWhite} className="logo" alt="Fitlan Academy" />
+          <Link to="/"><img src={logoWhite} className="logo" alt="Fitlan Academy" /></Link>
 
           {verified === "true" ? (
             <div className="alert-box alert-box--success">

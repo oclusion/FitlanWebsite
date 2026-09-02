@@ -45,7 +45,7 @@ const Register = () => {
       <div className="bg-landing auth-screen">
         <div className="container">
           <div className="col-12 col-md-4 mx-auto text-center">
-            <img src={logoWhite} className="logo" alt="Fitlan Academy" />
+            <Link to="/"><img src={logoWhite} className="logo" alt="Fitlan Academy" /></Link>
             <h1>Revisa tu email</h1>
             <p>Te enviamos un link para activar tu cuenta. Una vez que lo confirmes, ya puedes iniciar sesión.</p>
             <Link to="/login" className="btn btn-primary btn-sesion">Ir a iniciar sesión</Link>
@@ -59,7 +59,7 @@ const Register = () => {
     <div className="bg-landing dark auth-screen">
       <div className="container">
         <div className="col-12 col-md-4 mx-auto text-center">
-          <img src={logoWhite} className="logo" alt="Fitlan Academy" />
+          <Link to="/"><img src={logoWhite} className="logo" alt="Fitlan Academy" /></Link>
 
           <form onSubmit={handleSubmit} className="auth-form">
             <input className="form-control" type="text" placeholder="Nombre" value={form.name} onChange={handleChange("name")} />

@@ -43,7 +43,7 @@ const ResetPassword = () => {
       <div className="bg-landing auth-screen">
         <div className="container">
           <div className="col-12 col-md-4 mx-auto text-center">
-            <img src={logoWhite} className="logo" alt="Fitlan Academy" />
+            <Link to="/"><img src={logoWhite} className="logo" alt="Fitlan Academy" /></Link>
             <h1>Link inválido</h1>
             <p>Falta el token de recuperación en el link.</p>
             <Link to="/olvide-password" className="btn btn-primary btn-sesion">Pedir uno nuevo</Link>
@@ -58,7 +58,7 @@ const ResetPassword = () => {
       <div className="bg-landing dark auth-screen">
         <div className="container">
           <div className="col-12 col-md-4 mx-auto text-center">
-            <img src={logoWhite} className="logo" alt="Fitlan Academy" />
+            <Link to="/"><img src={logoWhite} className="logo" alt="Fitlan Academy" /></Link>
             <h1>Contraseña restablecida</h1>
             <p>Ya puedes iniciar sesión con tu nueva contraseña.</p>
             <button className="btn btn-primary btn-sesion" type="button" onClick={() => navigate("/login")}>
@@ -74,7 +74,7 @@ const ResetPassword = () => {
     <div className="bg-landing dark auth-screen">
       <div className="container">
         <div className="col-12 col-md-4 mx-auto text-center">
-          <img src={logoWhite} className="logo" alt="Fitlan Academy" />
+          <Link to="/"><img src={logoWhite} className="logo" alt="Fitlan Academy" /></Link>
 
           <form onSubmit={handleSubmit} className="auth-form">
             <input
