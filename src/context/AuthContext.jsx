@@ -12,26 +12,34 @@ export const AuthProvider = ({ children }) => {
   // accesibles.
   const [hasSubscription, setHasSubscription] = useState(null);
 
+  // Devuelve el booleano de acceso además de setearlo en el estado, para que
+  // el caller (p. ej. Login) pueda decidir a dónde navegar sin esperar al render.
+  const refreshSubscription = useCallback(async () => {
+    setHasSubscription(null);
+    try {
+      const data = await subscriptionService.getMySubscription();
+      const access = hasSubscriptionAccess(data);
+      setHasSubscription(access);
+      return access;
+    } catch (error) {
+      // 404 = sin suscripción (o la más reciente no da acceso) — no es un error.
+      if (error.status !== 404) console.log("No se pudo verificar la suscripción", error);
+      setHasSubscription(false);
+      return false;
+    }
+  }, []);
+
   const login = useCallback(async (identifier, password) => {
     await authService.login(identifier, password);
     setIsAuthenticated(true);
-  }, []);
+    return refreshSubscription();
+  }, [refreshSubscription]);
 
-  const refreshSubscription = useCallback(() => {
-    setHasSubscription(null);
-    return subscriptionService.getMySubscription()
-      .then((data) => setHasSubscription(hasSubscriptionAccess(data)))
-      .catch((error) => {
-        // 404 = sin suscripción (o la más reciente no da acceso) — no es un error.
-        if (error.status !== 404) console.log("No se pudo verificar la suscripción", error);
-        setHasSubscription(false);
-      });
-  }, []);
-
+  // Al montar la app con una sesión ya guardada (reload de página), verificar la
+  // suscripción. Tras un login nuevo lo hace login() directamente.
   useEffect(() => {
-    if (isAuthenticated) refreshSubscription();
-    else setHasSubscription(null);
-  }, [isAuthenticated, refreshSubscription]);
+    if (authService.isAuthenticated()) refreshSubscription();
+  }, [refreshSubscription]);
 
   // Sincrónico de punta a punta (authService.logout() también lo es), y el
   // reload a "/" vive acá adentro en vez de en cada caller — así cualquier

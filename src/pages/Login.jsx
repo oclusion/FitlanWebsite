@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import logoWhite from "../assets/img/fitlan-white.svg";
 
@@ -7,9 +7,14 @@ import logoWhite from "../assets/img/fitlan-white.svg";
 // (ver README backend) — acá con más sentido todavía, ya que este sitio SÍ permite
 // registrarse y activar suscripción, así que los CTA llevan a esas páginas propias
 // en vez de a un link externo.
+//
+// Tras verificar el email, el backend redirige a /login?verified=true (o
+// ?verified=error si el link ya se usó / expiró); acá se muestra el aviso.
 const Login = () => {
   const { isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const verified = searchParams.get("verified");
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,8 +29,10 @@ const Login = () => {
     setLoading(true);
     setError(null);
     try {
-      await login(identifier, password);
-      navigate("/entrenamientos");
+      // login() devuelve si la cuenta tiene una suscripción con acceso. Sin ella
+      // (cuenta nueva recién verificada) se entra directo a /planes a elegir uno.
+      const hasSubscription = await login(identifier, password);
+      navigate(hasSubscription ? "/entrenamientos" : "/planes");
     } catch (err) {
       setError(err);
     } finally {
@@ -40,7 +47,7 @@ const Login = () => {
     if (message.startsWith("No tienes una cuenta activa")) {
       return (
         <div className="alert-box">
-          <p>Todavía no tenés una cuenta activa. Registrate para poder entrar.</p>
+          <p>Todavía no tienes una cuenta activa. Regístrate para poder entrar.</p>
           <Link to="/registro">Crear cuenta</Link>
         </div>
       );
@@ -62,7 +69,18 @@ const Login = () => {
     <div className="bg-landing auth-screen">
       <div className="container">
         <div className="col-12 col-md-4 mx-auto text-center">
-          <img src={logoWhite} className="logo" alt="Fitlan Academy" />
+          <Link to="/"><img src={logoWhite} className="logo" alt="Fitlan Academy" /></Link>
+
+          {verified === "true" ? (
+            <div className="alert-box alert-box--success">
+              <p>¡Cuenta verificada! Ya puedes iniciar sesión.</p>
+            </div>
+          ) : null}
+          {verified === "error" ? (
+            <div className="alert-box">
+              <p>El enlace de verificación es inválido o ya fue usado.</p>
+            </div>
+          ) : null}
 
           <form onSubmit={handleSubmit} className="auth-form">
             <input
@@ -91,7 +109,7 @@ const Login = () => {
           </form>
 
           <p className="auth-switch">
-            ¿No tenés cuenta? <Link to="/registro">Registrate</Link>
+            ¿No tienes cuenta? <Link to="/registro">Regístrate</Link>
           </p>
         </div>
       </div>

@@ -53,7 +53,7 @@ const Account = () => {
             {hasActiveSubscription ? (
               <p>Plan {subscription.plan_display_name} — activa</p>
             ) : (
-              <p>No tenés una suscripción activa.</p>
+              <p>No tienes una suscripción activa.</p>
             )}
             <Link to="/planes" className="btn btn-light">
               {hasActiveSubscription ? "Cambiar de plan" : "Activar suscripción"}
