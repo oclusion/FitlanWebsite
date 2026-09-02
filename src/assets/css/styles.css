@@ -797,6 +797,11 @@ footer {
 
 .text-muted { color: #5b6fc3 !important; }
 
+main {
+        padding-top: 128px;
+        padding-bottom: 108px;
+}
+
 /* ======================================== MOBILE 0px → 575px ======================================== */
 
 .bg-landing {
