@@ -8,6 +8,7 @@
 }
 
 /* ======================================== THEME — LIGHT ======================================== */
+
 .light {
     --bg-primary: #ffffff;
     --bg-secondary: #f5f5f5;
@@ -19,11 +20,11 @@
 /* ======================================== THEME — DARK ======================================== */
 
 .dark {
-    --bg-primary: #111111;
-    --bg-secondary: #1c1c1c;
+    --bg-primary: #0f1117;
+    --bg-secondary: #1c1f2a;
     --text-primary: #ffffff;
-    --text-secondary: #b5b5b5;
-    --accent: #ffffff;
+    --text-secondary: #8a8a9a;
+    --accent: #5b6fc3;
 }
 
 /* ======================================== RESET / BASE ======================================== */
@@ -37,7 +38,6 @@ body {
 
 body {
     min-height: 100vh;
-    background-color: white;
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-family: "Inter Tight", sans-serif;
@@ -54,7 +54,6 @@ h3,
 h4,
 h5,
 h6 {
-    color: var(--text-primary);
     font-family: "Inter Tight", sans-serif;
     line-height: 90%;
 }
@@ -66,7 +65,7 @@ header {
     padding: 20px;
     position: fixed;
     z-index: 999;
-    background-color: #ffffff;
+    background-color: #07080F;
     -webkit-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.34);
     box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.34);
 }
@@ -105,7 +104,7 @@ nav {
     z-index: 999999999;
     font-weight: 400;
     padding: 20px;
-    background-color: #ffffff;
+    background-color: #1c1f2a;
     -webkit-box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.34);
     box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.34);
 }
@@ -119,7 +118,7 @@ nav ul {
 
 nav a {
     text-decoration: none;
-    color: #000000;
+    color: #FFFFFF;
     transition: all 0.4s ease;
 }
 nav a:hover { color: #5670C9; }
@@ -129,6 +128,9 @@ main {
     margin: 0 auto;
     min-height: 824px;
 }
+
+.content h1 { color: #FFFFFF; }
+.content h1 span { color: #8a8a9a; }
 
 footer {
     width: 100%;
@@ -160,11 +162,7 @@ footer {
 
 .icn-nav {
     font-size: 28px;
-    color: #000000;
-}
-.pt-b-108 {
-    padding-top: 108px;
-    padding-bottom: 108px;
+    color: #FFFFFF;
 }
 .pt-b-50 {
     padding-top: 50px;
@@ -328,7 +326,6 @@ footer {
     flex-wrap: wrap;
     align-items: center;
     padding: 25px 0;
-    background-color: #ffffff;
 }
 
 .training-instructor { flex: 1; }
@@ -433,7 +430,6 @@ footer {
 
 .training-description p {
     margin: 0 0 25px;
-    color: #111111;
     font-family: "Inter Tight", sans-serif;
     font-size: 20px;
     line-height: 1.35;
@@ -738,7 +734,7 @@ footer {
     font-size: 2.75rem;
     font-weight: 700;
     letter-spacing: 1px;
-    color: #1a1a1a;
+    color: #FFFFFF;
     margin-bottom: 1.25rem;
     text-transform: uppercase;
 }
@@ -798,6 +794,8 @@ footer {
   flex: 0 0 100%;
   scroll-snap-align: start;
 }
+
+.text-muted { color: #5b6fc3 !important; }
 
 /* ======================================== MOBILE 0px → 575px ======================================== */
 
@@ -905,9 +903,10 @@ footer {
     margin-bottom: 30px;
 }
 
-.content-info article p {
-    font-size: 16px;
-}
+.content-info article p { font-size: 16px; }
+
+.container h1 { margin-bottom: 40px; }
+
 
 .training-menu {
     display: flex;
@@ -1024,6 +1023,8 @@ footer div.footer article {
         flex-direction: column;
     }
     main {
+        padding-top: 128px;
+        padding-bottom: 108px;
         flex: 1 0 auto;
     }
 

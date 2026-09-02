@@ -85,7 +85,7 @@ const StepPlayer = () => {
 
   if (!session) {
     return (
-      <div className="light">
+      <div>
         <Header />
         <main className="pt-b-108"><div className="container"><p>Cargando...</p></div></main>
         <Footer />
@@ -95,7 +95,7 @@ const StepPlayer = () => {
 
   if (!activeStep) {
     return (
-      <div className="light">
+      <div>
         <Header />
         <main className="pt-b-108"><div className="container"><p>Ejercicio no encontrado.</p></div></main>
         <Footer />
@@ -114,9 +114,9 @@ const StepPlayer = () => {
   ];
 
   return (
-    <div className="light">
+    <div>
       <Header />
-      <main className="pt-b-108">
+      <main>
         <div className="container">
           <Breadcrumb items={crumbs} />
           <div className="row">

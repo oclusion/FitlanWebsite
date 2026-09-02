@@ -63,7 +63,7 @@ const TrainingDetail = () => {
 
   if (!training) {
     return (
-      <div className="light">
+      <div>
         <Header />
         <main className="pt-b-108"><div className="container"><p>Cargando...</p></div></main>
         <Footer />
@@ -91,9 +91,9 @@ const TrainingDetail = () => {
   };
 
   return (
-    <div className="light">
+    <div>
       <Header />
-      <main className="pt-b-108">
+      <main>
         <div className="container">
           <div className="row">
             <div className="col-12">

@@ -41,9 +41,9 @@ const CoachProfile = () => {
 
   if (!coach) {
     return (
-      <div className="light">
+      <div>
         <Header />
-        <main className="pt-b-108"><div className="container"><p>Cargando...</p></div></main>
+        <main><div className="container"><p>Cargando...</p></div></main>
         <Footer />
       </div>
     );

@@ -59,7 +59,7 @@ const Login = () => {
   if (isAuthenticated) return <Navigate to="/entrenamientos" replace />;
 
   return (
-    <div className="bg-landing dark auth-screen">
+    <div className="bg-landing auth-screen">
       <div className="container">
         <div className="col-12 col-md-4 mx-auto text-center">
           <img src={logoWhite} className="logo" alt="Fitlan Academy" />

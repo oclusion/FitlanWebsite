@@ -18,9 +18,9 @@ const MyTrainings = () => {
   }, []);
 
   return (
-    <div className="light">
+    <div>
       <Header />
-      <main className="pt-b-108">
+      <main>
         <div className="container">
           <h1>Mis entrenamientos</h1>
 

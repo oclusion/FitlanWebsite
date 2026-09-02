@@ -4,9 +4,9 @@ import Footer from "../components/Footer";
 
 // Catch-all para rutas que no existen (`<Route path="*">` en App.jsx).
 const NotFound = () => (
-  <div className="light">
+  <div>
     <Header />
-    <main className="pt-b-108">
+    <main>
       <div className="container text-center not-found">
         <p className="not-found-code">404</p>
         <h1>Esta página no existe</h1>

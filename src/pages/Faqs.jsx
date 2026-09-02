@@ -15,9 +15,9 @@ const Faqs = () => {
   }, []);
 
   return (
-    <div className="light">
+    <div>
       <Header />
-      <main className="pt-b-108">
+      <main>
         <div className="container">
           <h1>Preguntas frecuentes</h1>
           <div className="faq-list">

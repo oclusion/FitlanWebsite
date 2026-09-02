@@ -61,16 +61,16 @@ const Feed = () => {
   };
 
   return (
-    <div className="light page">
+    <div className="page">
       <Header />
-      <main className="pt-b-108">
+      <main>
         <div className="container">
           <div className="row">
             <div className="col-12">
               <div className="container-fluid">
                 <div className="row">
                   <div className="content p-2">
-                    <h1>Entrena diferente con Fitlan Academy</h1>
+                    <h1><span>Entrena diferente con</span> Fitlan Academy</h1>
                     <div className="content training-menu">
                       <button
                         type="button"

@@ -3,17 +3,18 @@
 
 button.box {
     background: none;
-    border: 1px solid var(--text-secondary, #666);
     border-radius: 8px;
-    color: var(--text-primary);
     cursor: pointer;
     font: inherit;
+    background-color: #1c1f2a;
+    color: #8a8a9a;
+    border: 2px solid #2e323f;
 }
 
 button.box.active {
-    background-color: var(--accent);
-    color: var(--bg-primary);
-    border-color: var(--accent);
+    background-color: #5b6fc3;
+    color: #FFFFFF;
+    border-color: #5b6fc3;
 }
 
 .training-menu button.box {
@@ -170,7 +171,7 @@ button.box.active {
     gap: 6px;
     margin-bottom: 16px;
     font-size: 14px;
-    color: var(--text-secondary);
+    color: #FFFFFF;
 }
 
 /* Clase propia (no `.breadcrumb-item`): esa es de Bootstrap y agrega su propio
@@ -182,17 +183,17 @@ button.box.active {
 }
 
 .breadcrumb-nav a {
-    color: var(--text-secondary);
+    color: #FFFFFF;
     text-decoration: none;
 }
 
 .breadcrumb-nav a:hover {
-    color: var(--text-primary);
+    color: #8a8a9a;
     text-decoration: underline;
 }
 
 .breadcrumb-nav [aria-current="page"] {
-    color: var(--text-primary);
+    color: #5b6fc3;
     font-weight: 500;
 }
 
@@ -210,12 +211,12 @@ button.box.active {
     padding: 16px;
     border: 1px solid var(--bg-secondary);
     border-radius: 8px;
-    color: var(--text-primary);
+    color: #FFFFFF;
     text-decoration: none;
 }
 
 .session-meta {
-    color: var(--text-secondary);
+    color: #8a8a9a;
     font-size: 14px;
 }
 
@@ -330,6 +331,7 @@ button.box.active {
     border-radius: 4px;
     background-color: var(--bg-secondary);
     overflow: hidden;
+    margin: 20px 0;
 }
 
 .progress-fill {

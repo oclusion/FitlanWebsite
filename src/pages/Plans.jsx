@@ -27,9 +27,9 @@ const Plans = () => {
   const currentPlanId = hasSubscriptionAccess(subscription) ? subscription.plan : null;
 
   return (
-    <div className="light">
+    <div>
       <Header />
-      <main className="pt-b-108">
+      <main>
         <div className="container">
           <h1>Planes</h1>
           <div className="row g-3">

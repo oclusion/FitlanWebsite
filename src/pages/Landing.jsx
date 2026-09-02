@@ -35,7 +35,7 @@ const Landing = () => {
   if (isAuthenticated) return <Navigate to="/entrenamientos" replace />;
 
   return (
-    <div className="bg-landing dark">
+    <div className="bg-landing">
       <main>
         <div className="container">
           <div className="row justify-content-center">

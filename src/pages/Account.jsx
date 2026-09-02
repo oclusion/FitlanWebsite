@@ -28,9 +28,9 @@ const Account = () => {
   const hasActiveSubscription = hasSubscriptionAccess(subscription);
 
   return (
-    <div className="light">
+    <div>
       <Header />
-      <main className="pt-b-108">
+      <main>
         <div className="container account-page">
           <div className="profile-row account-header">
             {user?.profile_image_url ? (
