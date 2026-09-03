@@ -52,9 +52,9 @@ const CoachProfile = () => {
   const hasSocial = coach.instagram_url || coach.facebook_url || coach.tiktok_url;
 
   return (
-    <div className="light">
+    <div>
       <Header />
-      <main className="pt-b-108">
+      <main>
         <div className="container">
           <div className="profile-row profile-row-centered">
             <div className="profile-photo-wrapper">

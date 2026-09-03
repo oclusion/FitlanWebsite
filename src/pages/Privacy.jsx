@@ -31,7 +31,7 @@ const Privacy = () => {
           <p className="text-muted">Última actualización: {content.updated_at}</p>
           {content.sections.map((section) => (
             <section key={section.title} className="content-section">
-              <h3>{section.title}</h3>
+              <h4>{section.title}</h4>
               <p>{section.body}</p>
             </section>
           ))}

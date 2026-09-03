@@ -318,7 +318,7 @@ button.box.active {
 .enrollment-card {
     display: block;
     padding: 16px;
-    border: 1px solid var(--bg-secondary);
+    border: 1px solid #8a8a9a;
     border-radius: 8px;
     text-decoration: none;
     color: var(--text-primary);
@@ -367,7 +367,7 @@ button.box.active {
 .faq-item {
     text-align: left;
     background: none;
-    border: 1px solid var(--bg-secondary);
+    border: 1px solid #8a8a9a;
     border-radius: 8px;
     padding: 16px;
     color: var(--text-primary);
@@ -391,7 +391,7 @@ button.box.active {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-bottom: 24px;
+    margin-bottom: 60px;
 }
 
 .contact-row {
@@ -399,14 +399,14 @@ button.box.active {
     align-items: center;
     gap: 8px;
     padding: 12px 16px;
-    border: 1px solid var(--bg-secondary);
+    border: 1px solid #8a8a9a;
     border-radius: 8px;
     color: var(--text-primary);
     text-decoration: none;
 }
 
 .content-section {
-    margin: 24px 0;
+    margin: 24px 0 60px 0;
 }
 
 /* ---------- Configuración (switches) ---------- */
@@ -421,7 +421,7 @@ button.box.active {
     justify-content: space-between;
     align-items: center;
     padding: 16px;
-    border-bottom: 1px solid var(--bg-secondary);
+    border-bottom: 1px solid #8a8a9a;
 }
 
 .settings-row input[type="checkbox"] {

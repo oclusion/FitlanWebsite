@@ -30,8 +30,6 @@ const Help = () => {
       <main className="pt-b-108">
         <div className="container">
           <h1>Ayuda y soporte</h1>
-
-          <h1>Contáctanos</h1>
           <div className="contact-list">
             <a href={`mailto:${content.contact_email}`} className="contact-row">
               <IoMailOutline /> {content.contact_email}
