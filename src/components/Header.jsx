@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { IoEllipsisVertical } from "react-icons/io5";
-import logoColor from "../assets/img/fitlan-color.webp";
+import logoColor from "../assets/img/fitlan-color.png";
 import { useAuth } from "../context/AuthContext";
 import ConfirmModal from "./ConfirmModal";
 
