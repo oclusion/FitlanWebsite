@@ -22,6 +22,10 @@ const Register = () => {
       setError("Completa todos los campos");
       return;
     }
+    if (form.username.length < 4 || form.username.length > 20) {
+      setError("El usuario tiene que tener entre 4 y 20 caracteres");
+      return;
+    }
     if (form.password.length < 8) {
       setError("La contraseña tiene que tener al menos 8 caracteres");
       return;
@@ -32,7 +36,11 @@ const Register = () => {
       await authService.register(form.username, form.password, form.email, form.name);
       setDone(true);
     } catch (err) {
-      setError(err.message || "No se pudo completar el registro");
+      // Validación por campo del backend (400 con { errors: { campo: mensaje } }) no
+      // trae un err.message útil ("Errores de validación" a secas) — mostrar el
+      // primer mensaje de campo si vino, y si no, el mensaje plano (ej. duplicados).
+      const fieldMessage = err.errors ? Object.values(err.errors)[0] : null;
+      setError(fieldMessage || err.message || "No se pudo completar el registro");
     } finally {
       setLoading(false);
     }
@@ -62,8 +70,8 @@ const Register = () => {
           <Link to="/"><img src={logoWhite} className="logo" alt="Fitlan Academy" /></Link>
 
           <form onSubmit={handleSubmit} className="auth-form">
-            <input className="form-control" type="text" placeholder="Nombre" value={form.name} onChange={handleChange("name")} />
-            <input className="form-control" type="text" placeholder="Usuario" autoCapitalize="none" value={form.username} onChange={handleChange("username")} />
+            <input className="form-control" type="text" placeholder="Nombre completo" value={form.name} onChange={handleChange("name")} />
+            <input className="form-control" type="text" placeholder="Usuario (mínimo 4 caracteres)" autoCapitalize="none" value={form.username} onChange={handleChange("username")} />
             <input className="form-control" type="email" placeholder="Correo" autoCapitalize="none" value={form.email} onChange={handleChange("email")} />
             <input className="form-control" type="password" placeholder="Contraseña (mínimo 8 caracteres)" value={form.password} onChange={handleChange("password")} />
 
