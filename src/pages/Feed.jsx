@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { IoSearchOutline, IoCloseOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import TrainingCard from "../components/TrainingCard";
@@ -10,7 +11,14 @@ import categoryService from "../services/categoryService";
 // (GET /category), y las cards de training vienen de GET /training.
 // El menú es multi-selección: se pueden marcar varias categorías y el filtro
 // (category_ids=1,2,3) las combina. La selección se guarda en localStorage.
+//
+// La lupa al inicio del menú abre un buscador por texto (GET /training?search=)
+// que reemplaza el menú de categorías mientras está abierto; el tachecito lo
+// cierra y vuelve a los filtros. Ojo: el backend pagina siempre que `search`
+// está presente (aunque no se mande `page`), así que la respuesta ahí es
+// { items, ... } en vez del array plano de siempre — ver trainingService.
 const SELECTED_CATEGORIES_KEY = "fitlan_feed_categories";
+const SEARCH_DEBOUNCE_MS = 350;
 
 const readStoredCategories = () => {
   try {
@@ -27,6 +35,9 @@ const Feed = () => {
   const [selectedCategoryIds, setSelectedCategoryIds] = useState(readStoredCategories);
   const [trainings, setTrainings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   useEffect(() => {
     categoryService.getCategories()
@@ -47,17 +58,31 @@ const Feed = () => {
   }, [selectedCategoryIds]);
 
   useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchText.trim()), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [searchText]);
+
+  useEffect(() => {
     setLoading(true);
-    trainingService.getTrainings(selectedCategoryIds)
-      .then(setTrainings)
+    const search = searchOpen ? debouncedSearch : "";
+    trainingService.getTrainings(searchOpen ? [] : selectedCategoryIds, search ? { search } : undefined)
+      // Con `search` la respuesta siempre viene paginada ({ items, ... }); sin
+      // búsqueda sigue siendo el array plano de siempre.
+      .then((data) => setTrainings(Array.isArray(data) ? data : (data.items ?? [])))
       .catch((error) => console.log("No se pudieron cargar los entrenamientos", error))
       .finally(() => setLoading(false));
-  }, [selectedCategoryIds]);
+  }, [selectedCategoryIds, searchOpen, debouncedSearch]);
 
   const toggleCategory = (id) => {
     setSelectedCategoryIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
+  };
+
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setSearchText("");
+    setDebouncedSearch("");
   };
 
   return (
@@ -72,23 +97,54 @@ const Feed = () => {
                   <div className="content p-2">
                     <h1><span>Entrena diferente con</span> Fitlan Academy</h1>
                     <div className="content training-menu">
-                      <button
-                        type="button"
-                        className={`box d-flex align-items-center justify-content-center${selectedCategoryIds.length === 0 ? " active" : ""}`}
-                        onClick={() => setSelectedCategoryIds([])}
-                      >
-                        Todos
-                      </button>
-                      {categories.map((cat) => (
-                        <button
-                          key={cat.id}
-                          type="button"
-                          className={`box d-flex align-items-center justify-content-center${selectedCategoryIds.includes(cat.id) ? " active" : ""}`}
-                          onClick={() => toggleCategory(cat.id)}
-                        >
-                          {cat.name}
-                        </button>
-                      ))}
+                      {searchOpen ? (
+                        <div className="training-search">
+                          <button
+                            type="button"
+                            className="training-search-close"
+                            onClick={closeSearch}
+                            aria-label="Cerrar búsqueda"
+                          >
+                            <IoCloseOutline />
+                          </button>
+                          <input
+                            type="text"
+                            className="training-search-input"
+                            placeholder="Buscar entrenamientos"
+                            value={searchText}
+                            onChange={(e) => setSearchText(e.target.value)}
+                            autoFocus
+                          />
+                        </div>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            className="box training-search-toggle d-flex align-items-center justify-content-center"
+                            onClick={() => setSearchOpen(true)}
+                            aria-label="Buscar"
+                          >
+                            <IoSearchOutline />
+                          </button>
+                          <button
+                            type="button"
+                            className={`box d-flex align-items-center justify-content-center${selectedCategoryIds.length === 0 ? " active" : ""}`}
+                            onClick={() => setSelectedCategoryIds([])}
+                          >
+                            Todos
+                          </button>
+                          {categories.map((cat) => (
+                            <button
+                              key={cat.id}
+                              type="button"
+                              className={`box d-flex align-items-center justify-content-center${selectedCategoryIds.includes(cat.id) ? " active" : ""}`}
+                              onClick={() => toggleCategory(cat.id)}
+                            >
+                              {cat.name}
+                            </button>
+                          ))}
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
