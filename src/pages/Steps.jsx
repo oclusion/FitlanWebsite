@@ -182,7 +182,7 @@ const Steps = () => {
             </div>
           </div>
 
-          <div className="row pt-b-50">
+          <div className="row">
             <div className="col-12">
               <div className="steps-cards-list">
                 {steps.map((step, index) => (

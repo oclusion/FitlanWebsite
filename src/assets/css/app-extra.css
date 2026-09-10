@@ -910,6 +910,9 @@ button.step {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    /* Antes usaba .pt-b-50 (50px) — mucho, no hay heading arriba que lo
+       justifique (a diferencia de "Sesiones" en TrainingDetail). */
+    margin-top: 10px;
 }
 
 .step-card {
