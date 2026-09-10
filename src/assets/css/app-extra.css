@@ -800,6 +800,18 @@ button.step {
     z-index: 2;
 }
 
+/* "Entrena con {coach}" pegado al botón de seguir, ambos juntos a la derecha
+   — la maqueta le da flex:1 a .training-instructor para separarlos, uno en
+   cada extremo de la fila. */
+.training-meta {
+    gap: 16px;
+    justify-content: flex-end;
+}
+
+.training-instructor {
+    flex: 0 0 auto;
+}
+
 /* fitlan-color.webp es un emblema casi cuadrado (600x737); con el `width: 120px`
    de `.logo` de la maqueta desborda verticalmente el header (88.5px de alto,
    ~48px de contenido). En el header lo limitamos por altura para que se ajuste. */
