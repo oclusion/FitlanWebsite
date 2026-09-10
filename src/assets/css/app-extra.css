@@ -54,6 +54,11 @@ button.box.active {
     color: rgba(255, 255, 255, 0.6);
 }
 
+.training-search-input:focus {
+    outline: none;
+    border-color: #5b6fc3;
+}
+
 .training-search-close {
     position: absolute;
     left: 12px;
