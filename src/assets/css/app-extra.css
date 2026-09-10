@@ -892,6 +892,96 @@ button.step {
     line-height: 1.375;
 }
 
+/* Subtítulo del hero de la sesión ("N ejercicios · Xmin") — homologado con
+   heroSubtitle de SessionStepsScreen en rn-starter. Igual que .training-badges,
+   margin-top negativo para comerse el margin-bottom:25px que .training-hero h1
+   trae de la maqueta (pensado para cuando el h1 era el último elemento). */
+.training-hero-subtitle {
+    margin: -14px 0 0;
+    color: #ffffff;
+    font-family: "Inter Tight", sans-serif;
+    font-size: 14px;
+}
+
+/* Listado de steps de una sesión — cards con imagen + info, homologadas con
+   SessionStepsScreen (rn-starter): número + título, descripción del step
+   truncada a una línea, duración e indicador de video. */
+.steps-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.step-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px;
+    border-radius: 16px;
+    background-color: #1c1f2a;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.step-card-image {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.step-card-image--placeholder {
+    background-color: var(--bg-secondary);
+}
+
+.step-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.step-card-title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.step-card-number {
+    font-weight: 700;
+    color: #5872d1;
+}
+
+.step-card-title {
+    font-weight: 700;
+}
+
+.step-card-description {
+    margin: 0 0 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #8a8a9a;
+    font-size: 13px;
+}
+
+.step-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #8a8a9a;
+    font-size: 13px;
+}
+
+.step-card-video-icon {
+    margin-left: 8px;
+    color: #5872d1;
+}
+
+.step-card-video-label {
+    color: #5872d1;
+}
+
 .step-duration {
     display: flex;
     align-items: center;
