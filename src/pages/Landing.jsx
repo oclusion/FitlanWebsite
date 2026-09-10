@@ -11,14 +11,46 @@ import logoWhite from "../assets/img/fitlan-white.svg";
 // El carrusel usa el JS de Bootstrap (bootstrap se importa en main.jsx). Como el
 // DOM lo renderiza React, el auto-init de `data-bs-ride` no lo agarra: se
 // instancia a mano en un useEffect y se hace dispose al desmontar.
+
+// Los planes casi no cambian — se cachean en localStorage para que la sección no
+// aparezca "de golpe" (layout shift) en cada visita. `useState(() => ...)` lee la
+// caché de forma síncrona, así que si hay una vigente ya se pinta en el primer
+// render; igual se re-pide en segundo plano y se actualiza la caché (por si un
+// admin cambió precios/planes).
+const PLANS_CACHE_KEY = "fitlan_plans_cache_v1";
+const PLANS_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hora
+
+const readCachedPlans = () => {
+  try {
+    const raw = localStorage.getItem(PLANS_CACHE_KEY);
+    if (!raw) return null;
+    const { plans, savedAt } = JSON.parse(raw);
+    if (!Array.isArray(plans) || !plans.length || Date.now() - savedAt > PLANS_CACHE_TTL_MS) return null;
+    return plans;
+  } catch {
+    return null;
+  }
+};
+
+const writeCachedPlans = (plans) => {
+  try {
+    localStorage.setItem(PLANS_CACHE_KEY, JSON.stringify({ plans, savedAt: Date.now() }));
+  } catch {
+    // localStorage no disponible (modo privado, etc.) — sin caché, se sigue pidiendo cada vez
+  }
+};
+
 const Landing = () => {
   const { isAuthenticated } = useAuth();
-  const [plans, setPlans] = useState([]);
+  const [plans, setPlans] = useState(() => readCachedPlans() ?? []);
   const carouselRef = useRef(null);
 
   useEffect(() => {
     subscriptionService.getPlans()
-      .then(setPlans)
+      .then((data) => {
+        setPlans(data);
+        writeCachedPlans(data);
+      })
       .catch((error) => console.log("No se pudieron cargar los planes", error));
   }, []);
 
