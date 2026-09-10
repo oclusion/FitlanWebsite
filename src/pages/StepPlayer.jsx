@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { IoPlay, IoShareSocialOutline } from "react-icons/io5";
+import { IoPlay, IoShareSocialOutline, IoTimeOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Breadcrumb from "../components/Breadcrumb";
@@ -11,6 +11,7 @@ import coachService from "../services/coachService";
 import { firstName, formatDuration } from "../utils/format";
 import { assetUrl } from "../utils/assetUrl";
 import TrainingHeroSkeleton from "../components/TrainingHeroSkeleton";
+import ExercisesList from "../components/ExercisesList";
 
 const formatTimer = (seconds) => {
   const mins = Math.floor(seconds / 60);
@@ -19,8 +20,11 @@ const formatTimer = (seconds) => {
 };
 
 // El player de un step usa el mismo layout que la pantalla de sesión (Steps):
-// header del sitio, hero con imagen + título, "Entrena con {coach}" + seguir,
-// descripción y duración. Donde la sesión lista sus steps, acá va el video.
+// header del sitio, hero, "Entrena con {coach}" + seguir, descripción y
+// duración. Donde la sesión lista sus steps, acá va el video. A diferencia de
+// TrainingDetail/Steps, el título NO va superpuesto al hero — va debajo, en
+// fila con la duración (StepPlayerScreen.titleRow en rn-starter), porque acá
+// el hero es un video y superponer texto interfiere con los controles.
 // El registro de progreso se hace al entrar a cada step.
 const StepPlayer = () => {
   const { trainingId, sessionId, stepId } = useParams();
@@ -134,7 +138,6 @@ const StepPlayer = () => {
     );
   }
 
-  const title = training?.title ?? session.title;
   const description = training?.description ?? session.description;
   const durationSeconds = activeStep.duration_seconds ?? session.duration_seconds;
 
@@ -196,14 +199,19 @@ const StepPlayer = () => {
                   </button>
                 ) : null}
 
-                {!isPlaying ? (
-                  <div className="training-hero-overlay">
-                    <div className="training-hero-content">
-                      <h1>{title}</h1>
-                    </div>
-                  </div>
-                ) : null}
               </section>
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-12">
+              <div className="step-title-row">
+                <h2>{activeStep.title}</h2>
+                <span className="step-duration">
+                  <IoTimeOutline />
+                  {formatDuration(durationSeconds)}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -235,7 +243,7 @@ const StepPlayer = () => {
             <div className="col-12">
               <section className="training-description">
                 {description ? <p>{description}</p> : null}
-                <p className="training-recommendation">{formatDuration(durationSeconds)}</p>
+                <ExercisesList exercises={activeStep.exercises} />
               </section>
             </div>
           </div>

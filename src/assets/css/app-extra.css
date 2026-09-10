@@ -848,6 +848,59 @@ button.step {
     }
 }
 
+/* Título del step player: debajo del video (no superpuesto), en fila con la
+   duración — homologado con StepPlayerScreen.titleRow en rn-starter, en vez
+   del <h1> superpuesto al hero que usan TrainingDetail/Steps. */
+.step-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 25px;
+}
+
+.step-title-row h2 {
+    margin: 0;
+    color: #ffffff;
+    font-family: "Inter Tight", sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* Listado de ejercicios del step (ExercisesList) — "<repeticiones>" en una
+   columna angosta a la izq, detalle a la derecha, igual que en la app. */
+.exercises-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.exercises-list-row {
+    display: flex;
+}
+
+.exercises-list-count {
+    width: 80px;
+    flex-shrink: 0;
+    color: #ffffff;
+}
+
+.exercises-list-detail {
+    flex: 1;
+    color: #ffffff;
+    line-height: 1.375;
+}
+
+.step-duration {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    color: #8a8a9a;
+    font-size: 14px;
+}
+
 /* fitlan-color.webp es un emblema casi cuadrado (600x737); con el `width: 120px`
    de `.logo` de la maqueta desborda verticalmente el header (88.5px de alto,
    ~48px de contenido). En el header lo limitamos por altura para que se ajuste. */
