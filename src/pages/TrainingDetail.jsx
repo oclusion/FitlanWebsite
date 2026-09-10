@@ -7,7 +7,7 @@ import trainingService from "../services/trainingService";
 import enrollmentService from "../services/enrollmentService";
 import coachService from "../services/coachService";
 import { formatDifficulty, firstName, formatDuration } from "../utils/format";
-import { assetUrl } from "../utils/assetUrl";
+import ResponsiveImage from "../components/ResponsiveImage";
 
 // Puerto de maquetas/assets/includes/training-detail.html. Los botones "Comenzar
 // entrenamiento" y "Solicitar entrenamiento personalizado" de la maqueta se
@@ -98,13 +98,14 @@ const TrainingDetail = () => {
           <div className="row">
             <div className="col-12">
               <section className="training-hero">
-                {training.image_url ? (
-                  <img
-                    src={assetUrl(training.image_url, training.image_key)}
-                    alt={training.title}
-                    className="training-hero-image"
-                  />
-                ) : null}
+                <ResponsiveImage
+                  url={training.image_url}
+                  imageKey={training.image_key}
+                  landscapeUrl={training.image_landscape_url}
+                  landscapeKey={training.image_landscape_key}
+                  alt={training.title}
+                  className="training-hero-image"
+                />
                 <button
                   className="share-button share-button--hero"
                   type="button"

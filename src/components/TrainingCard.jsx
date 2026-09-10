@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { formatDifficultyShort, formatDuration } from "../utils/format";
-import { assetUrl } from "../utils/assetUrl";
+import ResponsiveImage from "./ResponsiveImage";
 
 // Card del feed (/entrenamientos). La imagen cubre todo el card; encima, sobre un
 // degradado: título, dificultad, una línea divisoria y el nº de sesiones + los
@@ -16,10 +16,13 @@ const TrainingCard = ({ training }) => {
   return (
     <div className="col-6 col-md-4 col-lg-3 d-flex">
       <Link to={`/entrenamiento/${training.id}`} className="feed-card">
-        {training.image_url ? (
-          <img
+        {training.image_url || training.image_landscape_url ? (
+          <ResponsiveImage
             className="feed-card-img"
-            src={assetUrl(training.image_url, training.image_key)}
+            url={training.image_url}
+            imageKey={training.image_key}
+            landscapeUrl={training.image_landscape_url}
+            landscapeKey={training.image_landscape_key}
             alt={training.title}
           />
         ) : (

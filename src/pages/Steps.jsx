@@ -6,7 +6,7 @@ import Breadcrumb from "../components/Breadcrumb";
 import sessionService from "../services/sessionService";
 import trainingService from "../services/trainingService";
 import { formatDuration } from "../utils/format";
-import { assetUrl } from "../utils/assetUrl";
+import ResponsiveImage from "../components/ResponsiveImage";
 
 // Puerto de maquetas/assets/includes/steps.html. El listado de steps se muestra
 // con el mismo estilo que el listado de sesiones (.sessions-list); al tocar uno
@@ -55,13 +55,14 @@ const Steps = () => {
           <div className="row">
             <div className="col-12">
               <section className="training-hero">
-                {session.image_url ? (
-                  <img
-                    src={assetUrl(session.image_url, session.image_key)}
-                    alt={session.title}
-                    className="training-hero-image"
-                  />
-                ) : null}
+                <ResponsiveImage
+                  url={session.image_url}
+                  imageKey={session.image_key}
+                  landscapeUrl={session.image_landscape_url}
+                  landscapeKey={session.image_landscape_key}
+                  alt={session.title}
+                  className="training-hero-image"
+                />
                 <div className="training-hero-overlay">
                   <div className="training-hero-content">
                     <h1>{session.title}</h1>

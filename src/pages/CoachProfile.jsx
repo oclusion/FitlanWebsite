@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import coachService from "../services/coachService";
 import { getInitials } from "../utils/initials";
 import { assetUrl } from "../utils/assetUrl";
+import ResponsiveImage from "../components/ResponsiveImage";
 
 // Puerto de maquetas/assets/includes/profile.html (era en realidad el perfil de
 // un coach, no del usuario propio — mismo dato de prueba, Keftiu Barrón).
@@ -100,14 +101,15 @@ const CoachProfile = () => {
                 <div key={training.id} className="col-12 col-sm-6 col-lg-3">
                   <Link to={`/entrenamiento/${training.id}`} className="training-card-link">
                     <article className="training-card">
-                      {training.image_url ? (
-                        <img
-                          src={assetUrl(training.image_url, training.image_key)}
-                          alt={training.title}
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      ) : null}
+                      <ResponsiveImage
+                        url={training.image_url}
+                        imageKey={training.image_key}
+                        landscapeUrl={training.image_landscape_url}
+                        landscapeKey={training.image_landscape_key}
+                        alt={training.title}
+                        loading="lazy"
+                        decoding="async"
+                      />
                       <div className="training-card-content">
                         <h2>{training.title}</h2>
                       </div>
