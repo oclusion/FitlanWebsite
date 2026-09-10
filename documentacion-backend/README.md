@@ -360,6 +360,7 @@ El `*_key` es el valor que debes reenviar al backend al editar el recurso — **
 | `profile_image_url` | `profile_image_key` |
 | `banner_image_url` | `banner_image_key` |
 | `image_url` | `image_key` |
+| `image_landscape_url` | `image_landscape_key` |
 | `video_url` | `video_key` |
 
 ---
@@ -762,6 +763,7 @@ GET /training?search=yoga&status=PUBLISHED&category_ids=1,2
   "title": "Yoga Vinyasa Nivel 1",
   "description": "Entrenamiento de flujo dinámico para principiantes.",
   "image_url": "https://...",
+  "image_landscape_url": "https://...",
   "video_url": "https://...",
   "price": 9.99,
   "difficulty_level": "BEGINNER",
@@ -791,7 +793,7 @@ Se pueden combinar: `/training?search=yoga&status=PUBLISHED&category_ids=1,2&pag
 
 `publish_status`: `DRAFT` | `PUBLISHED`
 
-> `description`, `image_url`, `video_url`, `price`, `coach_id` y `tags` son opcionales. Si se envía `description`, debe tener al menos 3 caracteres. `price` debe ser mayor o igual a 0. `coach_id` debe corresponder a un usuario con `ROLE_COACH`. `tags` es un array de strings; si se omite el training queda sin tags.
+> `description`, `image_url`, `image_landscape_url`, `video_url`, `price`, `coach_id` y `tags` son opcionales. `image_landscape_url` es la versión horizontal de la portada — úsala en web desktop; en móvil usa `image_url`. Si se envía `description`, debe tener al menos 3 caracteres. `price` debe ser mayor o igual a 0. `coach_id` debe corresponder a un usuario con `ROLE_COACH`. `tags` es un array de strings; si se omite el training queda sin tags.
 
 **Response — objeto `coach` dentro de cada training:**
 ```json
@@ -832,6 +834,7 @@ Se pueden combinar: `/training?search=yoga&status=PUBLISHED&category_ids=1,2&pag
   "title": "Saludo al sol",
   "description": "Secuencia de apertura de 15 minutos.",
   "image_url": "https://...",
+  "image_landscape_url": "https://...",
   "video_url": "https://...",
   "display_order": 1,
   "duration_seconds": 900,
@@ -839,7 +842,7 @@ Se pueden combinar: `/training?search=yoga&status=PUBLISHED&category_ids=1,2&pag
 }
 ```
 
-> `training_id` debe corresponder a un training existente. `description`, `image_url` y `video_url` son opcionales.
+> `training_id` debe corresponder a un training existente. `description`, `image_url`, `image_landscape_url` y `video_url` son opcionales.
 
 ---
 
@@ -865,6 +868,7 @@ Se pueden combinar: `/training?search=yoga&status=PUBLISHED&category_ids=1,2&pag
     "2 veces - Extensión de columna con respiración"
   ],
   "image_url": "https://...",
+  "image_landscape_url": "https://...",
   "video_url": "https://...",
   "duration_seconds": 30,
   "display_order": 1,
@@ -872,7 +876,7 @@ Se pueden combinar: `/training?search=yoga&status=PUBLISHED&category_ids=1,2&pag
 }
 ```
 
-> `session_id` debe corresponder a una sesión existente. `description`, `exercises`, `image_url` y `video_url` son opcionales. `exercises` es un array de strings de texto libre.
+> `session_id` debe corresponder a una sesión existente. `description`, `exercises`, `image_url`, `image_landscape_url` y `video_url` son opcionales. `exercises` es un array de strings de texto libre.
 
 ---
 

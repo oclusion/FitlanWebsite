@@ -1185,7 +1185,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Yoga Vinyasa Nivel 1\",\n  \"description\": \"Entrenamiento de flujo dinámico para principiantes.\",\n  \"difficulty_level\": \"BEGINNER\",\n  \"premium\": false,\n  \"price\": 0,\n  \"publish_status\": \"PUBLISHED\",\n  \"category_ids\": [2],\n  \"tags\": [\"yoga\", \"principiantes\", \"flexibilidad\"]\n}"
+              "raw": "{\n  \"title\": \"Yoga Vinyasa Nivel 1\",\n  \"description\": \"Entrenamiento de flujo dinámico para principiantes.\",\n  \"image_url\": \"uploads/portrait.jpg\",\n  \"image_landscape_url\": \"uploads/landscape.jpg\",\n  \"video_url\": null,\n  \"difficulty_level\": \"BEGINNER\",\n  \"premium\": false,\n  \"price\": 0,\n  \"publish_status\": \"PUBLISHED\",\n  \"category_ids\": [2],\n  \"tags\": [\"yoga\", \"principiantes\", \"flexibilidad\"]\n}"
             }
           }
         },
@@ -1206,7 +1206,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Box Avanzado\",\n  \"description\": \"Entrenamiento de boxeo de alto rendimiento.\",\n  \"difficulty_level\": \"ADVANCED\",\n  \"premium\": true,\n  \"price\": 19.99,\n  \"publish_status\": \"PUBLISHED\",\n  \"coach_id\": 3,\n  \"category_ids\": [1],\n  \"tags\": [\"boxeo\", \"avanzado\", \"cardio\"]\n}"
+              "raw": "{\n  \"title\": \"Box Avanzado\",\n  \"description\": \"Entrenamiento de boxeo de alto rendimiento.\",\n  \"image_url\": \"uploads/portrait.jpg\",\n  \"image_landscape_url\": \"uploads/landscape.jpg\",\n  \"video_url\": null,\n  \"difficulty_level\": \"ADVANCED\",\n  \"premium\": true,\n  \"price\": 19.99,\n  \"publish_status\": \"PUBLISHED\",\n  \"coach_id\": 3,\n  \"category_ids\": [1],\n  \"tags\": [\"boxeo\", \"avanzado\", \"cardio\"]\n}"
             }
           }
         },
@@ -1269,7 +1269,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Yoga Vinyasa Actualizado\",\n  \"description\": \"Descripción actualizada.\",\n  \"difficulty_level\": \"INTERMEDIATE\",\n  \"premium\": false,\n  \"price\": 9.99,\n  \"publish_status\": \"PUBLISHED\",\n  \"category_ids\": [2],\n  \"tags\": [\"yoga\", \"intermedio\"]\n}"
+              "raw": "{\n  \"title\": \"Yoga Vinyasa Actualizado\",\n  \"description\": \"Descripción actualizada.\",\n  \"image_url\": \"uploads/portrait.jpg\",\n  \"image_landscape_url\": \"uploads/landscape.jpg\",\n  \"difficulty_level\": \"INTERMEDIATE\",\n  \"premium\": false,\n  \"price\": 9.99,\n  \"publish_status\": \"PUBLISHED\",\n  \"category_ids\": [2],\n  \"tags\": [\"yoga\", \"intermedio\"]\n}"
             }
           }
         },
@@ -1334,7 +1334,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Saludo al sol\",\n  \"description\": \"Secuencia de apertura de 15 minutos.\",\n  \"display_order\": 1,\n  \"duration_seconds\": 900,\n  \"training_id\": 1\n}"
+              "raw": "{\n  \"title\": \"Saludo al sol\",\n  \"description\": \"Secuencia de apertura de 15 minutos.\",\n  \"image_url\": \"uploads/portrait.jpg\",\n  \"image_landscape_url\": \"uploads/landscape.jpg\",\n  \"video_url\": null,\n  \"display_order\": 1,\n  \"duration_seconds\": 900,\n  \"training_id\": 1\n}"
             }
           }
         },
@@ -1433,7 +1433,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Postura del perro boca abajo\",\n  \"description\": \"Mantén la posición 30 segundos.\",\n  \"exercises\": [\n    \"4 veces - Posición de piernas en L con piernas flexionadas a 60 grados\",\n    \"2 veces - Extensión de columna con respiración\"\n  ],\n  \"duration_seconds\": 30,\n  \"display_order\": 1,\n  \"session_id\": 1\n}"
+              "raw": "{\n  \"title\": \"Postura del perro boca abajo\",\n  \"description\": \"Mantén la posición 30 segundos.\",\n  \"exercises\": [\n    \"4 veces - Posición de piernas en L con piernas flexionadas a 60 grados\",\n    \"2 veces - Extensión de columna con respiración\"\n  ],\n  \"image_url\": \"uploads/portrait.jpg\",\n  \"image_landscape_url\": \"uploads/landscape.jpg\",\n  \"video_url\": null,\n  \"duration_seconds\": 30,\n  \"display_order\": 1,\n  \"session_id\": 1\n}"
             }
           }
         },
