@@ -798,7 +798,10 @@ button.step {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 10px;
+    /* Negativo para comerse la mayor parte del margin-bottom:25px que
+       .training-hero h1 trae de la maqueta (pensado para cuando el h1 era
+       el último elemento) y pegar los tags al título. */
+    margin-top: -14px;
 }
 
 .training-badge {
