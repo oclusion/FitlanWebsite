@@ -790,6 +790,31 @@ button.step {
     object-fit: cover;
 }
 
+/* Tags del hero de la ficha de entrenamiento (dificultad + categorías, +
+   PREMIUM si aplica) homologados con los badges de TrainingDetailScreen en
+   rn-starter — reemplazan el texto plano "Nivel Básico" de la maqueta y la
+   descripción duplicada (esa ya se muestra debajo, en .training-description). */
+.training-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.training-badge {
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+    border-radius: 6px;
+    padding: 2px 8px;
+}
+
+.training-badge--premium {
+    color: #f5a623;
+    border-color: #f5a623;
+}
+
 /* El botón de compartir de la ficha de entrenamiento va sobre la imagen del
    hero, arriba a la derecha (antes vivía en .training-actions, debajo de la
    imagen, junto al botón de follow). */

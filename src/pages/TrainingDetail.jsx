@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import trainingService from "../services/trainingService";
 import enrollmentService from "../services/enrollmentService";
 import coachService from "../services/coachService";
-import { formatDifficulty, firstName, formatDuration } from "../utils/format";
+import { formatDifficultyShort, firstName, formatDuration } from "../utils/format";
 import ResponsiveImage from "../components/ResponsiveImage";
 import TrainingHeroSkeleton from "../components/TrainingHeroSkeleton";
 import SessionRowSkeleton from "../components/SessionRowSkeleton";
@@ -159,9 +159,14 @@ const TrainingDetail = () => {
                 </button>
                 <div className="training-hero-overlay">
                   <div className="training-hero-content">
-                    {training.description ? <p className="training-eyebrow">{training.description}</p> : null}
                     <h1>{training.title}</h1>
-                    <p className="training-level">{formatDifficulty(training.difficulty_level)}</p>
+                    <div className="training-badges">
+                      <span className="training-badge">{formatDifficultyShort(training.difficulty_level)}</span>
+                      {training.premium ? <span className="training-badge training-badge--premium">PREMIUM</span> : null}
+                      {training.categories?.map((cat) => (
+                        <span key={cat.id} className="training-badge">{cat.name}</span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </section>
