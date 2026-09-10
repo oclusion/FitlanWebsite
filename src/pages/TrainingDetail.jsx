@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { IoShareOutline } from "react-icons/io5";
+import { IoShareSocialOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import trainingService from "../services/trainingService";
@@ -155,7 +155,7 @@ const TrainingDetail = () => {
                   onClick={handleShare}
                   aria-label="Compartir"
                 >
-                  <IoShareOutline />
+                  <IoShareSocialOutline />
                 </button>
                 <div className="training-hero-overlay">
                   <div className="training-hero-content">

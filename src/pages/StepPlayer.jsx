@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { IoPlay, IoShareOutline } from "react-icons/io5";
+import { IoPlay, IoShareSocialOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Breadcrumb from "../components/Breadcrumb";
@@ -175,7 +175,7 @@ const StepPlayer = () => {
                   onClick={handleShare}
                   aria-label="Compartir"
                 >
-                  <IoShareOutline />
+                  <IoShareSocialOutline />
                 </button>
 
                 {isPlaying || currentTime > 0 ? (
