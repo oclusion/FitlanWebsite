@@ -125,8 +125,13 @@ button.box.active {
     justify-content: center;
 }
 
+/* Bloque centrado como conjunto (ancho = su contenido, centrado con margin auto),
+   pero los ítems entre sí quedan alineados a la izquierda (no cada línea centrada
+   por separado). */
 #infoCarousel .info-block ul {
-    margin: 0;
+    width: fit-content;
+    margin: 0 auto;
+    text-align: left;
 }
 
 #infoCarousel .carousel-indicators {
