@@ -915,6 +915,18 @@ button.step {
     margin-top: 10px;
 }
 
+/* "Sesiones" en TrainingDetail: h3 trae margin-bottom:60px de la maqueta —
+   mucho para un heading pegado a su propio listado. Se acorta, y el listado
+   no suma encima el margin-top que trae por defecto (ver .steps-cards-list). */
+.sessions-heading {
+    margin-bottom: 16px;
+}
+
+.sessions-heading + .steps-cards-list,
+.sessions-heading + .sessions-empty {
+    margin-top: 0;
+}
+
 .step-card {
     display: flex;
     align-items: center;
@@ -983,6 +995,70 @@ button.step {
 
 .step-card-video-label {
     color: #5872d1;
+}
+
+/* Listado de sesiones de un training — mismo esquema de card que .step-card
+   (imagen + info), pero sin número y con chevron al final en vez del
+   indicador de video, homologado con sessionCard de TrainingDetailScreen
+   (rn-starter). Reusa .steps-cards-list para el contenedor. */
+.session-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px;
+    border-radius: 16px;
+    background-color: #1c1f2a;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.session-card-image {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.session-card-image--placeholder {
+    background-color: var(--bg-secondary);
+}
+
+.session-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.session-card-title {
+    margin: 0 0 4px;
+    font-weight: 700;
+}
+
+.session-card-description {
+    margin: 0 0 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #8a8a9a;
+    font-size: 13px;
+}
+
+.session-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #8a8a9a;
+    font-size: 13px;
+}
+
+.session-card-chevron {
+    flex-shrink: 0;
+    color: #8a8a9a;
+    font-size: 18px;
+}
+
+.sessions-empty {
+    color: #8a8a9a;
 }
 
 .step-duration {

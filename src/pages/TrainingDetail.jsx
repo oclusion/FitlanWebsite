@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { IoShareSocialOutline } from "react-icons/io5";
+import { IoShareSocialOutline, IoTimeOutline, IoChevronForward } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import trainingService from "../services/trainingService";
@@ -200,26 +200,49 @@ const TrainingDetail = () => {
             </div>
           </div>
 
-          {sessions.length > 0 ? (
-            <div className="row pt-b-50">
-              <div className="col-12">
-                <h3>Sesiones</h3>
-                <div className="sessions-list">
+          <div className="row pt-b-50">
+            <div className="col-12">
+              <h3 className="sessions-heading">Sesiones{sessions.length > 0 ? ` (${sessions.length})` : ""}</h3>
+              {sessions.length === 0 ? (
+                <p className="sessions-empty">Este entrenamiento aún no tiene contenido disponible.</p>
+              ) : (
+                <div className="steps-cards-list">
                   {sessions.map((session) => (
-                    <Link key={session.id} to={sessionTarget(session)} className="session-row">
-                      <span>{session.title}</span>
-                      <span className="session-meta">
-                        {formatDuration(session.duration_seconds)}
-                        {session.steps?.length
-                          ? ` · ${session.steps.length} ${session.steps.length === 1 ? "ejercicio" : "ejercicios"}`
-                          : ""}
-                      </span>
+                    <Link key={session.id} to={sessionTarget(session)} className="session-card">
+                      {session.image_url || session.image_landscape_url ? (
+                        <ResponsiveImage
+                          className="session-card-image"
+                          url={session.image_url}
+                          imageKey={session.image_key}
+                          landscapeUrl={session.image_landscape_url}
+                          landscapeKey={session.image_landscape_key}
+                          alt={session.title}
+                        />
+                      ) : (
+                        <div className="session-card-image session-card-image--placeholder" />
+                      )}
+                      <div className="session-card-info">
+                        <p className="session-card-title">{session.title}</p>
+                        {session.description ? (
+                          <p className="session-card-description">{session.description}</p>
+                        ) : null}
+                        <div className="session-card-meta">
+                          <IoTimeOutline />
+                          <span>
+                            {formatDuration((session.steps ?? []).reduce((acc, s) => acc + (s.duration_seconds ?? 0), 0))}
+                          </span>
+                          {session.steps?.length ? (
+                            <span>· {session.steps.length} {session.steps.length === 1 ? "ejercicio" : "ejercicios"}</span>
+                          ) : null}
+                        </div>
+                      </div>
+                      <IoChevronForward className="session-card-chevron" />
                     </Link>
                   ))}
                 </div>
-              </div>
+              )}
             </div>
-          ) : null}
+          </div>
         </div>
       </main>
       <Footer />
