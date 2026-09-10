@@ -798,6 +798,11 @@ button.step {
     top: 16px;
     right: 16px;
     z-index: 2;
+    /* Circular y semitransparente como el botón de compartir de la app
+       (shareIconButton en rn-starter), en vez del cuadrado negro sólido de
+       .share-button en la maqueta. */
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 /* "Entrena con {coach}" pegado al botón de seguir, ambos juntos a la derecha
