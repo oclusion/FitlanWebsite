@@ -7,6 +7,8 @@ import sessionService from "../services/sessionService";
 import trainingService from "../services/trainingService";
 import { formatDuration } from "../utils/format";
 import ResponsiveImage from "../components/ResponsiveImage";
+import TrainingHeroSkeleton from "../components/TrainingHeroSkeleton";
+import SessionRowSkeleton from "../components/SessionRowSkeleton";
 
 // Puerto de maquetas/assets/includes/steps.html. El listado de steps se muestra
 // con el mismo estilo que el listado de sesiones (.sessions-list); al tocar uno
@@ -33,7 +35,34 @@ const Steps = () => {
     return (
       <div>
         <Header />
-        <main className="pt-b-108"><div className="container"><p>Cargando...</p></div></main>
+        <main>
+          <div className="container">
+            <div className="row">
+              <div className="col-12">
+                <TrainingHeroSkeleton />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-12">
+                <section className="training-description">
+                  <span className="skeleton-line skeleton-line--desc" />
+                  <span className="skeleton-line skeleton-line--desc-short" />
+                </section>
+              </div>
+            </div>
+
+            <div className="row pt-b-50">
+              <div className="col-12">
+                <div className="sessions-list">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <SessionRowSkeleton key={i} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
         <Footer />
       </div>
     );

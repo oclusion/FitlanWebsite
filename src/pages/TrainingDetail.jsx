@@ -8,6 +8,8 @@ import enrollmentService from "../services/enrollmentService";
 import coachService from "../services/coachService";
 import { formatDifficulty, firstName, formatDuration } from "../utils/format";
 import ResponsiveImage from "../components/ResponsiveImage";
+import TrainingHeroSkeleton from "../components/TrainingHeroSkeleton";
+import SessionRowSkeleton from "../components/SessionRowSkeleton";
 
 // Puerto de maquetas/assets/includes/training-detail.html. Los botones "Comenzar
 // entrenamiento" y "Solicitar entrenamiento personalizado" de la maqueta se
@@ -65,7 +67,48 @@ const TrainingDetail = () => {
     return (
       <div>
         <Header />
-        <main className="pt-b-108"><div className="container"><p>Cargando...</p></div></main>
+        <main>
+          <div className="container">
+            <div className="row">
+              <div className="col-12">
+                <TrainingHeroSkeleton />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-12">
+                <section className="training-meta">
+                  <div className="training-instructor">
+                    <span className="skeleton-line skeleton-line--instructor" />
+                  </div>
+                  <div className="training-actions">
+                    <span className="skeleton-pill" />
+                  </div>
+                </section>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-12">
+                <section className="training-description">
+                  <span className="skeleton-line skeleton-line--desc" />
+                  <span className="skeleton-line skeleton-line--desc-short" />
+                </section>
+              </div>
+            </div>
+
+            <div className="row pt-b-50">
+              <div className="col-12">
+                <h3>Sesiones</h3>
+                <div className="sessions-list">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <SessionRowSkeleton key={i} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
         <Footer />
       </div>
     );

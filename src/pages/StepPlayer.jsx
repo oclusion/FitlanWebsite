@@ -10,6 +10,7 @@ import enrollmentService from "../services/enrollmentService";
 import coachService from "../services/coachService";
 import { firstName, formatDuration } from "../utils/format";
 import { assetUrl } from "../utils/assetUrl";
+import TrainingHeroSkeleton from "../components/TrainingHeroSkeleton";
 
 const formatTimer = (seconds) => {
   const mins = Math.floor(seconds / 60);
@@ -87,7 +88,37 @@ const StepPlayer = () => {
     return (
       <div>
         <Header />
-        <main className="pt-b-108"><div className="container"><p>Cargando...</p></div></main>
+        <main>
+          <div className="container">
+            <div className="row">
+              <div className="col-12">
+                <TrainingHeroSkeleton />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-12">
+                <section className="training-meta">
+                  <div className="training-instructor">
+                    <span className="skeleton-line skeleton-line--instructor" />
+                  </div>
+                  <div className="training-actions">
+                    <span className="skeleton-pill" />
+                  </div>
+                </section>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-12">
+                <section className="training-description">
+                  <span className="skeleton-line skeleton-line--desc" />
+                  <span className="skeleton-line skeleton-line--desc-short" />
+                </section>
+              </div>
+            </div>
+          </div>
+        </main>
         <Footer />
       </div>
     );
