@@ -55,6 +55,36 @@ button.box.active {
     color: rgba(255, 255, 255, 0.6);
 }
 
+/* Campo de contraseña con botón de mostrar/ocultar (ojito) */
+.password-field {
+    position: relative;
+}
+
+.password-field .form-control {
+    width: 100%;
+    padding-right: 44px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+    color: #ffffff;
+}
+
 .forgot-link {
     color: rgba(255, 255, 255, 0.8);
     text-align: right;

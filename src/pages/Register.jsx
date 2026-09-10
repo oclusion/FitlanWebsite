@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
+import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import authService from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 import logoWhite from "../assets/img/fitlan-white.svg";
@@ -10,6 +11,7 @@ import logoWhite from "../assets/img/fitlan-white.svg";
 const Register = () => {
   const { isAuthenticated } = useAuth();
   const [form, setForm] = useState({ name: "", username: "", email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [done, setDone] = useState(false);
@@ -73,7 +75,23 @@ const Register = () => {
             <input className="form-control" type="text" placeholder="Nombre completo" value={form.name} onChange={handleChange("name")} />
             <input className="form-control" type="text" placeholder="Usuario (mínimo 4 caracteres)" autoCapitalize="none" value={form.username} onChange={handleChange("username")} />
             <input className="form-control" type="email" placeholder="Correo" autoCapitalize="none" value={form.email} onChange={handleChange("email")} />
-            <input className="form-control" type="password" placeholder="Contraseña (mínimo 8 caracteres)" value={form.password} onChange={handleChange("password")} />
+            <div className="password-field">
+              <input
+                className="form-control"
+                type={showPassword ? "text" : "password"}
+                placeholder="Contraseña (mínimo 8 caracteres)"
+                value={form.password}
+                onChange={handleChange("password")}
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                {showPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+              </button>
+            </div>
 
             {error ? <div className="alert-box"><p>{error}</p></div> : null}
 
