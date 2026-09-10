@@ -802,14 +802,17 @@ button.step {
 
 /* "Entrena con {coach}" pegado al botón de seguir, ambos juntos a la derecha
    — la maqueta le da flex:1 a .training-instructor para separarlos, uno en
-   cada extremo de la fila. */
-.training-meta {
-    gap: 16px;
-    justify-content: flex-end;
-}
+   cada extremo de la fila. Solo desde md: en mobile se deja el comportamiento
+   original de la maqueta (cada uno en un extremo). */
+@media (min-width: 768px) {
+    .training-meta {
+        gap: 16px;
+        justify-content: flex-end;
+    }
 
-.training-instructor {
-    flex: 0 0 auto;
+    .training-instructor {
+        flex: 0 0 auto;
+    }
 }
 
 /* fitlan-color.webp es un emblema casi cuadrado (600x737); con el `width: 120px`
