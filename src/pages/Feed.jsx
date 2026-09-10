@@ -3,6 +3,7 @@ import { IoSearchOutline, IoCloseOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import TrainingCard from "../components/TrainingCard";
+import TrainingCardSkeleton from "../components/TrainingCardSkeleton";
 import trainingService from "../services/trainingService";
 import categoryService from "../services/categoryService";
 
@@ -150,7 +151,11 @@ const Feed = () => {
                 </div>
 
                 {loading ? (
-                  <p className="p-2">Cargando...</p>
+                  <div className="row g-3">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <TrainingCardSkeleton key={i} />
+                    ))}
+                  </div>
                 ) : (
                   <div className="row g-3">
                     {trainings.map((training) => (
