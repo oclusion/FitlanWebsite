@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { IoLogoInstagram, IoLogoFacebook, IoLogoTiktok, IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -7,7 +7,7 @@ import coachService from "../services/coachService";
 import conversationService from "../services/conversationService";
 import { getInitials } from "../utils/initials";
 import { assetUrl } from "../utils/assetUrl";
-import ResponsiveImage from "../components/ResponsiveImage";
+import TrainingCard from "../components/TrainingCard";
 
 // Puerto de maquetas/assets/includes/profile.html (era en realidad el perfil de
 // un coach, no del usuario propio — mismo dato de prueba, Keftiu Barrón).
@@ -120,28 +120,15 @@ const CoachProfile = () => {
           ) : null}
 
           {coach.trainings?.length ? (
-            <div className="row g-3 pt-b-50 justify-content-center text-center">
-              <h3>Entrenamientos</h3>
-              {coach.trainings.map((training) => (
-                <div key={training.id} className="col-12 col-sm-6 col-lg-3">
-                  <Link to={`/entrenamiento/${training.id}`} className="training-card-link">
-                    <article className="training-card">
-                      <ResponsiveImage
-                        url={training.image_url}
-                        imageKey={training.image_key}
-                        landscapeUrl={training.image_landscape_url}
-                        landscapeKey={training.image_landscape_key}
-                        alt={training.title}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                      <div className="training-card-content">
-                        <h2>{training.title}</h2>
-                      </div>
-                    </article>
-                  </Link>
+            <div className="row pt-b-50">
+              <div className="col-12">
+                <h3 className="text-center">Entrenamientos</h3>
+                <div className="row g-3 justify-content-center">
+                  {coach.trainings.map((training) => (
+                    <TrainingCard key={training.id} training={training} />
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           ) : null}
         </div>

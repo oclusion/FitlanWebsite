@@ -770,10 +770,19 @@ button.step {
 .profile-row-centered .profile-text {
     margin-left: auto;
     margin-right: auto;
+    /* La maqueta trae color:#1a1a1a (pensado para fondo claro) — en esta
+       página el fondo es oscuro, quedaba casi invisible. */
+    color: #ffffff;
 }
 
 .profile-social-centered {
     text-align: center;
+}
+
+.profile-social-centered .profile-social-label {
+    /* Mismo problema que .profile-text: #1a1a1a de la maqueta sobre fondo
+       oscuro. */
+    color: #ffffff;
 }
 
 /* "Chatear" junto a "Seguir" en la ficha de coach — homologado con el
@@ -792,9 +801,13 @@ button.step {
 
 /* El hero de la ficha de entrenamiento / sesión: la maqueta dejaba la imagen en
    `height: auto`, así que una foto vertical se veía gigante. Se acota a una
-   franja tipo header y se recorta con object-fit. */
+   franja tipo header y se recorta con object-fit. Bordes redondeados como el
+   resto de las cards (.feed-card, .session-card, .step-card) — .training-hero
+   ya tiene overflow:hidden en la maqueta, así que esto también recorta la
+   imagen/video y el overlay. */
 .training-hero {
     max-height: 60vh;
+    border-radius: 16px;
 }
 
 .training-hero-image {
