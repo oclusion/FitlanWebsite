@@ -1070,6 +1070,56 @@ button.step {
     font-size: 14px;
 }
 
+/* Overlay al terminar el video de un step — homologado con videoEndedOverlay
+   de StepPlayerScreen (rn-starter): bloquea el video (tapa controles/timer/
+   play) hasta que el usuario elige compartir o terminar. */
+.video-ended-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.video-ended-check {
+    font-size: 40px;
+    color: #ffffff;
+}
+
+.video-ended-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.video-ended-share {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    border: 1px solid #ffffff;
+    border-radius: 8px;
+    background: none;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.video-ended-finish {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #5872d1;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+}
+
 /* fitlan-color.webp es un emblema casi cuadrado (600x737); con el `width: 120px`
    de `.logo` de la maqueta desborda verticalmente el header (88.5px de alto,
    ~48px de contenido). En el header lo limitamos por altura para que se ajuste. */

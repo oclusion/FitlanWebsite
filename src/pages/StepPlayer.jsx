@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { IoPlay, IoShareSocialOutline, IoTimeOutline } from "react-icons/io5";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { IoPlay, IoShareSocialOutline, IoTimeOutline, IoCheckmarkCircleOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Breadcrumb from "../components/Breadcrumb";
@@ -25,14 +25,22 @@ const formatTimer = (seconds) => {
 // TrainingDetail/Steps, el título NO va superpuesto al hero — va debajo, en
 // fila con la duración (StepPlayerScreen.titleRow en rn-starter), porque acá
 // el hero es un video y superponer texto interfiere con los controles.
-// El registro de progreso se hace al entrar a cada step.
+//
+// El registro de progreso (enrollmentService.completeSession) se dispara con
+// el evento `ended` del video — homologado con StepPlayerScreen (que escucha
+// el evento nativo `playToEnd`) — no al entrar al step: si no, cualquier
+// step quedaría "completado" con solo navegarlo, sin ver el video. Se manda
+// la duración real del video (no la nominal del step). Steps sin video no
+// se marcan por esta vía (igual que en la app).
 const StepPlayer = () => {
   const { trainingId, sessionId, stepId } = useParams();
+  const navigate = useNavigate();
   const videoRef = useRef(null);
   const [session, setSession] = useState(null);
   const [training, setTraining] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [videoEnded, setVideoEnded] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
 
@@ -57,11 +65,15 @@ const StepPlayer = () => {
   useEffect(() => {
     setIsPlaying(false);
     setCurrentTime(0);
-    if (activeStep) {
-      enrollmentService.completeSession(trainingId, sessionId, activeStep.duration_seconds)
-        .catch((error) => console.log("No se pudo registrar el progreso", error));
-    }
-  }, [stepId, activeStep, trainingId, sessionId]);
+    setVideoEnded(false);
+  }, [stepId]);
+
+  const handleVideoEnded = () => {
+    setVideoEnded(true);
+    const watchedSeconds = Math.round(videoRef.current?.duration || activeStep.duration_seconds || 0);
+    enrollmentService.completeSession(trainingId, sessionId, watchedSeconds)
+      .catch((error) => console.log("No se pudo registrar la sesión completada", error));
+  };
 
   const handleToggleFollow = async () => {
     if (!training?.coach?.id || followLoading) return;
@@ -165,6 +177,7 @@ const StepPlayer = () => {
                     onTimeUpdate={(event) => setCurrentTime(event.target.currentTime)}
                     onPlay={() => setIsPlaying(true)}
                     onPause={() => setIsPlaying(false)}
+                    onEnded={handleVideoEnded}
                     controls={isPlaying}
                     playsInline
                   />
@@ -181,11 +194,11 @@ const StepPlayer = () => {
                   <IoShareSocialOutline />
                 </button>
 
-                {isPlaying || currentTime > 0 ? (
+                {!videoEnded && (isPlaying || currentTime > 0) ? (
                   <span className="training-hero-timer">{formatTimer(currentTime)}</span>
                 ) : null}
 
-                {!isPlaying && activeStep.video_url ? (
+                {!videoEnded && !isPlaying && activeStep.video_url ? (
                   <button
                     type="button"
                     className="workout-play-btn"
@@ -199,6 +212,27 @@ const StepPlayer = () => {
                   </button>
                 ) : null}
 
+                {/* Al terminar el video, se bloquea con este overlay — homologado
+                    con el videoEndedOverlay de StepPlayerScreen — y solo se sale
+                    por "Terminar" (o "Compartir" para compartir el logro). */}
+                {videoEnded ? (
+                  <div className="video-ended-overlay">
+                    <IoCheckmarkCircleOutline className="video-ended-check" />
+                    <div className="video-ended-actions">
+                      <button type="button" className="video-ended-share" onClick={handleShare}>
+                        <IoShareSocialOutline />
+                        Compartir
+                      </button>
+                      <button
+                        type="button"
+                        className="video-ended-finish"
+                        onClick={() => navigate(`/entrenamiento/${trainingId}/sesion/${sessionId}`)}
+                      >
+                        Terminar
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
               </section>
             </div>
           </div>
