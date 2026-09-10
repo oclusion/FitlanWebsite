@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import authService from "../services/authService";
 import subscriptionService, { hasSubscriptionAccess } from "../services/subscriptionService";
+import chatSocketService from "../services/chatSocketService";
 
 const AuthContext = createContext(null);
 
@@ -32,13 +33,18 @@ export const AuthProvider = ({ children }) => {
   const login = useCallback(async (identifier, password) => {
     await authService.login(identifier, password);
     setIsAuthenticated(true);
+    chatSocketService.connect();
     return refreshSubscription();
   }, [refreshSubscription]);
 
   // Al montar la app con una sesión ya guardada (reload de página), verificar la
-  // suscripción. Tras un login nuevo lo hace login() directamente.
+  // suscripción y conectar el chat en vivo. Tras un login nuevo lo hace login()
+  // directamente. (Ver socketService.connect() en rn-starter — mismo criterio.)
   useEffect(() => {
-    if (authService.isAuthenticated()) refreshSubscription();
+    if (authService.isAuthenticated()) {
+      refreshSubscription();
+      chatSocketService.connect();
+    }
   }, [refreshSubscription]);
 
   // Sincrónico de punta a punta (authService.logout() también lo es), y el
@@ -55,6 +61,7 @@ export const AuthProvider = ({ children }) => {
   // próximo arranque de la app.
   const logout = useCallback(() => {
     authService.logout();
+    chatSocketService.disconnect();
     window.location.href = "/";
   }, []);
 

@@ -17,6 +17,10 @@ import Account from "./pages/Account";
 import MyTrainings from "./pages/MyTrainings";
 import Settings from "./pages/Settings";
 import Plans from "./pages/Plans";
+import Notifications from "./pages/Notifications";
+import Messages from "./pages/Messages";
+import SearchCoaches from "./pages/SearchCoaches";
+import Conversation from "./pages/Conversation";
 import Help from "./pages/Help";
 import Faqs from "./pages/Faqs";
 import Privacy from "./pages/Privacy";
@@ -43,6 +47,10 @@ function App() {
           <Route path="/cuenta" element={<ProtectedRoute><Account /></ProtectedRoute>} />
           <Route path="/configuracion" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/planes" element={<ProtectedRoute><Plans /></ProtectedRoute>} />
+          <Route path="/notificaciones" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+          <Route path="/mensajes" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+          <Route path="/mensajes/nuevo" element={<ProtectedRoute><SearchCoaches /></ProtectedRoute>} />
+          <Route path="/mensajes/:conversationId" element={<ProtectedRoute><Conversation /></ProtectedRoute>} />
 
           {/* Requieren sesión + suscripción con acceso (si no, → /planes) */}
           <Route path="/entrenamientos" element={<SubscriptionRoute><Feed /></SubscriptionRoute>} />

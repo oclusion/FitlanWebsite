@@ -11,12 +11,14 @@
     "start": "serve -s dist -l ${PORT:-8080}"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.3.0",
     "bootstrap": "^5.3.8",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-icons": "^5.7.0",
     "react-router-dom": "^7.18.2",
-    "serve": "^14.2.6"
+    "serve": "^14.2.6",
+    "sockjs-client": "^1.6.1"
   },
   "devDependencies": {
     "@types/react": "^19.2.18",

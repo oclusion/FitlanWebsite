@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { IoLogoInstagram, IoLogoFacebook, IoLogoTiktok } from "react-icons/io5";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { IoLogoInstagram, IoLogoFacebook, IoLogoTiktok, IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import coachService from "../services/coachService";
+import conversationService from "../services/conversationService";
 import { getInitials } from "../utils/initials";
 import { assetUrl } from "../utils/assetUrl";
 import ResponsiveImage from "../components/ResponsiveImage";
@@ -12,9 +13,12 @@ import ResponsiveImage from "../components/ResponsiveImage";
 // un coach, no del usuario propio — mismo dato de prueba, Keftiu Barrón).
 const CoachProfile = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [coach, setCoach] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
+  const [startingChat, setStartingChat] = useState(false);
+  const [chatError, setChatError] = useState(null);
 
   useEffect(() => {
     coachService.getCoach(id)
@@ -37,6 +41,20 @@ const CoachProfile = () => {
       console.log("No se pudo actualizar el seguimiento", error);
     } finally {
       setFollowLoading(false);
+    }
+  };
+
+  const handleOpenChat = async () => {
+    if (startingChat) return;
+    setStartingChat(true);
+    setChatError(null);
+    try {
+      const conversation = await conversationService.startConversation(id);
+      navigate(`/mensajes/${conversation.id}`);
+    } catch (error) {
+      setChatError(error.message || "No se pudo iniciar la conversación");
+    } finally {
+      setStartingChat(false);
     }
   };
 
@@ -72,9 +90,16 @@ const CoachProfile = () => {
 
             <h1 className="profile-name">{coach.name}</h1>
             {coach.description ? <p className="profile-text">{coach.description}</p> : null}
-            <button className="follow-button" type="button" onClick={handleToggleFollow} disabled={followLoading}>
-              {isFollowing ? "Siguiendo" : "Follow"}
-            </button>
+            <div className="coach-actions-row">
+              <button className="follow-button" type="button" onClick={handleToggleFollow} disabled={followLoading}>
+                {isFollowing ? "Siguiendo" : "Follow"}
+              </button>
+              <button className="follow-button chat-button" type="button" onClick={handleOpenChat} disabled={startingChat}>
+                <IoChatbubbleEllipsesOutline />
+                Chatear
+              </button>
+            </div>
+            {chatError ? <div className="alert-box"><p>{chatError}</p></div> : null}
           </div>
 
           {hasSocial ? (
