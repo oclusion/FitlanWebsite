@@ -9,6 +9,7 @@ import { IoShareSocialOutline, IoLogoWhatsapp, IoLogoFacebook, IoLogoTwitter, Io
 // — igual se puede compartir ahí copiando el link.
 const ShareMenu = ({ url, text, wrapperClassName = "", triggerClassName = "share-menu-trigger", ariaLabel = "Compartir", children }) => {
   const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const wrapperRef = useRef(null);
 
   useEffect(() => {
@@ -20,12 +21,19 @@ const ShareMenu = ({ url, text, wrapperClassName = "", triggerClassName = "share
     return () => document.removeEventListener("mousedown", handlePointer);
   }, [open]);
 
+  // Toast en vez de alert(): no bloquea la página y desaparece solo.
+  useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(timer);
+  }, [copied]);
+
   const shareText = text ? `${text} ${url}` : url;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(url);
     setOpen(false);
-    alert("Link copiado");
+    setCopied(true);
   };
 
   return (
@@ -65,6 +73,11 @@ const ShareMenu = ({ url, text, wrapperClassName = "", triggerClassName = "share
           <button type="button" className="share-menu-item" onClick={handleCopy}>
             <IoLinkOutline /> Copiar link
           </button>
+        </div>
+      ) : null}
+      {copied ? (
+        <div className="share-toast" role="status" aria-live="polite">
+          Link copiado
         </div>
       ) : null}
     </div>

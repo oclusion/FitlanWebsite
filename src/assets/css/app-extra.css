@@ -587,6 +587,34 @@ button.box.active {
     flex-shrink: 0;
 }
 
+/* Toast de "Link copiado" (reemplaza el alert() nativo, feo y bloqueante).
+   Se monta y desmonta sola por el setTimeout de ShareMenu.jsx; la animación
+   solo maneja la entrada/salida visual, mismo tiempo total (2s). */
+.share-toast {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 10;
+    margin-top: 8px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    background-color: #1c1f2a;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 13px;
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    animation: share-toast-fade 2s ease forwards;
+    pointer-events: none;
+}
+
+@keyframes share-toast-fade {
+    0% { opacity: 0; transform: translateY(-4px); }
+    10% { opacity: 1; transform: translateY(0); }
+    85% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
 .enrollment-header {
     display: flex;
     justify-content: space-between;
