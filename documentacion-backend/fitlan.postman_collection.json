@@ -1169,6 +1169,33 @@
           }
         },
         {
+          "name": "Training público por id — sin token (espera 200 si PUBLISHED)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/public/training/1",
+            "header": [],
+            "description": "Sin Authorization. 200 si el training existe y está PUBLISHED. 404 si no existe o está en DRAFT. Nunca incluye video_url ni video_key. Steps solo devuelven id, title, duration_seconds."
+          }
+        },
+        {
+          "name": "Training público por id — DRAFT (espera 404)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/public/training/2",
+            "header": [],
+            "description": "Debe devolver 404 si el training existe pero publish_status != PUBLISHED."
+          }
+        },
+        {
+          "name": "Training público por id — inexistente (espera 404)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/public/training/9999",
+            "header": [],
+            "description": "Debe devolver 404 si el training no existe."
+          }
+        },
+        {
           "name": "Crear training sin coach (admin)",
           "request": {
             "method": "POST",

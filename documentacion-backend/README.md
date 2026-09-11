@@ -683,6 +683,55 @@ Al iniciar el servidor se insertan automáticamente:
 
 ---
 
+## Training público (sin login)
+
+```
+GET /public/training/{id}
+```
+
+Sin `Authorization`. Devuelve info del training para páginas públicas compartibles y meta tags de redes sociales (WhatsApp, Facebook, X).
+
+**Reglas:**
+- 404 si no existe o `publish_status != PUBLISHED`.
+- Nunca incluye `video_url` ni `video_key` en ningún nivel.
+- Steps solo devuelven `id`, `title`, `duration_seconds`.
+
+**Response `200`:**
+```json
+{
+  "id": 1,
+  "title": "Yoga Vinyasa Nivel 1",
+  "description": "Entrenamiento de flujo dinámico para principiantes.",
+  "image_url": "https://...",
+  "image_key": "uploads/...",
+  "image_landscape_url": "https://...",
+  "image_landscape_key": "uploads/...",
+  "difficulty_level": "BEGINNER",
+  "premium": false,
+  "categories": [{ "id": 2, "name": "Yoga" }],
+  "coach": {
+    "id": 5,
+    "name": "Juan Pérez",
+    "profile_image_url": "https://...",
+    "profile_image_key": "uploads/..."
+  },
+  "sessions": [
+    {
+      "id": 1,
+      "title": "Vinyasa 1",
+      "duration_seconds": 1440,
+      "steps": [
+        { "id": 1, "title": "Saludo al sol", "duration_seconds": 900 }
+      ]
+    }
+  ]
+}
+```
+
+> `image_landscape_url` es la imagen horizontal para web desktop. Sessions están ordenadas por `display_order`; steps también.
+
+---
+
 ## Trainings
 
 | Método | Endpoint | Rol requerido |
