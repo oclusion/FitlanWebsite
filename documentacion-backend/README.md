@@ -2070,6 +2070,8 @@ axios.interceptors.response.use(
 
 > Este interceptor cubre todos los casos de `401`: token expirado, sesión cerrada remotamente, cuenta suspendida, etc.
 
+**Push notifications del dispositivo desplazado:** el backend elimina automáticamente el device token push asociado a la sesión desplazada en el mismo instante en que crea la nueva sesión. La app del dispositivo desplazado no necesita hacer ninguna llamada de desregistro — ya no recibirá notificaciones aunque nunca llegue a detectar el `401`. Este comportamiento es server-side y no requiere ninguna acción adicional del cliente.
+
 ---
 
 ## Email
