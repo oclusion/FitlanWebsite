@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import TrainingCard from "../components/TrainingCard";
 import TrainingCardSkeleton from "../components/TrainingCardSkeleton";
 import RecentTrainingsRail from "../components/RecentTrainingsRail";
+import RecentTrainingsRailSkeleton from "../components/RecentTrainingsRailSkeleton";
 import trainingService from "../services/trainingService";
 import categoryService from "../services/categoryService";
 import enrollmentService from "../services/enrollmentService";
@@ -38,6 +39,7 @@ const Feed = () => {
   const [selectedCategoryIds, setSelectedCategoryIds] = useState(readStoredCategories);
   const [trainings, setTrainings] = useState([]);
   const [recentTrainings, setRecentTrainings] = useState([]);
+  const [recentLoading, setRecentLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -52,7 +54,8 @@ const Feed = () => {
         // campo "training" anidado (mismo resguardo que TrainingsScreen.jsx).
         setRecentTrainings(items.map((item) => item.training ?? item));
       })
-      .catch((error) => console.log("No se pudieron cargar los recientes", error));
+      .catch((error) => console.log("No se pudieron cargar los recientes", error))
+      .finally(() => setRecentLoading(false));
   }, []);
 
   useEffect(() => {
@@ -183,7 +186,13 @@ const Feed = () => {
                   </div>
                 </div>
 
-                {!searchOpen ? <RecentTrainingsRail trainings={recentTrainings.slice(0, 4)} /> : null}
+                {!searchOpen ? (
+                  recentLoading ? (
+                    <RecentTrainingsRailSkeleton />
+                  ) : (
+                    <RecentTrainingsRail trainings={recentTrainings.slice(0, 4)} />
+                  )
+                ) : null}
 
                 {/* Homologado con trainingsTitle de TrainingsScreen.jsx — a
                     diferencia de "Recientes", este título se muestra también
