@@ -1,6 +1,6 @@
 // Placeholder de carga para el grid de /entrenamientos — mismo grid/shape que
-// TrainingCard (misma aspect-ratio 3/4) para que el layout no salte al llegar
-// los datos reales.
+// TrainingCard (misma clase .feed-card, aspect-ratio 3/4) para que el layout
+// no salte al llegar los datos reales.
 const TrainingCardSkeleton = () => (
   <div className="col-6 col-md-4 col-lg-3 d-flex">
     <div className="feed-card feed-card-skeleton" aria-hidden="true">

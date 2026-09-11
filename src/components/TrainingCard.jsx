@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import { formatDifficultyShort, formatDuration } from "../utils/format";
 import ResponsiveImage from "./ResponsiveImage";
 
-// Card del feed (/entrenamientos). La imagen cubre todo el card; encima, sobre un
-// degradado: título, dificultad, una línea divisoria y el nº de sesiones + los
+// Card del feed (/entrenamientos), homologado con el card de TrainingsScreen.jsx
+// (rn-starter): imagen de fondo, degradado, título, badge de dificultad (borde
+// y texto en el accent, no texto plano), línea divisoria y nº de sesiones +
 // minutos totales (suma de la duración de todos los steps). `GET /training` ya
 // trae `sessions[]` con sus `steps[]`.
 const TrainingCard = ({ training }) => {

@@ -96,13 +96,17 @@ const Feed = () => {
               <div className="container-fluid">
                 <div className="row">
                   <div className="content p-2">
-                    <h1><span>Entrena diferente con</span> Fitlan Academy</h1>
+                    <h1 className="feed-heading"><span>Entrena diferente con</span> Fitlan Academy</h1>
                     <div className="content training-menu">
                       {searchOpen ? (
                         <div className="training-search">
+                          {/* Mismo botón (ícono suelto, sin caja) que abre el
+                              buscador — homologado con searchToggleButton en
+                              TrainingsScreen.jsx, que reutiliza un solo botón
+                              con el ícono cambiando entre "search"/"close". */}
                           <button
                             type="button"
-                            className="training-search-close"
+                            className="training-search-toggle d-flex align-items-center justify-content-center"
                             onClick={closeSearch}
                             aria-label="Cerrar búsqueda"
                           >
@@ -111,7 +115,7 @@ const Feed = () => {
                           <input
                             type="text"
                             className="training-search-input"
-                            placeholder="Buscar entrenamientos"
+                            placeholder="Buscar entrenamiento..."
                             value={searchText}
                             onChange={(e) => setSearchText(e.target.value)}
                             autoFocus
@@ -119,31 +123,38 @@ const Feed = () => {
                         </div>
                       ) : (
                         <>
+                          {/* La lupa queda fija fuera del carril que scrollea
+                              (homologado con filterBarRow/searchIconButton de
+                              TrainingsScreen.jsx en rn-starter) — antes
+                              compartía el mismo overflow-x:auto que las
+                              categorías y podía quedar fuera de vista. */}
                           <button
                             type="button"
-                            className="box training-search-toggle d-flex align-items-center justify-content-center"
+                            className="training-search-toggle d-flex align-items-center justify-content-center"
                             onClick={() => setSearchOpen(true)}
                             aria-label="Buscar"
                           >
                             <IoSearchOutline />
                           </button>
-                          <button
-                            type="button"
-                            className={`box d-flex align-items-center justify-content-center${selectedCategoryIds.length === 0 ? " active" : ""}`}
-                            onClick={() => setSelectedCategoryIds([])}
-                          >
-                            Todos
-                          </button>
-                          {categories.map((cat) => (
+                          <div className="training-menu-scroll">
                             <button
-                              key={cat.id}
                               type="button"
-                              className={`box d-flex align-items-center justify-content-center${selectedCategoryIds.includes(cat.id) ? " active" : ""}`}
-                              onClick={() => toggleCategory(cat.id)}
+                              className={`box d-flex align-items-center justify-content-center${selectedCategoryIds.length === 0 ? " active" : ""}`}
+                              onClick={() => setSelectedCategoryIds([])}
                             >
-                              {cat.name}
+                              Todas
                             </button>
-                          ))}
+                            {categories.map((cat) => (
+                              <button
+                                key={cat.id}
+                                type="button"
+                                className={`box d-flex align-items-center justify-content-center${selectedCategoryIds.includes(cat.id) ? " active" : ""}`}
+                                onClick={() => toggleCategory(cat.id)}
+                              >
+                                {cat.name}
+                              </button>
+                            ))}
+                          </div>
                         </>
                       )}
                     </div>
