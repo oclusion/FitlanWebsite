@@ -71,7 +71,7 @@ POST /auth/login
 >
 > **Excepción para el website:** si el request incluye `X-Fitlan-Client: web`, el check de suscripción se omite y se emite el token igualmente. El website luego llama a `GET /subscriptions/me` para verificar el estado y redirigir al usuario a la pantalla de planes si no tiene suscripción activa.
 
-> **Límite de sesiones:** cada usuario puede tener hasta **2 sesiones activas** simultáneamente (configurable con `app.auth.max-sessions`). Al hacer login en un 3° dispositivo, la sesión más antigua se elimina automáticamente y el token de ese dispositivo queda inválido en el próximo request.
+> **Límite de sesiones:** cada usuario puede tener hasta **2 sesiones activas** simultáneamente (configurable con `app.auth.max-sessions`). Al hacer login en un 3° dispositivo, la sesión más antigua se elimina automáticamente, su token queda inválido en el próximo request **y su device token push se elimina** para que no sigan llegando notificaciones al dispositivo desplazado.
 
 ---
 
@@ -1427,6 +1427,8 @@ Authorization: Bearer <user_token o coach_token>
 → 200
 ```
 
+> El backend vincula internamente el device token con la sesión activa (mediante un hash del JWT). Esto garantiza que si esa sesión es desplazada por un login en otro dispositivo, el device token se elimina automáticamente y el dispositivo desplazado deja de recibir notificaciones.
+
 **Desregistrar — llamar en logout:**
 ```
 DELETE /api/v1/notifications/device-token
@@ -1438,6 +1440,8 @@ Authorization: Bearer <user_token o coach_token>
 Solo borra la asociación del token con el usuario autenticado. Si el token no existe o pertenece a otro usuario, no hace nada (idempotente y seguro). Si el usuario tiene sesión abierta en varios dispositivos, solo se desregistra el dispositivo que cierra sesión.
 
 Si el usuario tiene varios dispositivos, cada uno registra su propio token. Un mismo token reasignado a otro usuario se actualiza automáticamente.
+
+> **Limpieza automática de device tokens:** los device tokens se eliminan en tres situaciones: (1) logout explícito (vía `DELETE /device-token`), (2) desplazamiento por límite de sesiones concurrentes (el backend los borra al crear la nueva sesión), (3) expiración de la sesión (cron nocturno a las 03:00). El resultado es que un dispositivo siempre deja de recibir notificaciones cuando pierde su sesión, sin necesidad de acción explícita por parte de la app.
 
 ---
 
