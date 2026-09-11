@@ -4,6 +4,7 @@ import { IoPlay, IoShareSocialOutline, IoTimeOutline, IoCheckmarkCircleOutline }
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Breadcrumb from "../components/Breadcrumb";
+import ShareMenu from "../components/ShareMenu";
 import sessionService from "../services/sessionService";
 import trainingService from "../services/trainingService";
 import enrollmentService from "../services/enrollmentService";
@@ -90,18 +91,11 @@ const StepPlayer = () => {
     }
   };
 
-  const handleShare = () => {
-    // La URL pública del training (sin cuenta, sin videos), no la de este
-    // step en la app — quien la reciba no tiene sesión. No hay página
-    // pública de step, así que comparte la de su training.
-    const url = `${window.location.origin}/entrenamiento-publico/${trainingId}`;
-    if (navigator.share) {
-      navigator.share({ title: training?.title, url }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(url);
-      alert("Link copiado");
-    }
-  };
+  // La URL pública del training (sin cuenta, sin videos), no la de este step
+  // en la app — quien la reciba no tiene sesión. No hay página pública de
+  // step, así que comparte la de su training. Se usa en los dos triggers de
+  // compartir de abajo (hero y overlay de video terminado).
+  const publicUrl = `${window.location.origin}/entrenamiento-publico/${trainingId}`;
 
   if (!session) {
     return (
@@ -188,14 +182,12 @@ const StepPlayer = () => {
                   <div className="training-hero-video workout-video-placeholder">Video no disponible</div>
                 )}
 
-                <button
-                  className="share-button share-button--hero"
-                  type="button"
-                  onClick={handleShare}
-                  aria-label="Compartir"
-                >
-                  <IoShareSocialOutline />
-                </button>
+                <ShareMenu
+                  url={publicUrl}
+                  text={training?.title}
+                  wrapperClassName="share-button share-button--hero"
+                  ariaLabel="Compartir"
+                />
 
                 {!videoEnded && (isPlaying || currentTime > 0) ? (
                   <span className="training-hero-timer">{formatTimer(currentTime)}</span>
@@ -222,10 +214,16 @@ const StepPlayer = () => {
                   <div className="video-ended-overlay">
                     <IoCheckmarkCircleOutline className="video-ended-check" />
                     <div className="video-ended-actions">
-                      <button type="button" className="video-ended-share" onClick={handleShare}>
+                      <ShareMenu
+                        url={publicUrl}
+                        text={training?.title}
+                        wrapperClassName="share-menu-wrapper--inline"
+                        triggerClassName="video-ended-share"
+                        ariaLabel="Compartir"
+                      >
                         <IoShareSocialOutline />
                         Compartir
-                      </button>
+                      </ShareMenu>
                       <button
                         type="button"
                         className="video-ended-finish"

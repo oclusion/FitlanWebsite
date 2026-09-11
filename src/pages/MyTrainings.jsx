@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { IoShareSocialOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import ShareMenu from "../components/ShareMenu";
 import enrollmentService from "../services/enrollmentService";
 
 // Equivalente web de ProgressScreen.jsx en la app móvil — mismo endpoint
@@ -21,17 +21,6 @@ const MyTrainings = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleShare = (enrollment) => {
-    const url = `${window.location.origin}/entrenamiento-publico/${enrollment.training_id}`;
-    const text = `¡Llevo ${Math.round(enrollment.progress_percentage)}% de "${enrollment.training_title}" en Fitlán Academy! 💪`;
-    if (navigator.share) {
-      navigator.share({ title: enrollment.training_title, text, url }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(url);
-      alert("Link copiado");
-    }
-  };
-
   return (
     <div>
       <Header />
@@ -45,14 +34,12 @@ const MyTrainings = () => {
           <div className="enrollment-list">
             {enrollments.map((enrollment) => (
               <div key={enrollment.id} className="enrollment-card">
-                <button
-                  type="button"
-                  className="enrollment-card-share"
-                  onClick={() => handleShare(enrollment)}
-                  aria-label={`Compartir ${enrollment.training_title}`}
-                >
-                  <IoShareSocialOutline />
-                </button>
+                <ShareMenu
+                  url={`${window.location.origin}/entrenamiento-publico/${enrollment.training_id}`}
+                  text={`¡Llevo ${Math.round(enrollment.progress_percentage)}% de "${enrollment.training_title}" en Fitlán Academy! 💪`}
+                  wrapperClassName="enrollment-card-share"
+                  ariaLabel={`Compartir ${enrollment.training_title}`}
+                />
                 <Link to={`/entrenamiento/${enrollment.training_id}`} className="enrollment-card-link">
                   <div className="enrollment-header">
                     <span>{enrollment.training_title}</span>

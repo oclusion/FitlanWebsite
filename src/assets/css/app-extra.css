@@ -524,6 +524,69 @@ button.box.active {
     color: #ffffff;
 }
 
+/* ShareMenu.jsx: el wrapper hereda la posición/apariencia del botón de
+   compartir de cada contexto (share-button--hero, enrollment-card-share,
+   share-menu-wrapper--inline), y el <button> real adentro solo hace de
+   trigger transparente que llena ese espacio. El propio wrapper ya es
+   position:absolute en esos contextos, así que sirve de contenedor para el
+   menú desplegable sin declarar position acá (evita pisar esa regla). */
+.share-menu-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+    font-size: inherit;
+    cursor: pointer;
+}
+
+.share-menu-wrapper--inline {
+    position: relative;
+    display: inline-flex;
+}
+
+.share-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 10;
+    margin-top: 8px;
+    min-width: 180px;
+    padding: 6px 0;
+    border-radius: 10px;
+    background-color: #1c1f2a;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.share-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 16px;
+    border: none;
+    background: none;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 14px;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.share-menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.share-menu-item svg {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
 .enrollment-header {
     display: flex;
     justify-content: space-between;

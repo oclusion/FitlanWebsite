@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { IoShareSocialOutline, IoTimeOutline, IoChevronForward } from "react-icons/io5";
+import { IoTimeOutline, IoChevronForward } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import ShareMenu from "../components/ShareMenu";
 import trainingService from "../services/trainingService";
 import enrollmentService from "../services/enrollmentService";
 import coachService from "../services/coachService";
@@ -50,18 +51,6 @@ const TrainingDetail = () => {
       console.log("No se pudo actualizar el seguimiento", error);
     } finally {
       setFollowLoading(false);
-    }
-  };
-
-  const handleShare = () => {
-    // La URL pública (sin cuenta, sin videos), no la de la app — quien la
-    // reciba no tiene sesión. Ver PublicTraining.jsx / server.js.
-    const url = `${window.location.origin}/entrenamiento-publico/${training.id}`;
-    if (navigator.share) {
-      navigator.share({ title: training?.title, url }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(url);
-      alert("Link copiado");
     }
   };
 
@@ -151,14 +140,12 @@ const TrainingDetail = () => {
                   alt={training.title}
                   className="training-hero-image"
                 />
-                <button
-                  className="share-button share-button--hero"
-                  type="button"
-                  onClick={handleShare}
-                  aria-label="Compartir"
-                >
-                  <IoShareSocialOutline />
-                </button>
+                <ShareMenu
+                  url={`${window.location.origin}/entrenamiento-publico/${training.id}`}
+                  text={training.title}
+                  wrapperClassName="share-button share-button--hero"
+                  ariaLabel="Compartir"
+                />
                 <div className="training-hero-overlay">
                   <div className="training-hero-content">
                     <h1>{training.title}</h1>

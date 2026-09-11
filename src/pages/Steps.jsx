@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { IoShareSocialOutline, IoTimeOutline, IoVideocamOutline } from "react-icons/io5";
+import { IoTimeOutline, IoVideocamOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Breadcrumb from "../components/Breadcrumb";
+import ShareMenu from "../components/ShareMenu";
 import sessionService from "../services/sessionService";
 import trainingService from "../services/trainingService";
 import coachService from "../services/coachService";
@@ -54,19 +55,6 @@ const Steps = () => {
       console.log("No se pudo actualizar el seguimiento", error);
     } finally {
       setFollowLoading(false);
-    }
-  };
-
-  const handleShare = () => {
-    // La URL pública del training (sin cuenta, sin videos), no la de esta
-    // sesión en la app — quien la reciba no tiene sesión. No hay página
-    // pública de sesión, así que comparte la de su training.
-    const url = `${window.location.origin}/entrenamiento-publico/${trainingId}`;
-    if (navigator.share) {
-      navigator.share({ title: session?.title, url }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(url);
-      alert("Link copiado");
     }
   };
 
@@ -132,14 +120,14 @@ const Steps = () => {
                   alt={session.title}
                   className="training-hero-image"
                 />
-                <button
-                  className="share-button share-button--hero"
-                  type="button"
-                  onClick={handleShare}
-                  aria-label="Compartir"
-                >
-                  <IoShareSocialOutline />
-                </button>
+                {/* No hay página pública de sesión, así que comparte la de
+                    su training (ver TrainingDetail/StepPlayer). */}
+                <ShareMenu
+                  url={`${window.location.origin}/entrenamiento-publico/${trainingId}`}
+                  text={session.title}
+                  wrapperClassName="share-button share-button--hero"
+                  ariaLabel="Compartir"
+                />
                 <div className="training-hero-overlay">
                   <div className="training-hero-content">
                     <h1>{session.title}</h1>
