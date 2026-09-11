@@ -14,6 +14,11 @@ const trainingService = {
     return api.get(`/training?${params.toString()}`);
   },
   getTrainingById: (id) => api.get(`/training/${id}`),
+  // Sin token, sin video_url/video_key — para la página pública de compartir
+  // (/entrenamiento-publico/:id). Ver
+  // documentacion-backend/PROPUESTA-training-publico.md (todavía no
+  // implementado del lado del backend).
+  getPublicTraining: (id) => api.get(`/public/training/${id}`),
 };
 
 export default trainingService;

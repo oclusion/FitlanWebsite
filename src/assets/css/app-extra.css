@@ -1759,3 +1759,33 @@ header .logo {
     opacity: 0.5;
     cursor: default;
 }
+
+/* ---------- Página pública de un training (/entrenamiento-publico/:id) ---------- */
+.public-training-coach {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 0;
+}
+
+.public-training-coach-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    font-size: 12px;
+}
+
+.public-training-coach-avatar--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-secondary);
+    color: #5872d1;
+    font-family: "Opening", sans-serif;
+    font-weight: normal;
+}
+
+.public-training-session-row {
+    padding-left: 16px;
+}

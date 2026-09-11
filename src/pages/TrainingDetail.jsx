@@ -54,7 +54,9 @@ const TrainingDetail = () => {
   };
 
   const handleShare = () => {
-    const url = window.location.href;
+    // La URL pública (sin cuenta, sin videos), no la de la app — quien la
+    // reciba no tiene sesión. Ver PublicTraining.jsx / server.js.
+    const url = `${window.location.origin}/entrenamiento-publico/${training.id}`;
     if (navigator.share) {
       navigator.share({ title: training?.title, url }).catch(() => {});
     } else {

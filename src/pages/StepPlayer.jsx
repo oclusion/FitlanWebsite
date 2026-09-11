@@ -91,7 +91,10 @@ const StepPlayer = () => {
   };
 
   const handleShare = () => {
-    const url = window.location.href;
+    // La URL pública del training (sin cuenta, sin videos), no la de este
+    // step en la app — quien la reciba no tiene sesión. No hay página
+    // pública de step, así que comparte la de su training.
+    const url = `${window.location.origin}/entrenamiento-publico/${trainingId}`;
     if (navigator.share) {
       navigator.share({ title: training?.title, url }).catch(() => {});
     } else {

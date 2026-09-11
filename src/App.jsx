@@ -21,6 +21,7 @@ import Notifications from "./pages/Notifications";
 import Messages from "./pages/Messages";
 import SearchCoaches from "./pages/SearchCoaches";
 import Conversation from "./pages/Conversation";
+import PublicTraining from "./pages/PublicTraining";
 import Help from "./pages/Help";
 import Faqs from "./pages/Faqs";
 import Privacy from "./pages/Privacy";
@@ -42,6 +43,9 @@ function App() {
           <Route path="/privacidad" element={<Privacy />} />
           <Route path="/acerca-de" element={<About />} />
           <Route path="/ayuda" element={<Help />} />
+          {/* Sin cuenta, sin videos — para compartir (ver server.js, arma
+              meta tags OG/Twitter del training para bots de redes) */}
+          <Route path="/entrenamiento-publico/:id" element={<PublicTraining />} />
 
           {/* Solo requieren sesión (cuenta activa) */}
           <Route path="/cuenta" element={<ProtectedRoute><Account /></ProtectedRoute>} />
