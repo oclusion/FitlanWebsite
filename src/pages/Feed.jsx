@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { IoSearchOutline, IoCloseOutline } from "react-icons/io5";
+import { IoSearchOutline, IoCloseOutline, IoChevronForward } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import TrainingCard from "../components/TrainingCard";
 import TrainingCardSkeleton from "../components/TrainingCardSkeleton";
+import RecentTrainingsRail from "../components/RecentTrainingsRail";
 import trainingService from "../services/trainingService";
 import categoryService from "../services/categoryService";
+import enrollmentService from "../services/enrollmentService";
 
 // Puerto de maquetas/assets/includes/feed-training.html — el menú de categorías
 // hardcodeado (Box, Yoga, Vinyasa...) se reemplaza por las categorías reales
@@ -35,10 +37,23 @@ const Feed = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState(readStoredCategories);
   const [trainings, setTrainings] = useState([]);
+  const [recentTrainings, setRecentTrainings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  // Independiente del filtro de categoría/búsqueda — se carga una sola vez.
+  useEffect(() => {
+    enrollmentService.getRecentTrainings()
+      .then((data) => {
+        const items = Array.isArray(data) ? data : [];
+        // El endpoint puede devolver trainings directo o enrollments con un
+        // campo "training" anidado (mismo resguardo que TrainingsScreen.jsx).
+        setRecentTrainings(items.map((item) => item.training ?? item));
+      })
+      .catch((error) => console.log("No se pudieron cargar los recientes", error));
+  }, []);
 
   useEffect(() => {
     categoryService.getCategories()
@@ -136,30 +151,44 @@ const Feed = () => {
                           >
                             <IoSearchOutline />
                           </button>
-                          <div className="training-menu-scroll">
-                            <button
-                              type="button"
-                              className={`box d-flex align-items-center justify-content-center${selectedCategoryIds.length === 0 ? " active" : ""}`}
-                              onClick={() => setSelectedCategoryIds([])}
-                            >
-                              Todas
-                            </button>
-                            {categories.map((cat) => (
+                          <div className="scroll-hint-wrap">
+                            <div className="training-menu-scroll">
                               <button
-                                key={cat.id}
                                 type="button"
-                                className={`box d-flex align-items-center justify-content-center${selectedCategoryIds.includes(cat.id) ? " active" : ""}`}
-                                onClick={() => toggleCategory(cat.id)}
+                                className={`box d-flex align-items-center justify-content-center${selectedCategoryIds.length === 0 ? " active" : ""}`}
+                                onClick={() => setSelectedCategoryIds([])}
                               >
-                                {cat.name}
+                                Todas
                               </button>
-                            ))}
+                              {categories.map((cat) => (
+                                <button
+                                  key={cat.id}
+                                  type="button"
+                                  className={`box d-flex align-items-center justify-content-center${selectedCategoryIds.includes(cat.id) ? " active" : ""}`}
+                                  onClick={() => toggleCategory(cat.id)}
+                                >
+                                  {cat.name}
+                                </button>
+                              ))}
+                            </div>
+                            {/* Puramente decorativa — el degradado ya insinúa
+                                que sigue, esto lo hace más explícito. */}
+                            <span className="scroll-hint-arrow" aria-hidden="true">
+                              <IoChevronForward />
+                            </span>
                           </div>
                         </>
                       )}
                     </div>
                   </div>
                 </div>
+
+                {!searchOpen ? <RecentTrainingsRail trainings={recentTrainings.slice(0, 4)} /> : null}
+
+                {/* Homologado con trainingsTitle de TrainingsScreen.jsx — a
+                    diferencia de "Recientes", este título se muestra también
+                    durante la búsqueda (ahí encabeza los resultados). */}
+                {loading || trainings.length > 0 ? <h3 className="feed-section-title">Entrenamientos</h3> : null}
 
                 {loading ? (
                   <div className="row g-3">

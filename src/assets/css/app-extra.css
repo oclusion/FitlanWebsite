@@ -65,6 +65,36 @@ button.box.active {
     margin-bottom: 16px;
 }
 
+/* Wrapper genérico para "esto scrollea horizontal" — position:relative para
+   anclar la flechita (.scroll-hint-arrow) fuera del elemento que scrollea
+   (si viviera adentro, se movería con el scroll en vez de quedar fija en el
+   borde). En .training-menu (flex) también hace de flex item: min-width:0
+   para que el overflow-x de adentro pueda activarse (mismo gotcha
+   documentado en .conversation-thread / .training-hero de este archivo). */
+.scroll-hint-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+}
+
+.scroll-hint-arrow {
+    position: absolute;
+    top: 50%;
+    right: 4px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.55);
+    color: #ffffff;
+    font-size: 14px;
+    /* Decorativa — no debe robarle el click/touch al scroll de abajo. */
+    pointer-events: none;
+}
+
 .training-menu-scroll {
     display: flex;
     align-items: center;
@@ -72,10 +102,12 @@ button.box.active {
     overflow-x: auto;
     flex-wrap: nowrap;
     scrollbar-width: none;
-    /* Sin esto el item flex no encoge por debajo del ancho de su contenido y
-       el overflow-x nunca llega a activarse (mismo gotcha documentado en
-       .conversation-thread / .training-hero de este archivo). */
-    min-width: 0;
+    /* Sin scrollbar visible (::-webkit-scrollbar de acá abajo) ni flecha,
+       nada avisaba que esto scrollea horizontal — el último chip quedaba
+       cortado justo en el borde, indistinguible de "no hay más". El
+       degradado en el borde derecho insinúa que sigue contenido. */
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent 100%);
 }
 
 .training-menu-scroll::-webkit-scrollbar {
@@ -417,6 +449,80 @@ button.box.active {
 .feed-card-meta {
     color: rgba(255, 255, 255, 0.8);
     font-size: 0.8125rem;
+}
+
+/* Título de sección del feed — compartido por "Recientes" (RecentTrainingsRail)
+   y "Entrenamientos" (Feed.jsx), homologado con recentTitle/trainingsTitle
+   de TrainingsScreen.jsx (mismo estilo en la app para los dos). */
+.feed-section-title {
+    margin: 0 0 12px;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+/* ---------- "Recientes" del feed (/entrenamientos) ---------- */
+/* Homologado con recentSection/recentCardTouchable de TrainingsScreen.jsx
+   (rn-starter): riel horizontal, solo título + badge de dificultad (sin meta
+   de sesiones/duración). El tamaño fijo 140x190 de la app (dp de un celular)
+   se veía chico acá — las cards ahora miden lo mismo que las de
+   "Entrenamientos" (.feed-card): mismas proporciones col-6/col-md-4/col-lg-3
+   y mismo gap (g-3, 16px) del grid de abajo, para que se vean del mismo
+   tamaño en vez de una franja angosta aparte. */
+.recent-trainings {
+    margin: 8px 0 24px;
+}
+
+.recent-trainings-scroll {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* Mismo degradado de borde que .training-menu-scroll: insinúa que el
+       riel sigue, sin eso el último card visible se veía como si fuera el
+       único. */
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent 100%);
+}
+
+.recent-trainings-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* .recent-card se suma a .feed-card (misma card, mismo tamaño) — acá solo se
+   pisa el width:100% de .feed-card por un ancho fijo dentro del riel, ya que
+   en .feed-card ese 100% lo da la columna Bootstrap (col-6/md-4/lg-3) y acá
+   no hay columna, hay un flex item dentro de .recent-trainings-scroll. */
+.recent-card {
+    flex: 0 0 calc(50% - 8px);
+    width: calc(50% - 8px);
+}
+
+@media (min-width: 768px) {
+    .recent-card {
+        flex-basis: calc(33.333% - 11px);
+        width: calc(33.333% - 11px);
+    }
+}
+
+@media (min-width: 992px) {
+    .recent-card {
+        flex-basis: calc(25% - 12px);
+        width: calc(25% - 12px);
+    }
+
+    /* De acá para arriba entran los 4 recientes sin scroll (25% x 4 = 100%,
+       mismo breakpoint que .recent-card) — ni la flecha ni el degradado
+       tienen sentido si no hay nada oculto que insinuar. La barra de
+       categorías no entra acá: esa sí puede desbordar en cualquier ancho
+       según cuántas categorías haya. */
+    .recent-trainings .scroll-hint-arrow {
+        display: none;
+    }
+
+    .recent-trainings .recent-trainings-scroll {
+        mask-image: none;
+        -webkit-mask-image: none;
+    }
 }
 
 /* ---------- Skeletons de carga (feed, ficha de training, sesión, step) ---------- */
