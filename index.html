@@ -11,6 +11,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
 
+    <!-- "Opening" es la fuente de los títulos grandes (h1/h2 — "VINYASA",
+         "Notificaciones", etc.), muy distinta en métricas a la fuente de
+         respaldo. Sin preload, el navegador recién la pide cuando parsea el
+         @font-face de styles.css y encuentra texto que la usa — con
+         font-display:swap eso se nota como un salto de layout al llegar. El
+         preload la arranca a descargar en paralelo con el resto del HTML. -->
+    <link rel="preload" href="/src/assets/fonts/opening-webfont.woff2" as="font" type="font/woff2" crossorigin />
+
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />

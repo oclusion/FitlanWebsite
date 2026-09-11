@@ -785,6 +785,22 @@ button.step {
     color: #ffffff;
 }
 
+/* Íconos de redes de la ficha de coach — homologados con socialButton de
+   CoachDetailScreen (rn-starter): círculo con borde en el acento en vez del
+   cuadrado relleno negro de la maqueta (.social-icon, que se deja intacto
+   para /acerca-de, que no comparte esta referencia). */
+.profile-social-centered .social-icon {
+    border-radius: 50%;
+    background-color: transparent;
+    border: 1px solid #5b6fc3;
+    color: #5b6fc3;
+}
+
+.profile-social-centered .social-icon:hover {
+    background-color: rgba(91, 111, 195, 0.15);
+    color: #5b6fc3;
+}
+
 /* "Chatear" junto a "Seguir" en la ficha de coach — homologado con el
    followRow de CoachDetailScreen (rn-starter). */
 .coach-actions-row {
