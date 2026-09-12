@@ -2154,7 +2154,7 @@ Al agregar el dominio público del website, añadirlo a la lista separado por co
 CORS_ALLOWED_ORIGINS=https://considerate-mercy-production-fb32.up.railway.app,https://fitlan.mx,http://localhost:*
 ```
 
-Los WebSockets (`/ws/**`, `/ws-native/**`) aceptan cualquier origen independientemente de esta variable (necesario para clientes móviles).
+**Métodos permitidos:** `GET, POST, PUT, PATCH, DELETE, OPTIONS`. Los WebSockets (`/ws/**`, `/ws-native/**`) aceptan cualquier origen independientemente de esta variable (necesario para clientes móviles).
 
 ---
 
