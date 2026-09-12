@@ -20,8 +20,9 @@ import NotificationCardSkeleton from "../components/NotificationCardSkeleton";
 import { parseServerDate } from "../utils/parseServerDate";
 
 // Puerto de NotificationsScreen (rn-starter). El swipe-to-reveal (marcar
-// leída / borrar) de la app no existe en web — se muestran esos dos botones
-// siempre visibles al lado de cada card en vez de requerir un gesto.
+// leída / borrar) de la app no existe en web — en vez de requerir un gesto,
+// esos dos botones quedan siempre visibles, pero discretos (ghost, dentro de
+// la misma card) en vez de dos cuadros de color grandes al costado.
 const iconByType = {
   NEW_TRAINING: IoBarbellOutline,
   WEEKLY_ACHIEVEMENT: IoTrophyOutline,
@@ -172,7 +173,20 @@ const Notifications = () => {
                 const Icon = iconByType[item.type] ?? IoNotificationsOutline;
                 return (
                   <div key={item.id} className={`notification-card${!item.read ? " notification-card--unread" : ""}`}>
-                    <button type="button" className="notification-card-main" onClick={() => handleOpenNotification(item)}>
+                    {/* Ya no es <button> (no puede anidar los de "acciones" abajo) —
+                        mismo rol/teclado que uno vía role="button" + onKeyDown. */}
+                    <div
+                      className="notification-card-main"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => handleOpenNotification(item)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handleOpenNotification(item);
+                        }
+                      }}
+                    >
                       <span className="notification-icon"><Icon /></span>
                       <span className="notification-info">
                         <span className="notification-title">{item.title}</span>
@@ -180,25 +194,27 @@ const Notifications = () => {
                         <span className="notification-time">{formatNotificationTime(item.created_at)}</span>
                       </span>
                       {!item.read ? <span className="notification-unread-dot" /> : null}
-                    </button>
+                    </div>
                     <div className="notification-actions">
                       {!item.read ? (
                         <button
                           type="button"
-                          className="notification-action notification-action--read"
+                          className="notification-action"
                           onClick={() => handleMarkAsRead(item.id)}
                           aria-label="Marcar como leída"
                         >
                           <IoMailOpenOutline />
+                          Leída
                         </button>
                       ) : null}
                       <button
                         type="button"
-                        className="notification-action notification-action--delete"
+                        className="notification-action notification-action--danger"
                         onClick={() => handleDelete(item.id)}
                         aria-label="Eliminar"
                       >
                         <IoTrashOutline />
+                        Eliminar
                       </button>
                     </div>
                   </div>

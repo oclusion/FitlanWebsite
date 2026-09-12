@@ -1578,29 +1578,32 @@ header .logo {
     gap: 10px;
 }
 
+/* El borde/fondo de la card ahora vive acá (antes en .notification-card-main)
+   para que las acciones (.notification-actions) queden adentro de la misma
+   card en vez de dos cuadros de color aparte al costado — más discreto,
+   ver comentario en Notifications.jsx. */
 .notification-card {
-    display: flex;
-    align-items: stretch;
-    gap: 8px;
+    padding: 12px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background-color: #1c1f2a;
+}
+
+.notification-card--unread {
+    border-color: #5b6fc3;
 }
 
 .notification-card-main {
     display: flex;
     align-items: flex-start;
-    flex: 1;
-    min-width: 0;
+    width: 100%;
     gap: 12px;
-    padding: 12px;
-    border: 1px solid transparent;
-    border-radius: 10px;
-    background-color: #1c1f2a;
+    padding: 0;
+    border: none;
+    background: none;
     color: #ffffff;
     text-align: left;
     cursor: pointer;
-}
-
-.notification-card--unread .notification-card-main {
-    border-color: #5b6fc3;
 }
 
 .notification-icon {
@@ -1648,32 +1651,42 @@ header .logo {
     background-color: #5b6fc3;
 }
 
+/* Alineadas bajo .notification-info (36px del ícono + 12px del gap), no
+   bajo el ícono — mismo criterio que la maqueta original de esta card. */
 .notification-actions {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex-shrink: 0;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-top: 8px;
+    padding-left: 48px;
 }
 
 .notification-action {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 40px;
-    flex: 1;
+    gap: 6px;
+    padding: 4px 8px;
     border: none;
-    border-radius: 10px;
-    color: #ffffff;
-    font-size: 18px;
+    border-radius: 6px;
+    background: none;
+    color: #8a8a9a;
+    font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease;
 }
 
-.notification-action--read {
-    background-color: #5872d1;
+.notification-action svg {
+    font-size: 16px;
 }
 
-.notification-action--delete {
-    background-color: #e2574c;
+.notification-action:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    color: #ffffff;
+}
+
+.notification-action--danger:hover {
+    color: #e2574c;
 }
 
 /* ---------- Mensajes (/mensajes) — puerto de MessagesScreen ---------- */
