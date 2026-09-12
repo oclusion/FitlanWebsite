@@ -113,7 +113,7 @@ const Header = () => {
                 <nav id="menuNav" className={menuOpen ? "collapse show" : "collapse"}>
                   <ul>
                     <li><Link to="/cuenta" onClick={() => setMenuOpen(false)}>Mi cuenta</Link></li>
-                    <li><Link to="/mis-entrenamientos" onClick={() => setMenuOpen(false)}>Mis entrenamientos</Link></li>
+                    <li><Link to="/progreso" onClick={() => setMenuOpen(false)}>Progreso</Link></li>
                     <li><Link to="/configuracion" onClick={() => setMenuOpen(false)}>Configuración</Link></li>
                     <li><Link to="/ayuda" onClick={() => setMenuOpen(false)}>Ayuda</Link></li>
                     <li>

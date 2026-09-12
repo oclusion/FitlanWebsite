@@ -631,53 +631,50 @@ button.box.active {
     font-size: 32px;
 }
 
-/* ---------- Mis entrenamientos (progreso) ---------- */
+/* ---------- Progreso (antes "Mis entrenamientos") ---------- */
+/* Homologado con ProgressScreen.jsx (rn-starter): sin el botón de compartir
+   que tenía esta pantalla en el sitio (no existe en la app) y con el mismo
+   look de card — fondo colors.card sin borde, no un cuadro con contorno. */
 .enrollment-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 8px;
+}
+
+.enrollment-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 60px 24px;
+    color: #8a8a9a;
+    font-size: 40px;
+    text-align: center;
+}
+
+.enrollment-empty p {
+    font-size: 16px;
 }
 
 .enrollment-card {
-    position: relative;
     padding: 16px;
-    border: 1px solid #8a8a9a;
-    border-radius: 8px;
+    border-radius: 16px;
+    background-color: var(--bg-secondary);
 }
 
 .enrollment-card-link {
     display: block;
-    padding-right: 28px;
     text-decoration: none;
     color: var(--text-primary);
 }
 
-.enrollment-card-share {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: none;
-    background: none;
-    color: #8a8a9a;
-    font-size: 18px;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-
-.enrollment-card-share:hover {
-    color: #ffffff;
-}
-
 /* ShareMenu.jsx: el wrapper hereda la posición/apariencia del botón de
-   compartir de cada contexto (share-button--hero, enrollment-card-share,
-   share-menu-wrapper--inline), y el <button> real adentro solo hace de
-   trigger transparente que llena ese espacio. El propio wrapper ya es
-   position:absolute en esos contextos, así que sirve de contenedor para el
-   menú desplegable sin declarar position acá (evita pisar esa regla). */
+   compartir de cada contexto (share-button--hero, share-menu-wrapper--inline),
+   y el <button> real adentro solo hace de trigger transparente que llena ese
+   espacio. El propio wrapper ya es position:absolute en esos contextos, así
+   que sirve de contenedor para el menú desplegable sin declarar position acá
+   (evita pisar esa regla). */
 .share-menu-trigger {
     display: flex;
     align-items: center;
@@ -765,22 +762,46 @@ button.box.active {
 
 .enrollment-header {
     display: flex;
+    align-items: center;
     justify-content: space-between;
+    gap: 8px;
     font-weight: bold;
     margin-bottom: 8px;
 }
 
+.enrollment-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.enrollment-percentage {
+    flex-shrink: 0;
+    color: #5b6fc3;
+}
+
+/* El track va sobre el fondo de la página (var(--bg-primary)), no el del
+   card (que ahora es el mismo tono que antes usaba el track) — si no, con
+   .enrollment-card ya pintado del mismo color, la parte sin completar del
+   progreso se volvía invisible contra el fondo del card. */
 .progress-track {
     height: 8px;
     border-radius: 4px;
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-primary);
     overflow: hidden;
-    margin: 20px 0;
+    margin: 0 0 8px;
 }
 
 .progress-fill {
     height: 100%;
+    border-radius: 4px;
     background-color: var(--accent);
+}
+
+.enrollment-sessions {
+    margin: 0;
+    color: #8a8a9a;
+    font-size: 13px;
 }
 
 /* ---------- Planes ---------- */

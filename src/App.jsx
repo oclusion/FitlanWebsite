@@ -62,7 +62,7 @@ function App() {
           <Route path="/entrenamiento/:trainingId/sesion/:sessionId" element={<SubscriptionRoute><Steps /></SubscriptionRoute>} />
           <Route path="/entrenamiento/:trainingId/sesion/:sessionId/step/:stepId" element={<SubscriptionRoute><StepPlayer /></SubscriptionRoute>} />
           <Route path="/entrenador/:id" element={<SubscriptionRoute><CoachProfile /></SubscriptionRoute>} />
-          <Route path="/mis-entrenamientos" element={<SubscriptionRoute><MyTrainings /></SubscriptionRoute>} />
+          <Route path="/progreso" element={<SubscriptionRoute><MyTrainings /></SubscriptionRoute>} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
