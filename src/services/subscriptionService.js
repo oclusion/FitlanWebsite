@@ -30,6 +30,16 @@ export const subscriptionStatusMeta = (subscription) => {
   return STATUS_META[subscription.status] ?? { label: subscription.status, modifier: "active" };
 };
 
+// Suscripciones asignadas manualmente desde el admin (sin stripe_customer_id)
+// dan 200 en GET /subscriptions/me igual que una de Stripe — el frontend no
+// tiene forma de distinguirlas de antemano (el response no expone
+// stripe_customer_id, ver README backend), así que "Gestionar suscripción"
+// se ofrece siempre con acceso activo, pero si el usuario es de este tipo el
+// portal responde 400 con este mensaje puntual. Ahí sí conviene aclarar que
+// no es un error transitorio — reintentar no va a arreglar nada.
+export const isManualSubscriptionError = (error) =>
+  error?.error === "El usuario no tiene un customer de Stripe";
+
 const subscriptionService = {
   getPlans: () => api.get("/subscriptions/plans"),
   // Puede devolver 404 si el usuario no tiene ninguna suscripción — no es un error,

@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import subscriptionService, { hasSubscriptionAccess, subscriptionStatusMeta } from "../services/subscriptionService";
+import subscriptionService, {
+  hasSubscriptionAccess,
+  subscriptionStatusMeta,
+  isManualSubscriptionError,
+} from "../services/subscriptionService";
 
 // Homologado con el flujo recomendado en el README backend ("Flujo
 // recomendado en el website" → página /planes): con suscripción activa se
@@ -62,7 +66,11 @@ const Plans = () => {
       window.location.assign(url);
     } catch (error) {
       console.log("No se pudo abrir el portal de suscripción", error);
-      setActionError(error.error || "No se pudo abrir la gestión de suscripción. Intentá de nuevo en unos minutos.");
+      setActionError(
+        isManualSubscriptionError(error)
+          ? "Tu plan fue activado manualmente por el equipo de Fitlán — contactanos para hacer cambios."
+          : error.error || "No se pudo abrir la gestión de suscripción. Intentá de nuevo en unos minutos.",
+      );
       setManagingPortal(false);
     }
   };

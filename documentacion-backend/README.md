@@ -2361,13 +2361,16 @@ if (res.ok) {
 
 **Estados que el frontend debe mostrar:**
 
-| Estado | Badge | Acción sugerida |
-|---|---|---|
-| `ACTIVE` | Verde — Activo | Botón "Gestionar" → portal |
-| `TRIALING` | Azul — En prueba | Botón "Gestionar" → portal |
-| `PAST_DUE` | Naranja — Pago pendiente | Botón "Gestionar" → portal |
-| `CANCELED` | Gris — Cancela el {fecha} | Botón "Renovar" → checkout |
-| `404` | Sin plan | Botón "Ver planes" → /planes |
+| Estado | `stripe_customer_id` | Badge | Acción sugerida |
+|---|---|---|---|
+| `ACTIVE` | presente | Verde — Activo | Botón "Gestionar" → portal |
+| `TRIALING` | presente | Azul — En prueba | Botón "Gestionar" → portal |
+| `PAST_DUE` | presente | Naranja — Pago pendiente | Botón "Gestionar" → portal |
+| `CANCELED` | presente | Gris — Cancela el {fecha} | Botón "Renovar" → checkout |
+| `ACTIVE` / `TRIALING` | ausente (manual) | Verde — Activo | Sin botón de gestión — plan asignado por admin |
+| `404` | — | Sin plan | Botón "Ver planes" → /planes |
+
+> **Suscripción manual vs. Stripe:** `GET /subscriptions/me` no expone el `stripe_customer_id` — el frontend no puede distinguir si el plan viene de Stripe o fue asignado manualmente. Por eso si el usuario con suscripción manual pulsa "Gestionar", el portal devuelve `400`. La solución práctica es ocultar el botón de portal/gestión si el usuario ya tiene plan activo y redirigir a soporte si quiere cambiar de plan.
 
 ---
 
@@ -2383,9 +2386,25 @@ Authorization: Bearer <token>
 → 200 { "url": "https://billing.stripe.com/..." }    ← usuario ya tiene suscripción → portal
 ```
 
-El website redirige al usuario a esa URL en ambos casos. Si el usuario ya tiene suscripción activa, el backend lo detecta y devuelve directamente la URL del Customer Portal para que gestione su plan desde ahí (sin crear una suscripción duplicada en Stripe).
+El website redirige al usuario a esa URL en ambos casos. El backend usa el **mismo criterio que `GET /subscriptions/me`** para decidir si el usuario ya tiene suscripción activa: evalúa únicamente la fila más reciente en BD y aplica la misma regla de acceso (ACTIVE/TRIALING/PAST_DUE = activa; CANCELED solo si `current_period_end` está en el futuro).
 
-> Si el plan no tiene `stripe_price_id` configurado en la BD → `400 { "error": "El plan PRO no tiene un stripe_price_id configurado" }`
+| Estado de la suscripción más reciente | Resultado |
+|---|---|
+| Sin suscripción activa | Crea checkout nuevo en Stripe |
+| ACTIVE / TRIALING / PAST_DUE (Stripe) | Redirige al Customer Portal |
+| CANCELED con `current_period_end` en el futuro (Stripe) | Redirige al Customer Portal |
+| CANCELED con `current_period_end` en el pasado | Crea checkout nuevo — el usuario puede volver a suscribirse |
+| ACTIVE / TRIALING / PAST_DUE (manual, sin Stripe) | `400` — suscripción asignada por admin |
+
+**Errores posibles:**
+
+| Código | Causa |
+|---|---|
+| `400` | El plan no tiene `stripe_price_id` configurado en BD |
+| `400` | El usuario tiene suscripción activa asignada manualmente por admin |
+| `500` | Error de conexión con Stripe |
+
+> **Consistencia con `/subscriptions/me`:** el criterio de "ya tiene suscripción" es idéntico en ambos endpoints — si `GET /subscriptions/me` devuelve `404`, el checkout siempre crea una sesión nueva en Stripe (nunca redirige al portal).
 
 ---
 
@@ -2399,7 +2418,7 @@ Authorization: Bearer <token>
 → 200 { "url": "https://billing.stripe.com/..." }
 ```
 
-> Si el usuario nunca hizo checkout (no tiene `stripe_customer_id`) → `400 { "error": "El usuario no tiene un customer de Stripe" }`
+> `400` si el usuario nunca hizo checkout de Stripe (no tiene `stripe_customer_id`) — esto incluye usuarios con suscripción asignada manualmente desde el CMS. En ese caso, gestionar el acceso directamente desde el panel de admin.
 
 ---
 

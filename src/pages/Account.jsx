@@ -4,7 +4,11 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ConfirmModal from "../components/ConfirmModal";
 import userService from "../services/userService";
-import subscriptionService, { hasSubscriptionAccess, subscriptionStatusMeta } from "../services/subscriptionService";
+import subscriptionService, {
+  hasSubscriptionAccess,
+  subscriptionStatusMeta,
+  isManualSubscriptionError,
+} from "../services/subscriptionService";
 import { useAuth } from "../context/AuthContext";
 import { getInitials } from "../utils/initials";
 import { assetUrl } from "../utils/assetUrl";
@@ -40,7 +44,11 @@ const Account = () => {
       window.location.assign(url);
     } catch (error) {
       console.log("No se pudo abrir el portal de suscripción", error);
-      setPortalError(error.error || "No se pudo abrir la gestión de suscripción. Intentá de nuevo en unos minutos.");
+      setPortalError(
+        isManualSubscriptionError(error)
+          ? "Tu plan fue activado manualmente por el equipo de Fitlán — contactanos para hacer cambios."
+          : error.error || "No se pudo abrir la gestión de suscripción. Intentá de nuevo en unos minutos.",
+      );
       setOpeningPortal(false);
     }
   };
