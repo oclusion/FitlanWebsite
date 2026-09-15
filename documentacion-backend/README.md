@@ -2199,10 +2199,32 @@ Disponible en `http://localhost:5173`. Requiere que el backend esté corriendo e
 
 ## Suscripciones
 
+Las suscripciones se gestionan con **Stripe**. El backend recibe eventos vía webhook y actualiza la base de datos automáticamente.
+
+**Variables de entorno requeridas en Railway:**
+| Variable | Descripción |
+|---|---|
+| `STRIPE_SECRET_KEY` | Secret key de Stripe (`sk_live_...` o `sk_test_...`) |
+| `STRIPE_WEBHOOK_SECRET` | Signing secret del webhook (`whsec_...`) — se obtiene en Stripe → Desarrolladores → Webhooks |
+
+**Configurar el webhook en Stripe:**
+- URL: `https://fitlan-production.up.railway.app/api/v1/stripe/webhook`
+- Eventos: `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.payment_failed`
+
+**Configurar planes:** cada plan en la BD necesita su `stripe_price_id` (se crea en Stripe → Catálogo de productos):
+```sql
+UPDATE plans SET stripe_price_id = 'price_xxx' WHERE id = 'LITE';
+UPDATE plans SET stripe_price_id = 'price_xxx' WHERE id = 'BASIC';
+UPDATE plans SET stripe_price_id = 'price_xxx' WHERE id = 'PRO';
+```
+
 | Método | Endpoint | Rol requerido |
 |---|---|---|
 | GET | `/subscriptions/plans` | Público |
 | GET | `/subscriptions/me` | USER, ADMIN |
+| POST | `/subscriptions/checkout` | USER, ADMIN |
+| POST | `/subscriptions/portal` | USER, ADMIN |
+| POST | `/stripe/webhook` | Público (verificado con firma HMAC) |
 | GET | `/admin/subscriptions` | ADMIN |
 | POST | `/admin/subscriptions` | ADMIN |
 
@@ -2291,6 +2313,57 @@ Authorization: Bearer <token>
 > `cancel_at_period_end: true` significa que la suscripción no se renovará al terminar el periodo actual — el usuario canceló pero todavía tiene acceso.
 
 > **Quitar suscripción desde el panel admin:** se envía `CANCELED` con `current_period_end` en el pasado (fecha de ayer en hora local), lo que revoca el acceso inmediatamente. La condición de `CANCELED` requiere `current_period_end > now`; al enviarlo en el pasado el acceso cae sin importar diferencias de zona horaria entre cliente y servidor.
+
+---
+
+### Iniciar checkout con Stripe
+
+Crea una sesión de pago en Stripe y devuelve la URL a la que el website debe redirigir al usuario.
+
+```
+POST /api/v1/subscriptions/checkout
+Authorization: Bearer <token>
+{ "plan": "PRO" }
+→ 200 { "url": "https://checkout.stripe.com/..." }
+```
+
+El website redirige al usuario a esa URL. Stripe gestiona el pago y redirige de vuelta a `stripe.success-url` (configurable). El webhook actualiza la BD automáticamente al completarse el pago.
+
+> Si el plan no tiene `stripe_price_id` configurado en la BD → `400 { "error": "El plan PRO no tiene un stripe_price_id configurado" }`
+
+---
+
+### Portal de cliente (gestionar / cancelar suscripción)
+
+Genera una sesión del Customer Portal de Stripe donde el usuario puede cambiar método de pago, ver facturas o cancelar.
+
+```
+POST /api/v1/subscriptions/portal
+Authorization: Bearer <token>
+→ 200 { "url": "https://billing.stripe.com/..." }
+```
+
+> Si el usuario nunca hizo checkout (no tiene `stripe_customer_id`) → `400 { "error": "El usuario no tiene un customer de Stripe" }`
+
+---
+
+### Webhook de Stripe
+
+Endpoint que Stripe llama automáticamente cuando ocurre un evento de suscripción. **No llamar manualmente.**
+
+```
+POST /api/v1/stripe/webhook
+Stripe-Signature: t=...,v1=...
+```
+
+Eventos que procesa:
+
+| Evento Stripe | Acción en BD |
+|---|---|
+| `customer.subscription.created` | Crea o actualiza la suscripción del usuario |
+| `customer.subscription.updated` | Actualiza estado, fechas y `cancel_at_period_end` |
+| `customer.subscription.deleted` | Marca la suscripción como `CANCELED` |
+| `invoice.payment_failed` | Marca la suscripción como `PAST_DUE` |
 
 ---
 

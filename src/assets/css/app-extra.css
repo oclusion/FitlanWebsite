@@ -1038,6 +1038,15 @@ button.step {
     align-items: center;
 }
 
+/* "Cambiar de plan" + "Gestionar suscripción" (Customer Portal de Stripe,
+   solo con suscripción activa) lado a lado en vez de apilados. */
+.account-subscription-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
 /* CoachProfile: cabecera centrada — foto arriba y nombre / descripción / follow
    apilados y centrados debajo (la maqueta los ponía lado a lado, alineados a la
    izquierda). También se centran las redes y la grilla de entrenamientos. */

@@ -2410,6 +2410,7 @@
     },
     {
       "name": "12. Suscripciones",
+      "description": "Integración con Stripe para pagos recurrentes.\n\nFlujo de checkout:\n  1. Website llama a POST /subscriptions/checkout con el plan elegido\n  2. Backend crea una sesión en Stripe y devuelve la URL\n  3. Website redirige al usuario a esa URL\n  4. Stripe procesa el pago y llama al webhook\n  5. Webhook actualiza el estado en la BD automáticamente\n\nFlujo de gestión (cambiar tarjeta, cancelar):\n  1. Website llama a POST /subscriptions/portal\n  2. Backend devuelve la URL del Customer Portal de Stripe\n  3. Website redirige al usuario\n\nWebhook: POST /api/v1/stripe/webhook — Stripe lo llama automáticamente. No invocar manualmente.\nEventos procesados: customer.subscription.created/updated/deleted, invoice.payment_failed\n\nConfiguración requerida en Railway:\n  STRIPE_SECRET_KEY=sk_live_...\n  STRIPE_WEBHOOK_SECRET=whsec_...\n\nCada plan en BD necesita su stripe_price_id (Stripe → Catálogo de productos).",
       "item": [
         {
           "name": "Planes disponibles (público)",
@@ -2429,6 +2430,49 @@
             "header": [
               { "key": "Authorization", "value": "Bearer {{user_token}}" }
             ]
+          }
+        },
+        {
+          "name": "Iniciar checkout (Stripe)",
+          "description": "Crea una sesión de pago en Stripe y devuelve la URL de checkout.\n\nEl website redirige al usuario a esa URL. Stripe gestiona el formulario de pago y redirige de vuelta a stripe.success-url al completarse.\nEl webhook actualiza la BD automáticamente — no es necesario hacer nada más desde el cliente.\n\n→ 400 si el plan no tiene stripe_price_id configurado en la BD.\n→ 500 si hay error de conexión con Stripe.\n\nplan: LITE | BASIC | PRO",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/subscriptions/checkout",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{user_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plan\": \"PRO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Portal de cliente (gestionar suscripción)",
+          "description": "Genera una sesión del Customer Portal de Stripe donde el usuario puede cambiar método de pago, ver facturas o cancelar su suscripción.\n\nEl website redirige al usuario a la URL devuelta. Stripe gestiona todo el flujo.\n\n→ 400 si el usuario nunca hizo checkout (no tiene stripe_customer_id en la BD).",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/subscriptions/portal",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ]
+          }
+        },
+        {
+          "name": "Webhook de Stripe (no invocar manualmente)",
+          "description": "Endpoint que Stripe llama automáticamente cuando ocurre un evento de suscripción.\n\nNO llamar manualmente — Stripe lo invoca con una firma HMAC en el header Stripe-Signature que el backend verifica con el webhook secret. Sin firma válida → 400.\n\nEventos procesados:\n  customer.subscription.created → crea o actualiza la suscripción en BD\n  customer.subscription.updated → actualiza estado, fechas y cancel_at_period_end\n  customer.subscription.deleted → marca como CANCELED\n  invoice.payment_failed        → marca como PAST_DUE\n\nConfigurar en Stripe → Desarrolladores → Webhooks:\n  URL: https://fitlan-production.up.railway.app/api/v1/stripe/webhook",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/stripe/webhook",
+            "header": [
+              { "key": "Stripe-Signature", "value": "t=...,v1=..." },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
           }
         },
         {
