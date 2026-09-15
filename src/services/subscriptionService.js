@@ -19,6 +19,12 @@ const subscriptionService = {
   // ver facturas, cancelar). 400 si el usuario nunca hizo checkout (no tiene
   // stripe_customer_id) — solo se debe ofrecer con una suscripción activa.
   openBillingPortal: () => api.post("/subscriptions/portal"),
+  // Fallback complementario al webhook (que sigue haciendo falta para
+  // renovaciones/cancelaciones/pagos fallidos posteriores) — llamado desde
+  // SubscriptionSuccess.jsx con el ?session_id que trae la redirección de
+  // Stripe, para que la suscripción quede activa en la BD sin esperar los
+  // segundos que puede tardar el webhook en llegar.
+  syncSubscription: (sessionId) => api.get(`/subscriptions/sync/${sessionId}`),
 };
 
 export default subscriptionService;

@@ -2460,6 +2460,17 @@
           }
         },
         {
+          "name": "Sincronizar suscripción desde éxito (fallback)",
+          "description": "Llamar desde la página de éxito con el session_id que Stripe incluye en la URL (?session_id=cs_test_...).\n\nConsulta la checkout session en Stripe, extrae la suscripción y la guarda/actualiza en la BD.\n\nEs un fallback complementario al webhook: garantiza que la suscripción queda activa en el momento que el usuario ve la página de éxito, sin esperar a que llegue el webhook.\n\nEjemplo desde el frontend:\n  const sessionId = new URLSearchParams(window.location.search).get('session_id');\n  await fetch(`/api/v1/subscriptions/sync/${sessionId}`, { headers: { Authorization: `Bearer ${token}` } });",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/subscriptions/sync/cs_test_REPLACE_WITH_SESSION_ID",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ]
+          }
+        },
+        {
           "name": "Webhook de Stripe (no invocar manualmente)",
           "description": "Endpoint que Stripe llama automáticamente cuando ocurre un evento de suscripción.\n\nNO llamar manualmente — Stripe lo invoca con una firma HMAC en el header Stripe-Signature que el backend verifica con el webhook secret. Sin firma válida → 400.\n\nEventos procesados:\n  customer.subscription.created → crea o actualiza la suscripción en BD\n  customer.subscription.updated → actualiza estado, fechas y cancel_at_period_end\n  customer.subscription.deleted → marca como CANCELED\n  invoice.payment_failed        → marca como PAST_DUE\n\nConfigurar en Stripe → Desarrolladores → Webhooks:\n  URL: https://fitlan-production.up.railway.app/api/v1/stripe/webhook",
           "request": {

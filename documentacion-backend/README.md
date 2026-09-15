@@ -2224,6 +2224,7 @@ UPDATE plans SET stripe_price_id = 'price_xxx' WHERE id = 'PRO';
 | GET | `/subscriptions/me` | USER, ADMIN |
 | POST | `/subscriptions/checkout` | USER, ADMIN |
 | POST | `/subscriptions/portal` | USER, ADMIN |
+| GET | `/subscriptions/sync/{sessionId}` | USER, ADMIN |
 | POST | `/stripe/webhook` | Público (verificado con firma HMAC) |
 | GET | `/admin/subscriptions` | ADMIN |
 | POST | `/admin/subscriptions` | ADMIN |
@@ -2344,6 +2345,28 @@ Authorization: Bearer <token>
 ```
 
 > Si el usuario nunca hizo checkout (no tiene `stripe_customer_id`) → `400 { "error": "El usuario no tiene un customer de Stripe" }`
+
+---
+
+### Sincronizar suscripción desde la página de éxito (fallback)
+
+Cuando el usuario completa el pago, Stripe redirige a la `success-url` con el `?session_id=cs_test_...` en la URL. El website debe llamar a este endpoint con ese ID para sincronizar la suscripción inmediatamente, sin esperar al webhook.
+
+```
+GET /api/v1/subscriptions/sync/{sessionId}
+Authorization: Bearer <token>
+→ 200
+```
+
+```js
+// Ejemplo desde la página de éxito
+const sessionId = new URLSearchParams(window.location.search).get('session_id');
+await fetch(`/api/v1/subscriptions/sync/${sessionId}`, {
+  headers: { Authorization: `Bearer ${token}` }
+});
+```
+
+> Este endpoint es un **fallback complementario** al webhook — no lo reemplaza. El webhook sigue siendo necesario para eventos posteriores (renovaciones, cancelaciones, pagos fallidos). Llamar este endpoint garantiza que la suscripción queda activa en la BD en el momento que el usuario ve la página de éxito, aunque el webhook tarde unos segundos en llegar.
 
 ---
 
