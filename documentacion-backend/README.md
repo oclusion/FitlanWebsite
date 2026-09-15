@@ -2317,6 +2317,60 @@ Authorization: Bearer <token>
 
 ---
 
+### Flujo recomendado en el website
+
+#### Página `/planes`
+
+Al cargar la página, el website debe verificar si el usuario ya tiene un plan activo para decidir qué mostrar:
+
+```js
+// Al cargar /planes (usuario autenticado)
+const res = await fetch('/api/v1/subscriptions/me', {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
+if (res.ok) {
+  const sub = await res.json();
+  // Usuario tiene plan activo → mostrar plan actual + botón "Gestionar suscripción"
+  // Al hacer clic: POST /subscriptions/portal → redirigir a la URL devuelta
+} else if (res.status === 404) {
+  // Sin suscripción → mostrar los 3 planes con botones de compra
+  // Al elegir un plan: POST /subscriptions/checkout con { plan: "LITE|BASIC|PRO" }
+}
+```
+
+> Si el usuario ya tiene suscripción activa y llama directamente a `POST /subscriptions/checkout`, el backend detecta la suscripción existente y devuelve la URL del Customer Portal en lugar de crear un nuevo checkout (prevención de duplicados automática).
+
+#### Perfil de usuario
+
+En la pantalla de perfil, mostrar el plan y estado actual:
+
+```js
+const res = await fetch('/api/v1/subscriptions/me', {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
+if (res.ok) {
+  const { plan_display_name, status, current_period_end, cancel_at_period_end } = await res.json();
+  // Mostrar badge: plan_display_name + estado
+  // cancel_at_period_end: true → "Cancela el {current_period_end}"
+} else {
+  // Mostrar "Sin plan activo" con enlace a /planes
+}
+```
+
+**Estados que el frontend debe mostrar:**
+
+| Estado | Badge | Acción sugerida |
+|---|---|---|
+| `ACTIVE` | Verde — Activo | Botón "Gestionar" → portal |
+| `TRIALING` | Azul — En prueba | Botón "Gestionar" → portal |
+| `PAST_DUE` | Naranja — Pago pendiente | Botón "Gestionar" → portal |
+| `CANCELED` | Gris — Cancela el {fecha} | Botón "Renovar" → checkout |
+| `404` | Sin plan | Botón "Ver planes" → /planes |
+
+---
+
 ### Iniciar checkout con Stripe
 
 Crea una sesión de pago en Stripe y devuelve la URL a la que el website debe redirigir al usuario.
@@ -2325,10 +2379,11 @@ Crea una sesión de pago en Stripe y devuelve la URL a la que el website debe re
 POST /api/v1/subscriptions/checkout
 Authorization: Bearer <token>
 { "plan": "PRO" }
-→ 200 { "url": "https://checkout.stripe.com/..." }
+→ 200 { "url": "https://checkout.stripe.com/..." }   ← usuario sin suscripción activa
+→ 200 { "url": "https://billing.stripe.com/..." }    ← usuario ya tiene suscripción → portal
 ```
 
-El website redirige al usuario a esa URL. Stripe gestiona el pago y redirige de vuelta a `stripe.success-url` (configurable). El webhook actualiza la BD automáticamente al completarse el pago.
+El website redirige al usuario a esa URL en ambos casos. Si el usuario ya tiene suscripción activa, el backend lo detecta y devuelve directamente la URL del Customer Portal para que gestione su plan desde ahí (sin crear una suscripción duplicada en Stripe).
 
 > Si el plan no tiene `stripe_price_id` configurado en la BD → `400 { "error": "El plan PRO no tiene un stripe_price_id configurado" }`
 

@@ -6,14 +6,36 @@ export const ACTIVE_SUBSCRIPTION_STATUSES = ["ACTIVE", "TRIALING", "PAST_DUE", "
 export const hasSubscriptionAccess = (subscription) =>
   !!subscription && ACTIVE_SUBSCRIPTION_STATUSES.includes(subscription.status);
 
+// Texto + color por estado, según la tabla del README backend ("Flujo
+// recomendado en el website" → perfil de usuario). Solo cubre los 4 estados
+// que dan acceso — GET /subscriptions/me devuelve 404 (no un objeto) para
+// el resto (UNPAID, INCOMPLETE, INCOMPLETE_EXPIRED, EXPIRED).
+const STATUS_META = {
+  ACTIVE: { label: "Activo", modifier: "active" },
+  TRIALING: { label: "En prueba", modifier: "trialing" },
+  PAST_DUE: { label: "Pago pendiente", modifier: "past-due" },
+};
+
+export const subscriptionStatusMeta = (subscription) => {
+  if (subscription.status === "CANCELED") {
+    const date = new Date(subscription.current_period_end).toLocaleDateString();
+    return { label: `Cancela el ${date}`, modifier: "canceled" };
+  }
+  return STATUS_META[subscription.status] ?? { label: subscription.status, modifier: "active" };
+};
+
 const subscriptionService = {
   getPlans: () => api.get("/subscriptions/plans"),
   // Puede devolver 404 si el usuario no tiene ninguna suscripción — no es un error,
   // hay que manejarlo explícitamente en el caller.
   getMySubscription: () => api.get("/subscriptions/me"),
-  // Devuelve { url } — la URL hosteada de Stripe Checkout a la que hay que
-  // redirigir (window.location.href, no fetch/XHR). 400 si el plan no tiene
-  // stripe_price_id configurado todavía.
+  // Devuelve { url } — la URL hosteada de Stripe a la que hay que redirigir
+  // (window.location.assign, no fetch/XHR). Si el usuario ya tiene una
+  // suscripción activa, el backend detecta el duplicado y devuelve la URL
+  // del Customer Portal en vez de crear un checkout nuevo — por eso
+  // Plans.jsx no ofrece "Adquirir" con una suscripción activa, para no
+  // mostrar un botón que en realidad abre el portal. 400 si el plan no
+  // tiene stripe_price_id configurado todavía.
   startCheckout: (plan) => api.post("/subscriptions/checkout", { plan }),
   // Devuelve { url } — el Customer Portal de Stripe (cambiar método de pago,
   // ver facturas, cancelar). 400 si el usuario nunca hizo checkout (no tiene

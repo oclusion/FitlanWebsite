@@ -823,6 +823,34 @@ button.box.active {
     font-weight: bold;
 }
 
+/* Plan actual en /planes con suscripción activa — una sola card centrada,
+   no la grilla de 3 (ver comentario en Plans.jsx). */
+.plan-card--current {
+    max-width: 360px;
+    margin: 0 auto;
+}
+
+.plan-status {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.plan-status--active {
+    color: #3ddc84;
+}
+
+.plan-status--trialing {
+    color: #5b6fc3;
+}
+
+.plan-status--past-due {
+    color: #f5a623;
+}
+
+.plan-status--canceled {
+    color: #8a8a9a;
+}
+
 /* ---------- FAQs ---------- */
 .faq-list {
     display: flex;

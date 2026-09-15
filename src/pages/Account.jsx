@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ConfirmModal from "../components/ConfirmModal";
 import userService from "../services/userService";
-import subscriptionService, { hasSubscriptionAccess } from "../services/subscriptionService";
+import subscriptionService, { hasSubscriptionAccess, subscriptionStatusMeta } from "../services/subscriptionService";
 import { useAuth } from "../context/AuthContext";
 import { getInitials } from "../utils/initials";
 import { assetUrl } from "../utils/assetUrl";
@@ -69,20 +69,27 @@ const Account = () => {
           <div className="content-section">
             <h3>Suscripción</h3>
             {hasActiveSubscription ? (
-              <p>Plan {subscription.plan_display_name} — activa</p>
+              <>
+                <p>Plan {subscription.plan_display_name}</p>
+                <p className={`plan-status plan-status--${subscriptionStatusMeta(subscription).modifier}`}>
+                  {subscriptionStatusMeta(subscription).label}
+                </p>
+              </>
             ) : (
               <p>No tienes una suscripción activa.</p>
             )}
             {portalError ? <div className="alert-box mb-3"><p>{portalError}</p></div> : null}
             <div className="account-subscription-actions">
-              <Link to="/planes" className="btn btn-light">
-                {hasActiveSubscription ? "Cambiar de plan" : "Activar suscripción"}
-              </Link>
               {hasActiveSubscription ? (
-                <button type="button" className="btn btn-outline-light" onClick={handleOpenPortal} disabled={openingPortal}>
+                // /planes muestra lo mismo (plan actual + este botón) con
+                // suscripción activa — para no duplicar el hop, la gestión
+                // vive directo acá, no "Cambiar de plan" → /planes.
+                <button type="button" className="btn btn-light" onClick={handleOpenPortal} disabled={openingPortal}>
                   {openingPortal ? "Abriendo..." : "Gestionar suscripción"}
                 </button>
-              ) : null}
+              ) : (
+                <Link to="/planes" className="btn btn-light">Activar suscripción</Link>
+              )}
             </div>
           </div>
 
