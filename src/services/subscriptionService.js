@@ -16,8 +16,14 @@ const STATUS_META = {
   PAST_DUE: { label: "Pago pendiente", modifier: "past-due" },
 };
 
+// La cancelación "normal" desde el Customer Portal NO cambia el status (sigue
+// ACTIVE/TRIALING/PAST_DUE) — Stripe solo marca cancel_at_period_end: true y
+// mantiene el acceso hasta current_period_end. status === "CANCELED" es la
+// cancelación inmediata (rara, o hecha desde el admin), un caso aparte.
+// Ambos se muestran igual: no importa cuál de los dos causó el vencimiento,
+// lo que le importa al usuario es la fecha en la que pierde el acceso.
 export const subscriptionStatusMeta = (subscription) => {
-  if (subscription.status === "CANCELED") {
+  if (subscription.cancel_at_period_end || subscription.status === "CANCELED") {
     const date = new Date(subscription.current_period_end).toLocaleDateString();
     return { label: `Cancela el ${date}`, modifier: "canceled" };
   }
