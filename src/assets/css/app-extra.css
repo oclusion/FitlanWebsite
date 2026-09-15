@@ -317,6 +317,12 @@ button.box.active {
     margin-top: 16px;
 }
 
+/* /suscripcion/exito — reutiliza el layout centrado de .not-found */
+.subscription-success-icon {
+    font-size: 5rem;
+    color: #3ddc84;
+}
+
 /* ---------- Breadcrumb (sesión / step) ---------- */
 .breadcrumb-nav {
     display: flex;

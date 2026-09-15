@@ -17,6 +17,7 @@ import Account from "./pages/Account";
 import MyTrainings from "./pages/MyTrainings";
 import Settings from "./pages/Settings";
 import Plans from "./pages/Plans";
+import SubscriptionSuccess from "./pages/SubscriptionSuccess";
 import Notifications from "./pages/Notifications";
 import Messages from "./pages/Messages";
 import SearchCoaches from "./pages/SearchCoaches";
@@ -51,6 +52,8 @@ function App() {
           <Route path="/cuenta" element={<ProtectedRoute><Account /></ProtectedRoute>} />
           <Route path="/configuracion" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/planes" element={<ProtectedRoute><Plans /></ProtectedRoute>} />
+          {/* stripe.success-url (backend) — ver SubscriptionSuccess.jsx */}
+          <Route path="/suscripcion/exito" element={<ProtectedRoute><SubscriptionSuccess /></ProtectedRoute>} />
           <Route path="/notificaciones" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
           <Route path="/mensajes" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
           <Route path="/mensajes/nuevo" element={<ProtectedRoute><SearchCoaches /></ProtectedRoute>} />
