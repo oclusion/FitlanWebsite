@@ -23,6 +23,7 @@ import Messages from "./pages/Messages";
 import SearchCoaches from "./pages/SearchCoaches";
 import Conversation from "./pages/Conversation";
 import PublicTraining from "./pages/PublicTraining";
+import OpenLink from "./pages/OpenLink";
 import Help from "./pages/Help";
 import Faqs from "./pages/Faqs";
 import Privacy from "./pages/Privacy";
@@ -47,6 +48,10 @@ function App() {
           {/* Sin cuenta, sin videos — para compartir (ver server.js, arma
               meta tags OG/Twitter del training para bots de redes) */}
           <Route path="/entrenamiento-publico/:id" element={<PublicTraining />} />
+          {/* Deep link con fallback al sitio — {{COURSE_URL}} de los emails
+              del backend apunta acá en vez de directo a /entrenamiento/:id.
+              Ver OpenLink.jsx. */}
+          <Route path="/open" element={<OpenLink />} />
 
           {/* Solo requieren sesión (cuenta activa) */}
           <Route path="/cuenta" element={<ProtectedRoute><Account /></ProtectedRoute>} />
