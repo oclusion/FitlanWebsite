@@ -50,7 +50,7 @@ const SubscriptionSuccess = () => {
             <>
               <IoCheckmarkCircleOutline className="subscription-success-icon" />
               <h1>¡Listo, tu suscripción está activa!</h1>
-              <p>Ya podés empezar a entrenar.</p>
+              <p>Ya puedes empezar a entrenar.</p>
               <Link to="/entrenamientos" className="btn btn-primary">Ir a entrenamientos</Link>
             </>
           )}

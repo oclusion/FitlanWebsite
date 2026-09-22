@@ -68,7 +68,7 @@ const Plans = () => {
       console.log("No se pudo abrir el portal de suscripción", error);
       setActionError(
         isManualSubscriptionError(error)
-          ? "Tu plan fue activado manualmente por el equipo de Fitlán — contactanos para hacer cambios."
+          ? "Tu plan fue activado manualmente por el equipo de Fitlán — contáctanos para hacer cambios."
           : error.error || "No se pudo abrir la gestión de suscripción. Intentá de nuevo en unos minutos.",
       );
       setManagingPortal(false);
