@@ -21,7 +21,7 @@ const EXPERIENCE_CLAMP_CHARS = 280;
 
 // TODO: quitar cuando el backend mande estos campos
 const PLACEHOLDERS = {
-  quote: "Mis huevos en tu arroz",
+  quote: "Frase del instructor",
   location: "Ciudad, País",
   role: "Instructor de Yoga",
   languages: [
