@@ -113,7 +113,7 @@ const CoachProfile = () => {
         <figure className="coach-hero-quote">
           {/* TODO backend: coach.quote = frase del instructor, coach.quote_author = firma (opcional) */}
           <blockquote className="coach-hero-text">
-            “{coach.quote || "Mis huevos en tu arroz"}”
+            “{coach.quote || "Aquí va la frase del instructor"}”
           </blockquote>
           <figcaption className="coach-hero-author">— {coach.quote_author || coach.name}</figcaption>
         </figure>
