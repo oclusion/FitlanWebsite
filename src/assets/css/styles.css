@@ -749,7 +749,6 @@ footer {
 
 /* Texto descripción */
 .profile-text {
-    color: #1a1a1a;
     font-size: 1.05rem;
     line-height: 1.6;
     margin-bottom: 1rem;
@@ -759,7 +758,6 @@ footer {
 /* Sección de redes sociales */
 .profile-social-label {
     font-size: 1rem;
-    color: #1a1a1a;
     margin-bottom: 0.75rem;
 }
 
@@ -775,6 +773,7 @@ footer {
     font-size: 1.2rem;
     text-decoration: none;
     transition: background-color 0.2s ease;
+    cursor: pointer;
 }
 
 .social-icon:hover {
@@ -1082,3 +1081,229 @@ main {
 /* ======================================== XXL — EXTRA LARGE DESKTOP 1400px+ ======================================== */
 
 @media (min-width: 1400px) {}
+
+
+/* Coaching Profile */
+
+/* ==========================================================================
+   PERFIL DEL COACH — solo estilos NUEVOS
+   No modifica ni reemplaza nada existente (.profile-photo-wrapper, .profile-name,
+   .profile-text, .follow-button, .social-icon, etc. se siguen usando tal cual).
+   Todo va scopeado bajo .coach-profile para no afectar otras pantallas.
+   Colores: solo variables del tema (--bg-secondary, --text-primary,
+   --text-secondary) con fallback al tema light, y colores de marca ya usados
+   en el proyecto (#405bc0, #5872d1, #7b7fd4).
+
+   1) Pega el bloque BASE (mobile) arriba de los @media, junto a "Foto de perfil".
+   2) Pega el bloque MD dentro de tu @media (min-width: 768px).
+   ========================================================================== */
+
+
+/* ======================= 1) BASE — MOBILE (0px+) ======================= */
+
+/* main con header fijo de 88.5px: el banner llega hasta el header */
+.coach-main {
+    padding-top: 88.5px;
+}
+
+/* Banner con frase (centrado) */
+.coach-hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    /* 32px arriba + 128px abajo (mitad de la foto 112px + 16px de aire) */
+    padding: 112px 20px 68px;
+    text-align: center;
+    background: linear-gradient(105deg, #405bc0 0%, #5872d1 50%, #7b7fd4 100%);
+}
+
+.coach-hero-quote {
+    max-width: 720px;
+    margin: 0;
+}
+
+.coach-hero-text {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+    text-wrap: balance;
+}
+
+.coach-hero-author {
+    margin-top: 8px;
+    color: #ffffff;
+    font-size: 1.125rem;
+}
+
+/* Foto: se monta sobre el banner (mitad de 225px) y queda centrada en mobile.
+   Doble clase = gana a .profile-photo-wrapper sin tocarlo. */
+.coach-profile .profile-photo-wrapper {
+    position: relative;
+    z-index: 1;
+    margin-top: -112px;
+    margin-bottom: 20px;
+}
+
+/* Identidad */
+.coach-profile .profile-name {
+    margin: 0 0 8px;
+    color: var(--text-primary, #111111);
+}
+
+.coach-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px;
+    color: var(--text-secondary, #666666);
+    font-size: 1rem;
+}
+
+.coach-role {
+    margin: 0 0 20px;
+    color: var(--text-primary, #111111);
+    font-size: 1.15rem;
+}
+
+.coach-divider {
+    margin: 28px 0;
+    border: 0;
+    border-top: 1px solid var(--text-secondary, #666666);
+    opacity: 0.35;
+}
+
+/* Secciones */
+.coach-section-title,
+.coach-brands-title {
+    margin: 0 0 12px;
+    color: var(--text-primary, #111111);
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.coach-brands-title {
+    margin-bottom: 24px;
+    font-weight: 400;
+}
+
+/* Experiencia + "Leer más" (se apoya en .profile-text) */
+.coach-experience-text {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.coach-experience-text.is-expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+}
+
+.coach-readmore {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--text-secondary, #666666);
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.coach-readmore svg {
+    transition: transform 0.2s ease;
+}
+
+.coach-readmore[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+}
+
+/* Columna lateral */
+.coach-aside-group + .coach-aside-group {
+    margin-top: 32px;
+}
+
+.coach-label {
+    margin: 0 0 12px;
+    color: var(--text-secondary, #666666);
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.coach-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.coach-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background-color: var(--bg-secondary, #f5f5f5);
+    color: var(--text-primary, #111111);
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.coach-chip-meta {
+    margin-left: 4px;
+    color: var(--text-secondary, #666666);
+}
+
+/* Marcas */
+.coach-brand-logos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px 40px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.coach-brand-logos img {
+    display: block;
+    height: 28px;
+    width: auto;
+}
+
+/* Foco visible en los controles nuevos */
+.coach-readmore:focus-visible,
+.coach-chip:focus-visible {
+    outline: 3px solid #5872d1;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .coach-readmore svg { transition: none; }
+}
+
+
+/* ======================= 2) MD — 768px+ (dentro de tu @media existente) ======================= */
+
+@media (min-width: 768px) {
+
+    .coach-hero {
+        min-height: 200px;
+        padding-top: 68px;
+    }
+
+    .coach-hero-text { font-size: 2.25rem; }
+    .coach-hero-author { font-size: 1.5rem; }
+
+    /* Foto a la izquierda (en mobile queda centrada por los margin auto) */
+    .coach-profile .profile-photo-wrapper {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
