@@ -123,6 +123,10 @@ nav ul {
     padding: 0;
     list-style: none;
 }
+nav ul li {
+    font-size: 16px;
+    padding: 4px 0;
+}
 
 nav a {
     text-decoration: none;
@@ -844,6 +848,12 @@ footer {
 .coach-aside-group + .coach-aside-group {
     margin-top: 32px;
 }
+.coach-aside-group h5 {
+    margin-bottom: 20px; 
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #FFFFFF;
+}
 
 .coach-label {
     margin: 0 0 12px;
@@ -1166,6 +1176,9 @@ footer div.footer article {
     margin: 0;
     padding: 0;
     list-style: none;
+}
+.footer article ul li {
+    font-size: 16px;
 }
 
 .footer article a {
