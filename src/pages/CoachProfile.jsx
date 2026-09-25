@@ -233,7 +233,7 @@ const CoachProfile = () => {
 
                 {hasSocial ? (
                   <section className="coach-aside-group profile-social">
-                    <p className="profile-social-label">Sígueme en:</p>
+                    <h5 className="coach-label">Sígueme en:</h5>
                     <div className="d-flex gap-2">
                       {coach.instagram_url ? (
                         <a href={coach.instagram_url} className="social-icon" target="_blank" rel="noreferrer"><IoLogoInstagram /></a>
