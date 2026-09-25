@@ -29,8 +29,6 @@ const PLACEHOLDERS = {
     { name: "Inglés", level: "Intermedio alto" },
   ],
   disciplines: ["Yoga", "Vinyasa", "Movilidad"],
-  email: "instructor@fitlan.fit",
-  phone: "00 0000 0000",
 };
 
 
@@ -100,7 +98,7 @@ const CoachProfile = () => {
   const languages = coach.languages ?? [];     // [{ name, level }]
   const disciplines = coach.disciplines ?? []; // ["Yoga", "Vinyasa", ...]
   const brands = coach.brands ?? [];           // [{ name, logo_url, logo_key }]
-  const hasAside = languages.length || disciplines.length || coach.email || coach.phone || hasSocial;
+  const hasAside = languages.length || disciplines.length || hasSocial;
   const isLongExperience = (coach.description?.length ?? 0) > EXPERIENCE_CLAMP_CHARS;
 
   return (
@@ -214,20 +212,6 @@ const CoachProfile = () => {
                         <li key={discipline}><span className="coach-chip">{discipline}</span></li>
                       ))}
                     </ul>
-                  </section>
-                ) : null}
-
-                {coach.email ? (
-                  <section className="coach-aside-group">
-                    <h5 className="coach-label">Email</h5>
-                    <a className="coach-chip" href={`mailto:${coach.email}`}>{coach.email}</a>
-                  </section>
-                ) : null}
-
-                {coach.phone ? (
-                  <section className="coach-aside-group">
-                    <h5 className="coach-label">Teléfono</h5>
-                    <a className="coach-chip" href={`tel:${coach.phone.replace(/\s+/g, "")}`}>{coach.phone}</a>
                   </section>
                 ) : null}
 
