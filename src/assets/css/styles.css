@@ -728,7 +728,7 @@ footer {
 }
 
 /* Banner con frase (centrado) */
-.coach-hero {
+.coach-hero, .user-hero {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1223,6 +1223,11 @@ main {
 }
 
 .coach-hero {
+    min-height: 200px;
+    padding: 40px 0 140px 0;
+}
+
+.user-hero {
     min-height: 200px;
     padding: 40px 0 68px 0;
 }

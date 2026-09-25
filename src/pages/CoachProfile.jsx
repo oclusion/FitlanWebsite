@@ -108,14 +108,14 @@ const CoachProfile = () => {
 
         {/* Banner con frase (centrado en mobile y desktop) */}
         <section className="coach-hero">
-        <figure className="coach-hero-quote">
-          {/* TODO backend: coach.quote = frase del instructor, coach.quote_author = firma (opcional) */}
-          <blockquote className="coach-hero-text">
-            “{coach.quote || "Aquí va la frase del instructor"}”
-          </blockquote>
-          <figcaption className="coach-hero-author">— {coach.quote_author || coach.name}</figcaption>
-        </figure>
-      </section>
+          <figure className="coach-hero-quote">
+            {/* TODO backend: coach.quote = frase del instructor, coach.quote_author = firma (opcional) */}
+            <blockquote className="coach-hero-text">
+              “{coach.quote || "Aquí va la frase del instructor"}”
+            </blockquote>
+            <figcaption className="coach-hero-author">— {coach.quote_author || coach.name}</figcaption>
+          </figure>
+        </section>
 
         <div className="container">
 
