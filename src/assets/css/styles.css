@@ -848,6 +848,10 @@ footer {
 .coach-aside-group + .coach-aside-group {
     margin-top: 32px;
 }
+.coach-aside-group {
+    margin-bottom: 60px;
+}
+
 .coach-aside-group h5 {
     margin-bottom: 20px; 
     font-size: 1.15rem;
