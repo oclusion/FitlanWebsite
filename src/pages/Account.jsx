@@ -151,7 +151,7 @@ const Account = () => {
             {trainings.length ? (
               <aside className="col-lg-4 offset-lg-1" aria-label="Entrenamientos del usuario">
                 <section className="coach-aside-group">
-                  <h5 className="coach-label">Entrenamientos</h5>
+                  <h5 className="coach-label">Diplomados o Certificaciones</h5>
                   <ul className="coach-chip-list">
                     {trainings.map((training) => (
                       <li key={training.id}>
