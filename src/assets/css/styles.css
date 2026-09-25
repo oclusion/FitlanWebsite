@@ -855,6 +855,7 @@ footer {
     color: #FFFFFF;
 }
 
+
 .coach-label {
     margin: 0 0 12px;
     color: var(--text-secondary, #666666);
@@ -902,6 +903,17 @@ footer {
     display: block;
     height: 28px;
     width: auto;
+}
+
+/* Agregar dentro del bloque BASE de coach-profile.css, junto a ".coach-brand-logos" */
+
+/* Entrenamientos en la columna lateral de la cuenta (Account.jsx).
+   .training-card ya es width:100% + aspect-ratio 3/4, así que solo
+   necesita apilarse verticalmente con espacio entre tarjetas. */
+.coach-aside-trainings {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 /* Foco visible en los controles nuevos */
