@@ -13,14 +13,15 @@ import { useAuth } from "../context/AuthContext";
 import { getInitials } from "../utils/initials";
 import { assetUrl } from "../utils/assetUrl";
 
-// TODO: quitar cuando el backend mande user.trainings — datos de ejemplo
-// solo para ver el diseño de la columna de "Entrenamientos". Ajusta los
-// campos a la forma real que use TrainingCard (coach.trainings).
-const PLACEHOLDER_TRAININGS = [
-  { id: "placeholder-1", title: "Yoga para principiantes", level: "Básico" },
-  { id: "placeholder-2", title: "Box: fundamentos", level: "Intermedio" },
-  { id: "placeholder-3", title: "Vinyasa flow", level: "Intermedio" },
-];
+// TODO: quitar cuando el backend mande estos campos
+const PLACEHOLDERS = {
+  bio: "Breve descripción del usuario",
+  trainings: [
+    { id: "placeholder-1", title: "Yoga para principiantes" },
+    { id: "placeholder-2", title: "Box: fundamentos" },
+    { id: "placeholder-3", title: "Vinyasa flow" },
+  ],
+};
 
 const Account = () => {
   const { logout } = useAuth();
@@ -32,7 +33,7 @@ const Account = () => {
 
   useEffect(() => {
     userService.getMe()
-      .then((data) => setUser({ ...data, trainings: data.trainings ?? PLACEHOLDER_TRAININGS }))
+      .then((data) => setUser({ ...(import.meta.env.DEV ? PLACEHOLDERS : {}), ...data })) // TODO: quitar cuando el backend mande estos campos
       .catch((error) => console.log("No se pudo cargar el perfil", error));
     subscriptionService.getMySubscription()
       .then(setSubscription)
@@ -64,7 +65,7 @@ const Account = () => {
     }
   };
 
-  // TODO backend: user.bio = breve descripción del usuario (campo nuevo, opcional)
+  // TODO backend: user.bio = breve descripción del usuario
   // TODO backend: user.trainings = entrenamientos que el usuario ha tomado (mismo shape que coach.trainings)
   const trainings = user?.trainings ?? [];
 
@@ -74,10 +75,10 @@ const Account = () => {
       <Header />
       <main className="coach-main">
 
-        {/* Banner (mismo que el perfil del coach, sin frase) */}
+        {/* Banner (mismo que el perfil del coach; sin frase, la cuenta no tiene "quote") */}
         <section className="coach-hero" />
 
-        <div className="container account-page">
+        <div className="container">
 
           {/* Foto: se monta sobre el banner. Centrada en mobile, a la izquierda en md+ */}
           <div className="profile-photo-wrapper">
@@ -94,11 +95,17 @@ const Account = () => {
 
           <div className="row gx-lg-5 gy-4">
 
-            {/* Columna principal: identidad, descripción y suscripción */}
+            {/* Columna principal */}
             <div className="col-lg-7">
               <div className="coach-identity text-center text-md-start">
                 <h1 className="profile-name">{user?.name}</h1>
                 <p className="text-muted mb-3">@{user?.username}</p>
+
+                {/* Breve descripción del usuario, en el mismo lugar donde el
+                    coach tiene ubicación y rol, antes de las acciones */}
+                {user?.bio ? <p className="profile-text mx-auto mx-md-0">{user.bio}</p> : null}
+
+                <hr className="coach-divider" />
 
                 <div className="coach-actions-row d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
                   <button type="button" className="btn btn-outline-danger" onClick={() => setShowLogoutConfirm(true)}>
@@ -106,21 +113,12 @@ const Account = () => {
                   </button>
                 </div>
               </div>
+            </div>
 
-              {user?.bio ? (
-                <>
-                  <hr className="coach-divider" />
-                  <section aria-labelledby="account-bio-title">
-                    <h4 className="coach-section-title" id="account-bio-title">Sobre mí</h4>
-                    <p className="profile-text">{user.bio}</p>
-                  </section>
-                </>
-              ) : null}
-
-              <hr className="coach-divider" />
-
-              <section className="content-section" aria-labelledby="account-subscription-title">
-                <h4 className="coach-section-title" id="account-subscription-title">Suscripción</h4>
+            {/* Columna lateral */}
+            <aside className="col-lg-4 offset-lg-1" aria-label="Datos de la cuenta">
+              <section className="coach-aside-group" aria-labelledby="account-subscription-title">
+                <h5 className="coach-label" id="account-subscription-title">Suscripción</h5>
                 {hasActiveSubscription ? (
                   <>
                     <p>Plan {subscription.plan_display_name}</p>
@@ -145,13 +143,10 @@ const Account = () => {
                   )}
                 </div>
               </section>
-            </div>
 
-            {/* Columna lateral: entrenamientos que ha tomado (mismo patrón de chips que Idiomas) */}
-            {trainings.length ? (
-              <aside className="col-lg-4 offset-lg-1" aria-label="Entrenamientos del usuario">
+              {trainings.length ? (
                 <section className="coach-aside-group">
-                  <h5 className="coach-label">Diplomados o Certificaciones</h5>
+                  <h5 className="coach-label">Entrenamientos</h5>
                   <ul className="coach-chip-list">
                     {trainings.map((training) => (
                       <li key={training.id}>
@@ -160,8 +155,8 @@ const Account = () => {
                     ))}
                   </ul>
                 </section>
-              </aside>
-            ) : null}
+              ) : null}
+            </aside>
           </div>
         </div>
       </main>
