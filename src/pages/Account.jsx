@@ -31,6 +31,10 @@ const Account = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [openingPortal, setOpeningPortal] = useState(false);
   const [portalError, setPortalError] = useState("");
+  const [editingName, setEditingName] = useState(false);
+  const [nameForm, setNameForm] = useState("");
+  const [savingName, setSavingName] = useState(false);
+  const [nameError, setNameError] = useState("");
   const [editingLocation, setEditingLocation] = useState(false);
   const [locationForm, setLocationForm] = useState({ country: "", state: "", city: "" });
   const [savingLocation, setSavingLocation] = useState(false);
@@ -95,6 +99,33 @@ const Account = () => {
     state: user?.state ?? null,
     city: user?.city ?? null,
   });
+
+  const handleStartEditName = () => {
+    setNameForm(user?.name ?? "");
+    setNameError("");
+    setEditingName(true);
+  };
+
+  // A diferencia de description/motto/ubicación, el nombre no se puede dejar
+  // vacío — no tiene sentido "borrarlo" con null.
+  const handleSaveName = async () => {
+    if (!nameForm.trim()) {
+      setNameError("El nombre no puede estar vacío.");
+      return;
+    }
+    setNameError("");
+    setSavingName(true);
+    try {
+      const data = await userService.updateMe({ ...currentLocationPayload(), name: nameForm.trim() });
+      setUser((prev) => ({ ...prev, ...data }));
+      setEditingName(false);
+    } catch (error) {
+      console.log("No se pudo actualizar el nombre", error);
+      setNameError(error.error || "No se pudo guardar. Intenta de nuevo.");
+    } finally {
+      setSavingName(false);
+    }
+  };
 
   const handleStartEditLocation = () => {
     setLocationForm({ country: user?.country ?? "", state: user?.state ?? "", city: user?.city ?? "" });
@@ -196,7 +227,38 @@ const Account = () => {
             {/* Columna principal */}
             <div className="col-lg-7">
               <div className="coach-identity text-center text-md-start">
-                <h1 className="profile-name">{user?.name}</h1>
+                {editingName ? (
+                  <div className="account-description-edit mx-auto mx-md-0">
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={nameForm}
+                      onChange={(event) => setNameForm(event.target.value)}
+                      placeholder="Tu nombre"
+                    />
+                    {nameError ? <div className="alert-box mb-3"><p>{nameError}</p></div> : null}
+                    <div className="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start mb-3">
+                      <button type="button" className="btn btn-light" onClick={handleSaveName} disabled={savingName}>
+                        {savingName ? "Guardando..." : "Guardar"}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline-light"
+                        onClick={() => setEditingName(false)}
+                        disabled={savingName}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <h1 className="profile-name">
+                    {user?.name}{" "}
+                    <button type="button" className="account-edit-trigger" onClick={handleStartEditName}>
+                      Editar
+                    </button>
+                  </h1>
+                )}
                 <p className="text-muted mb-3">@{user?.username}</p>
 
                 {editingLocation ? (
