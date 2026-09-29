@@ -35,6 +35,14 @@ const Account = () => {
   const [locationForm, setLocationForm] = useState({ country: "", state: "", city: "" });
   const [savingLocation, setSavingLocation] = useState(false);
   const [locationError, setLocationError] = useState("");
+  const [editingDescription, setEditingDescription] = useState(false);
+  const [descriptionForm, setDescriptionForm] = useState("");
+  const [savingDescription, setSavingDescription] = useState(false);
+  const [descriptionError, setDescriptionError] = useState("");
+  const [editingMotto, setEditingMotto] = useState(false);
+  const [mottoForm, setMottoForm] = useState("");
+  const [savingMotto, setSavingMotto] = useState(false);
+  const [mottoError, setMottoError] = useState("");
 
   useEffect(() => {
     userService.getMe()
@@ -73,6 +81,8 @@ const Account = () => {
   // TODO backend: user.trainings = entrenamientos que el usuario ha tomado (mismo shape que coach.trainings)
   const trainings = user?.trainings ?? [];
   const location = [user?.city, user?.state, user?.country].filter(Boolean).join(", ");
+  // motto (la "frase" del banner en CoachProfile.jsx) solo aplica a coaches.
+  const isCoach = user?.roles?.includes("ROLE_COACH") ?? false;
 
   const handleStartEditLocation = () => {
     setLocationForm({ country: user?.country ?? "", state: user?.state ?? "", city: user?.city ?? "" });
@@ -99,6 +109,49 @@ const Account = () => {
       setLocationError(error.error || "No se pudo guardar. Intenta de nuevo.");
     } finally {
       setSavingLocation(false);
+    }
+  };
+
+  const handleStartEditDescription = () => {
+    setDescriptionForm(user?.description ?? "");
+    setDescriptionError("");
+    setEditingDescription(true);
+  };
+
+  const handleSaveDescription = async () => {
+    setDescriptionError("");
+    setSavingDescription(true);
+    try {
+      const data = await userService.updateMe({ description: descriptionForm || null });
+      setUser((prev) => ({ ...prev, ...data }));
+      setEditingDescription(false);
+    } catch (error) {
+      console.log("No se pudo actualizar la descripción", error);
+      setDescriptionError(error.error || "No se pudo guardar. Intenta de nuevo.");
+    } finally {
+      setSavingDescription(false);
+    }
+  };
+
+  const handleStartEditMotto = () => {
+    setMottoForm(user?.motto ?? "");
+    setMottoError("");
+    setEditingMotto(true);
+  };
+
+  // Máximo 160 caracteres — límite documentado en el backend (ver README).
+  const handleSaveMotto = async () => {
+    setMottoError("");
+    setSavingMotto(true);
+    try {
+      const data = await userService.updateMe({ motto: mottoForm || null });
+      setUser((prev) => ({ ...prev, ...data }));
+      setEditingMotto(false);
+    } catch (error) {
+      console.log("No se pudo actualizar la frase", error);
+      setMottoError(error.error || "No se pudo guardar. Intenta de nuevo.");
+    } finally {
+      setSavingMotto(false);
     }
   };
 
@@ -159,16 +212,86 @@ const Account = () => {
                 ) : (
                   <p className="coach-location">
                     <IoLocationOutline aria-hidden="true" /> {location || "Sin ubicación"}{" "}
-                    <button type="button" className="account-location-edit-trigger" onClick={handleStartEditLocation}>
+                    <button type="button" className="account-edit-trigger" onClick={handleStartEditLocation}>
                       Editar
                     </button>
                   </p>
                 )}
 
+                {/* motto — la "frase" del banner de CoachProfile.jsx — solo
+                    aplica a usuarios con ROLE_COACH, se edita acá porque
+                    CoachProfile.jsx es de solo lectura (perfil de otros). */}
+                {isCoach ? (
+                  editingMotto ? (
+                    <div className="account-description-edit mx-auto mx-md-0">
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={mottoForm}
+                        onChange={(event) => setMottoForm(event.target.value)}
+                        placeholder="Tu frase como entrenador"
+                        maxLength={160}
+                      />
+                      {mottoError ? <div className="alert-box mb-3"><p>{mottoError}</p></div> : null}
+                      <div className="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start mb-3">
+                        <button type="button" className="btn btn-light" onClick={handleSaveMotto} disabled={savingMotto}>
+                          {savingMotto ? "Guardando..." : "Guardar"}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-outline-light"
+                          onClick={() => setEditingMotto(false)}
+                          disabled={savingMotto}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="profile-text mx-auto mx-md-0">
+                      {user?.motto ? `“${user.motto}”` : "Sin frase"}{" "}
+                      <button type="button" className="account-edit-trigger" onClick={handleStartEditMotto}>
+                        Editar
+                      </button>
+                    </p>
+                  )
+                ) : null}
+
                 {/* description es un campo real (mismo que usa CoachProfile para
                     "Experiencia"), no un placeholder — en el mismo lugar donde
                     el coach tiene ubicación y rol, antes de las acciones */}
-                {user?.description ? <p className="profile-text mx-auto mx-md-0">{user.description}</p> : null}
+                {editingDescription ? (
+                  <div className="account-description-edit mx-auto mx-md-0">
+                    <textarea
+                      className="form-control"
+                      value={descriptionForm}
+                      onChange={(event) => setDescriptionForm(event.target.value)}
+                      placeholder="Escribí una breve descripción"
+                      rows={3}
+                    />
+                    {descriptionError ? <div className="alert-box mb-3"><p>{descriptionError}</p></div> : null}
+                    <div className="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start mb-3">
+                      <button type="button" className="btn btn-light" onClick={handleSaveDescription} disabled={savingDescription}>
+                        {savingDescription ? "Guardando..." : "Guardar"}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline-light"
+                        onClick={() => setEditingDescription(false)}
+                        disabled={savingDescription}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="profile-text mx-auto mx-md-0">
+                    {user?.description || "Sin descripción"}{" "}
+                    <button type="button" className="account-edit-trigger" onClick={handleStartEditDescription}>
+                      Editar
+                    </button>
+                  </p>
+                )}
 
                 <hr className="coach-divider" />
 
