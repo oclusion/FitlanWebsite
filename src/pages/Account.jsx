@@ -76,7 +76,7 @@ const Account = () => {
       <main className="coach-main">
 
         {/* Banner (mismo que el perfil del coach; sin frase, la cuenta no tiene "quote") */}
-        <section className="user-hero">
+        <section className="user-hero" />
 
         <div className="container">
 
@@ -159,7 +159,6 @@ const Account = () => {
             </aside>
           </div>
         </div>
-      </section>
       </main>
       <Footer />
 
