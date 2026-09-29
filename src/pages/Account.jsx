@@ -84,6 +84,18 @@ const Account = () => {
   // motto (la "frase" del banner en CoachProfile.jsx) solo aplica a coaches.
   const isCoach = user?.roles?.includes("ROLE_COACH") ?? false;
 
+  // country/state/city (junto con profile_image_url/instagram_url/facebook_url/
+  // tiktok_url) son especiales en PUT /users/me: a diferencia del resto de los
+  // campos, "no incluirlos" y "mandarlos null" es lo mismo para el backend —
+  // se borran igual (ver README backend, nota en "Actualizar perfil propio").
+  // Por eso CUALQUIER guardado (no solo el de ubicación) tiene que reenviar
+  // los valores actuales acá, o se pierden.
+  const currentLocationPayload = () => ({
+    country: user?.country ?? null,
+    state: user?.state ?? null,
+    city: user?.city ?? null,
+  });
+
   const handleStartEditLocation = () => {
     setLocationForm({ country: user?.country ?? "", state: user?.state ?? "", city: user?.city ?? "" });
     setLocationError("");
@@ -122,7 +134,7 @@ const Account = () => {
     setDescriptionError("");
     setSavingDescription(true);
     try {
-      const data = await userService.updateMe({ description: descriptionForm || null });
+      const data = await userService.updateMe({ ...currentLocationPayload(), description: descriptionForm || null });
       setUser((prev) => ({ ...prev, ...data }));
       setEditingDescription(false);
     } catch (error) {
@@ -144,7 +156,7 @@ const Account = () => {
     setMottoError("");
     setSavingMotto(true);
     try {
-      const data = await userService.updateMe({ motto: mottoForm || null });
+      const data = await userService.updateMe({ ...currentLocationPayload(), motto: mottoForm || null });
       setUser((prev) => ({ ...prev, ...data }));
       setEditingMotto(false);
     } catch (error) {
