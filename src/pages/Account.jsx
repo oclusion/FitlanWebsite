@@ -16,6 +16,7 @@ import subscriptionService, {
 import { useAuth } from "../context/AuthContext";
 import { getInitials } from "../utils/initials";
 import { assetUrl } from "../utils/assetUrl";
+import { toCompressedJpeg } from "../utils/imageCompress";
 
 const Account = () => {
   const { logout } = useAuth();
@@ -102,9 +103,11 @@ const Account = () => {
     city: user?.city ?? null,
   });
 
-  // POST /files/upload sube el archivo y devuelve { key, url } — el key se
-  // reenvía en el campo profile_image_url al actualizar el usuario (así lo
-  // documenta el backend: ese campo acepta el key crudo, no una URL real).
+  // toCompressedJpeg() redimensiona/recodifica antes de subir — evita fotos
+  // de varios MB directo de cámara. POST /files/upload devuelve { key, url }
+  // — el key se reenvía en el campo profile_image_url al actualizar el
+  // usuario (así lo documenta el backend: ese campo acepta el key crudo, no
+  // una URL real).
   const handlePhotoChange = async (event) => {
     const file = event.target.files?.[0];
     event.target.value = ""; // permite volver a elegir el mismo archivo después
@@ -112,7 +115,8 @@ const Account = () => {
     setPhotoError("");
     setUploadingPhoto(true);
     try {
-      const { key } = await fileService.upload(file);
+      const compressed = await toCompressedJpeg(file);
+      const { key } = await fileService.upload(compressed);
       const data = await userService.updateMe({ ...currentLocationPayload(), profile_image_url: key });
       setUser((prev) => ({ ...prev, ...data }));
     } catch (error) {
