@@ -71,7 +71,7 @@ const Account = () => {
 
   return (
     // "coach-profile" es el scope compartido de los estilos del perfil (foto, nombre, banner)
-    <div className="coach-hero">
+    <div className="coach-profile">
       <Header />
       <main className="coach-main">
 
