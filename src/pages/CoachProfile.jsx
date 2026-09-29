@@ -21,7 +21,6 @@ const EXPERIENCE_CLAMP_CHARS = 280;
 
 // TODO: quitar cuando el backend mande estos campos
 const PLACEHOLDERS = {
-  quote: "Frase del instructor",
   role: "Instructor de Yoga",
   languages: [
     { name: "Español", level: "Nativo" },
@@ -107,15 +106,16 @@ const CoachProfile = () => {
       <Header />
       <main className="coach-main">
 
-        {/* Banner con frase (centrado en mobile y desktop) */}
+        {/* Banner con frase (centrado en mobile y desktop) — motto es
+            genuinamente opcional (el backend lo borra con null), así que sin
+            uno se deja la franja de fondo pero sin la cita vacía. */}
         <section className="coach-hero">
-          <figure className="coach-hero-quote">
-            {/* TODO backend: coach.quote = frase del instructor, coach.quote_author = firma (opcional) */}
-            <blockquote className="coach-hero-text">
-              “{coach.quote || "Aquí va la frase del instructor"}”
-            </blockquote>
-            <figcaption className="coach-hero-author">— {coach.quote_author || coach.name}</figcaption>
-          </figure>
+          {coach.motto ? (
+            <figure className="coach-hero-quote">
+              <blockquote className="coach-hero-text">“{coach.motto}”</blockquote>
+              <figcaption className="coach-hero-author">— {coach.name}</figcaption>
+            </figure>
+          ) : null}
         </section>
 
         <div className="container">

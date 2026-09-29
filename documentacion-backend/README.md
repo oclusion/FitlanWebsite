@@ -516,6 +516,7 @@ Authorization: Bearer <token>
     "id": 5,
     "name": "Juan Pérez",
     "description": "Entrenador especializado en yoga.",
+    "motto": "El límite es la mente.",
     "profile_image_url": "https://...",
     "profile_image_key": "uploads/abc123-avatar.jpg",
     "banner_image_url": "https://...",
@@ -591,6 +592,7 @@ Authorization: Bearer <token>
   "username": "juanperez",
   "email": "juan@mail.com",
   "description": "Entrenador especializado en yoga.",
+  "motto": "El límite es la mente.",
   "profile_image_url": "https://...",
   "banner_image_url": "https://...",
   "instagram_url": "https://instagram.com/juanperez",
@@ -607,7 +609,7 @@ Authorization: Bearer <token>
 ---
 
 ### Actualizar perfil propio
-Cualquier usuario autenticado puede editar sus propios datos. Solo se actualizan los campos que se incluyan en el body. `email` y `password` no se pueden cambiar por este endpoint. Para borrar las redes sociales envía el campo con valor `null`.
+Cualquier usuario autenticado puede editar sus propios datos. Solo se actualizan los campos que se incluyan en el body. `email` y `password` no se pueden cambiar por este endpoint. Para borrar las redes sociales o el motto envía el campo con valor `null`. `motto` tiene un máximo de 160 caracteres.
 
 ```
 PUT /users/me
@@ -619,6 +621,7 @@ Authorization: Bearer <token>
   "name": "Juan Pérez",
   "username": "juanperez",
   "description": "Entrenador especializado en yoga.",
+  "motto": "El límite es la mente.",
   "profile_image_url": "https://...",
   "banner_image_url": "https://...",
   "instagram_url": "https://instagram.com/juanperez",
@@ -638,6 +641,7 @@ Authorization: Bearer <token>
   "username": "juanperez",
   "email": "juan@mail.com",
   "description": "Entrenador especializado en yoga.",
+  "motto": "El límite es la mente.",
   "profile_image_url": "https://...",
   "banner_image_url": "https://...",
   "instagram_url": "https://instagram.com/juanperez",
@@ -666,6 +670,7 @@ Authorization: Bearer <token de admin>
   "name": "Juan Pérez",
   "username": "juanperez",
   "description": "Entrenador especializado en yoga.",
+  "motto": "El límite es la mente.",
   "profile_image_url": "https://...",
   "banner_image_url": "https://...",
   "instagram_url": "https://instagram.com/juanperez",
@@ -689,6 +694,7 @@ Authorization: Bearer <token de admin>
   "username": "juanperez",
   "email": "juan@mail.com",
   "description": "Entrenador especializado en yoga.",
+  "motto": "El límite es la mente.",
   "profile_image_url": "https://...",
   "banner_image_url": "https://...",
   "instagram_url": "https://instagram.com/juanperez",

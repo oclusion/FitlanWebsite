@@ -17,7 +17,6 @@ import { assetUrl } from "../utils/assetUrl";
 
 // TODO: quitar cuando el backend mande estos campos
 const PLACEHOLDERS = {
-  bio: "Breve descripción del usuario",
   trainings: [
     { id: "placeholder-1", title: "Yoga para principiantes" },
     { id: "placeholder-2", title: "Box: fundamentos" },
@@ -71,7 +70,6 @@ const Account = () => {
     }
   };
 
-  // TODO backend: user.bio = breve descripción del usuario
   // TODO backend: user.trainings = entrenamientos que el usuario ha tomado (mismo shape que coach.trainings)
   const trainings = user?.trainings ?? [];
   const location = [user?.city, user?.state, user?.country].filter(Boolean).join(", ");
@@ -167,9 +165,10 @@ const Account = () => {
                   </p>
                 )}
 
-                {/* Breve descripción del usuario, en el mismo lugar donde el
-                    coach tiene ubicación y rol, antes de las acciones */}
-                {user?.bio ? <p className="profile-text mx-auto mx-md-0">{user.bio}</p> : null}
+                {/* description es un campo real (mismo que usa CoachProfile para
+                    "Experiencia"), no un placeholder — en el mismo lugar donde
+                    el coach tiene ubicación y rol, antes de las acciones */}
+                {user?.description ? <p className="profile-text mx-auto mx-md-0">{user.description}</p> : null}
 
                 <hr className="coach-divider" />
 
