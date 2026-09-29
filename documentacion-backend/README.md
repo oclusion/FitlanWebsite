@@ -390,6 +390,12 @@ El `*_key` es el valor que debes reenviar al backend al editar el recurso — **
 | DELETE | `/users/coaches/{id}/follow` | USER, ADMIN |
 | GET | `/users/me` | USER, ADMIN |
 | PUT | `/users/me` | USER, ADMIN |
+| GET | `/users/me/certifications` | COACH, ADMIN |
+| POST | `/users/me/certifications` | COACH, ADMIN |
+| DELETE | `/users/me/certifications/{certId}` | COACH, ADMIN |
+| GET | `/users/{id}/certifications` | ADMIN |
+| POST | `/users/{id}/certifications` | ADMIN |
+| DELETE | `/users/{id}/certifications/{certId}` | ADMIN |
 | PUT | `/users/{id}` | ADMIN |
 | PUT | `/users/{id}/suspend` | ADMIN |
 | PUT | `/users/{id}/activate` | ADMIN |
@@ -527,17 +533,47 @@ Authorization: Bearer <token>
     "country": "México",
     "city": "Ciudad de México",
     "is_following": true,
+    "certifications": [
+      { "id": 1, "name": "ACE Personal Trainer" },
+      { "id": 2, "name": "FMS Level 1" }
+    ],
     "trainings": [
       {
         "id": 1,
-        "title": "Yoga Vinyasa Nivel 1"
+        "title": "Yoga Vinyasa Nivel 1",
+        "description": "Flujo de yoga dinámico para todos los niveles.",
+        "image_url": "https://...",
+        "image_key": "uploads/yoga-cover.jpg",
+        "image_landscape_url": "https://...",
+        "image_landscape_key": "uploads/yoga-cover-landscape.jpg",
+        "difficulty_level": "BEGINNER",
+        "price": 0.00,
+        "premium": false,
+        "publish_status": "PUBLISHED",
+        "categories": [
+          { "id": 3, "name": "Yoga" }
+        ],
+        "tags": ["yoga", "principiantes"],
+        "sessions": [
+          {
+            "id": 10,
+            "title": "Sesión 1 — Respiración",
+            "duration_seconds": 1800,
+            "display_order": 1,
+            "steps": [
+              { "id": 100, "title": "Pranayama básico", "duration_seconds": 600, "display_order": 1 }
+            ]
+          }
+        ]
       }
     ]
   }
 ]
 ```
 
-> `is_following` indica si el usuario autenticado ya sigue a ese coach.
+> `is_following` indica si el usuario autenticado ya sigue a ese coach.  
+> `certifications` es un array con las certificaciones registradas por el coach (puede estar vacío).  
+> Cada training en `trainings[]` incluye `categories`, `sessions` (con `steps` anidados) e imágenes resueltas — no se necesitan llamadas adicionales por training.
 
 ---
 
@@ -574,6 +610,69 @@ Authorization: Bearer <token>
 
 > Si el usuario no seguía al coach, la operación no tiene efecto.
 > Tras hacer unfollow, todos los endpoints anteriores devolverán `is_following: false` para ese coach.
+
+---
+
+### Certificaciones de coach
+
+Los coaches pueden gestionar sus propias certificaciones. Los admins pueden gestionar las de cualquier usuario.
+
+#### Listar certificaciones propias (coach)
+```
+GET /users/me/certifications
+Authorization: Bearer <token_coach>
+```
+**Response `200`:**
+```json
+[
+  { "id": 1, "name": "ACE Personal Trainer" },
+  { "id": 2, "name": "FMS Level 1" }
+]
+```
+
+#### Agregar certificación propia (coach)
+```
+POST /users/me/certifications
+Authorization: Bearer <token_coach>
+```
+**Body:**
+```json
+{ "name": "ACE Personal Trainer" }
+```
+**Response `201`:**
+```json
+{ "id": 1, "name": "ACE Personal Trainer" }
+```
+
+#### Eliminar certificación propia (coach)
+```
+DELETE /users/me/certifications/1
+Authorization: Bearer <token_coach>
+```
+**Response `204`:** sin body.
+
+#### Listar certificaciones de un usuario (admin)
+```
+GET /users/5/certifications
+Authorization: Bearer <token_admin>
+```
+**Response `200`:** misma estructura que el listado propio.
+
+#### Agregar certificación a un usuario (admin)
+```
+POST /users/5/certifications
+Authorization: Bearer <token_admin>
+```
+**Body y response:** igual que el endpoint propio.
+
+#### Eliminar certificación de un usuario (admin)
+```
+DELETE /users/5/certifications/1
+Authorization: Bearer <token_admin>
+```
+**Response `204`:** sin body.
+
+> El campo `name` acepta máximo 200 caracteres. Las certificaciones aparecen en el array `certifications` de `GET /users/coaches` y `GET /users/coaches/{id}`.
 
 ---
 

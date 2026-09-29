@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { IoLocationOutline, IoCameraOutline } from "react-icons/io5";
+import { IoLocationOutline, IoCameraOutline, IoCloseOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ConfirmModal from "../components/ConfirmModal";
@@ -44,6 +44,12 @@ const Account = () => {
   const [mottoForm, setMottoForm] = useState("");
   const [savingMotto, setSavingMotto] = useState(false);
   const [mottoError, setMottoError] = useState("");
+  const [certifications, setCertifications] = useState([]);
+  const [addingCertification, setAddingCertification] = useState(false);
+  const [certificationForm, setCertificationForm] = useState("");
+  const [savingCertification, setSavingCertification] = useState(false);
+  const [certificationError, setCertificationError] = useState("");
+  const [deletingCertificationId, setDeletingCertificationId] = useState(null);
 
   useEffect(() => {
     userService.getMe()
@@ -90,6 +96,16 @@ const Account = () => {
   const location = [user?.city, user?.state, user?.country].filter(Boolean).join(", ");
   // motto (la "frase" del banner en CoachProfile.jsx) solo aplica a coaches.
   const isCoach = user?.roles?.includes("ROLE_COACH") ?? false;
+
+  // GET /users/me/certifications requiere rol COACH — recién se sabe si el
+  // usuario es coach después de cargar el perfil, así que va en su propio
+  // efecto en vez del useEffect inicial.
+  useEffect(() => {
+    if (!isCoach) return;
+    userService.getMyCertifications()
+      .then(setCertifications)
+      .catch((error) => console.log("No se pudieron cargar las certificaciones", error));
+  }, [isCoach]);
 
   // country/state/city (junto con profile_image_url/instagram_url/facebook_url/
   // tiktok_url) son especiales en PUT /users/me: a diferencia del resto de los
@@ -222,6 +238,45 @@ const Account = () => {
       setMottoError(error.error || "No se pudo guardar. Intenta de nuevo.");
     } finally {
       setSavingMotto(false);
+    }
+  };
+
+  const handleStartAddCertification = () => {
+    setCertificationForm("");
+    setCertificationError("");
+    setAddingCertification(true);
+  };
+
+  // Máximo 200 caracteres — límite documentado en el backend (ver README).
+  const handleAddCertification = async () => {
+    const name = certificationForm.trim();
+    if (!name) {
+      setCertificationError("La certificación no puede estar vacía.");
+      return;
+    }
+    setCertificationError("");
+    setSavingCertification(true);
+    try {
+      const created = await userService.addCertification(name);
+      setCertifications((prev) => [...prev, created]);
+      setAddingCertification(false);
+    } catch (error) {
+      console.log("No se pudo agregar la certificación", error);
+      setCertificationError(error.error || "No se pudo guardar. Intenta de nuevo.");
+    } finally {
+      setSavingCertification(false);
+    }
+  };
+
+  const handleDeleteCertification = async (certId) => {
+    setDeletingCertificationId(certId);
+    try {
+      await userService.deleteCertification(certId);
+      setCertifications((prev) => prev.filter((cert) => cert.id !== certId));
+    } catch (error) {
+      console.log("No se pudo eliminar la certificación", error);
+    } finally {
+      setDeletingCertificationId(null);
     }
   };
 
@@ -455,6 +510,71 @@ const Account = () => {
                       </li>
                     ))}
                   </ul>
+                </section>
+              ) : null}
+
+              {/* Certificaciones — solo coaches (POST/DELETE /users/me/certifications
+                  requiere ese rol); se muestran en CoachProfile.jsx bajo
+                  "Diplomados o Certificaciones", ahí de solo lectura. */}
+              {isCoach ? (
+                <section className="coach-aside-group">
+                  <h5 className="coach-label">Certificaciones</h5>
+                  {certifications.length ? (
+                    <ul className="coach-chip-list mb-3">
+                      {certifications.map((cert) => (
+                        <li key={cert.id}>
+                          <span className="coach-chip coach-chip--removable">
+                            {cert.name}
+                            <button
+                              type="button"
+                              className="account-chip-remove"
+                              aria-label={`Eliminar certificación ${cert.name}`}
+                              onClick={() => handleDeleteCertification(cert.id)}
+                              disabled={deletingCertificationId === cert.id}
+                            >
+                              <IoCloseOutline aria-hidden="true" />
+                            </button>
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+
+                  {addingCertification ? (
+                    <div className="account-description-edit">
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={certificationForm}
+                        onChange={(event) => setCertificationForm(event.target.value)}
+                        placeholder="Ej. ACE Personal Trainer"
+                        maxLength={200}
+                      />
+                      {certificationError ? <div className="alert-box mb-3"><p>{certificationError}</p></div> : null}
+                      <div className="d-flex flex-wrap gap-2 mb-3">
+                        <button
+                          type="button"
+                          className="btn btn-light"
+                          onClick={handleAddCertification}
+                          disabled={savingCertification}
+                        >
+                          {savingCertification ? "Guardando..." : "Guardar"}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-outline-light"
+                          onClick={() => setAddingCertification(false)}
+                          disabled={savingCertification}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button type="button" className="account-edit-trigger" onClick={handleStartAddCertification}>
+                      + Agregar certificación
+                    </button>
+                  )}
                 </section>
               ) : null}
             </aside>

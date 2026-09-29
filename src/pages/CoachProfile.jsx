@@ -19,14 +19,9 @@ import TrainingCard from "../components/TrainingCard";
 // A partir de este largo, la descripción se recorta a 5 líneas con "Leer más".
 const EXPERIENCE_CLAMP_CHARS = 280;
 
-// TODO: quitar cuando el backend mande estos campos
+// TODO: quitar cuando el backend mande este campo
 const PLACEHOLDERS = {
   role: "Instructor de Yoga",
-  languages: [
-    { name: "Español", level: "Nativo" },
-    { name: "Inglés", level: "Intermedio alto" },
-  ],
-  disciplines: ["Yoga", "Vinyasa", "Movilidad"],
 };
 
 
@@ -45,7 +40,7 @@ const CoachProfile = () => {
   useEffect(() => {
     coachService.getCoach(id)
       .then((data) => {
-        setCoach({ ...(import.meta.env.DEV ? PLACEHOLDERS : {}), ...data }); // TODO: quitar cuando el backend mande estos campos
+        setCoach({ ...(import.meta.env.DEV ? PLACEHOLDERS : {}), ...data }); // TODO: quitar cuando el backend mande este campo
         setIsFollowing(data.is_following ?? false);
       })
       .catch((error) => console.log("No se pudo cargar el coach", error));
@@ -95,10 +90,17 @@ const CoachProfile = () => {
   const location = [coach.city, coach.country].filter(Boolean).join(", ");
 
   // Campos nuevos (todos opcionales; si no vienen del backend, el bloque no se pinta)
-  const languages = coach.languages ?? [];     // [{ name, level }]
-  const disciplines = coach.disciplines ?? []; // ["Yoga", "Vinyasa", ...]
-  const brands = coach.brands ?? [];           // [{ name, logo_url, logo_key }]
-  const hasAside = languages.length || disciplines.length || hasSocial;
+  const certifications = coach.certifications ?? []; // [{ id, name }]
+  const trainings = coach.trainings ?? [];            // shape completo, ver README backend
+  const brands = coach.brands ?? [];                  // [{ name, logo_url, logo_key }]
+  // "Disciplinas destacadas" = categorías de los trainings que da el coach,
+  // deduplicadas (varios trainings pueden compartir categoría).
+  const disciplineCategories = [
+    ...new Map(
+      trainings.flatMap((training) => training.categories ?? []).map((category) => [category.id, category]),
+    ).values(),
+  ];
+  const hasAside = certifications.length || disciplineCategories.length || hasSocial;
   const isLongExperience = (coach.description?.length ?? 0) > EXPERIENCE_CLAMP_CHARS;
 
   return (
@@ -189,28 +191,25 @@ const CoachProfile = () => {
             {/* Columna lateral */}
             {hasAside ? (
               <aside className="col-lg-4 offset-lg-1" aria-label="Datos del instructor">
-                {languages.length ? (
+                {certifications.length ? (
                   <section className="coach-aside-group">
                     <h5 className="coach-label">Diplomados o Certificaciones</h5>
                     <ul className="coach-chip-list">
-                      {languages.map((lang) => (
-                        <li key={lang.name}>
-                          <span className="coach-chip">
-                            {lang.name}
-                            {lang.level ? <>: <span className="coach-chip-meta">{lang.level}</span></> : null}
-                          </span>
+                      {certifications.map((cert) => (
+                        <li key={cert.id}>
+                          <span className="coach-chip">{cert.name}</span>
                         </li>
                       ))}
                     </ul>
                   </section>
                 ) : null}
 
-                {disciplines.length ? (
+                {disciplineCategories.length ? (
                   <section className="coach-aside-group">
                     <h5 className="coach-label">Disciplinas destacadas</h5>
                     <ul className="coach-chip-list">
-                      {disciplines.map((discipline) => (
-                        <li key={discipline}><span className="coach-chip">{discipline}</span></li>
+                      {disciplineCategories.map((category) => (
+                        <li key={category.id}><span className="coach-chip">{category.name}</span></li>
                       ))}
                     </ul>
                   </section>
@@ -250,12 +249,12 @@ const CoachProfile = () => {
             </section>
           ) : null}
 
-          {coach.trainings?.length ? (
+          {trainings.length ? (
             <div className="row pt-b-50">
               <div className="col-12">
                 <h3>Entrenamientos</h3>
                 <div className="row g-3">
-                  {coach.trainings.map((training) => (
+                  {trainings.map((training) => (
                     <TrainingCard key={training.id} training={training} />
                   ))}
                 </div>

@@ -1113,6 +1113,36 @@ button.step {
     resize: vertical;
 }
 
+/* Certificaciones editables en /cuenta (solo coach): cada chip suma un botón
+   "×" para eliminar, a diferencia de los chips de solo lectura en
+   CoachProfile.jsx (que lee el mismo campo `certifications`). */
+.coach-chip--removable {
+    gap: 6px;
+}
+
+.account-chip-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--text-secondary, #666666);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.account-chip-remove:hover,
+.account-chip-remove:focus-visible {
+    color: #c0392b;
+}
+
+.account-chip-remove:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
 /* "Editar" inline, junto a la ubicación o la descripción en /cuenta. */
 .account-edit-trigger {
     padding: 0;
