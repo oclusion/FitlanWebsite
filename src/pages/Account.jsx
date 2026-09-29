@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { IoLocationOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ConfirmModal from "../components/ConfirmModal";
+import LocationSelect from "../components/LocationSelect";
 import userService from "../services/userService";
 import subscriptionService, {
   hasSubscriptionAccess,
@@ -30,6 +32,10 @@ const Account = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [openingPortal, setOpeningPortal] = useState(false);
   const [portalError, setPortalError] = useState("");
+  const [editingLocation, setEditingLocation] = useState(false);
+  const [locationForm, setLocationForm] = useState({ country: "", state: "", city: "" });
+  const [savingLocation, setSavingLocation] = useState(false);
+  const [locationError, setLocationError] = useState("");
 
   useEffect(() => {
     userService.getMe()
@@ -68,6 +74,35 @@ const Account = () => {
   // TODO backend: user.bio = breve descripción del usuario
   // TODO backend: user.trainings = entrenamientos que el usuario ha tomado (mismo shape que coach.trainings)
   const trainings = user?.trainings ?? [];
+  const location = [user?.city, user?.state, user?.country].filter(Boolean).join(", ");
+
+  const handleStartEditLocation = () => {
+    setLocationForm({ country: user?.country ?? "", state: user?.state ?? "", city: user?.city ?? "" });
+    setLocationError("");
+    setEditingLocation(true);
+  };
+
+  // country/state/city siempre se sobreescriben con lo que se mande (ver
+  // README backend) — si el usuario los deja vacíos en el form, se manda
+  // null explícito para borrarlos, no se omiten.
+  const handleSaveLocation = async () => {
+    setLocationError("");
+    setSavingLocation(true);
+    try {
+      const data = await userService.updateMe({
+        country: locationForm.country || null,
+        state: locationForm.state || null,
+        city: locationForm.city || null,
+      });
+      setUser((prev) => ({ ...prev, ...data }));
+      setEditingLocation(false);
+    } catch (error) {
+      console.log("No se pudo actualizar la ubicación", error);
+      setLocationError(error.error || "No se pudo guardar. Intenta de nuevo.");
+    } finally {
+      setSavingLocation(false);
+    }
+  };
 
   return (
     // "coach-profile" es el scope compartido de los estilos del perfil (foto, nombre, banner)
@@ -100,6 +135,37 @@ const Account = () => {
               <div className="coach-identity text-center text-md-start">
                 <h1 className="profile-name">{user?.name}</h1>
                 <p className="text-muted mb-3">@{user?.username}</p>
+
+                {editingLocation ? (
+                  <div className="account-location-edit">
+                    <LocationSelect
+                      value={locationForm}
+                      onChange={setLocationForm}
+                      idPrefix="account-location"
+                    />
+                    {locationError ? <div className="alert-box mb-3"><p>{locationError}</p></div> : null}
+                    <div className="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start mb-3">
+                      <button type="button" className="btn btn-light" onClick={handleSaveLocation} disabled={savingLocation}>
+                        {savingLocation ? "Guardando..." : "Guardar"}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline-light"
+                        onClick={() => setEditingLocation(false)}
+                        disabled={savingLocation}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="coach-location">
+                    <IoLocationOutline aria-hidden="true" /> {location || "Sin ubicación"}{" "}
+                    <button type="button" className="account-location-edit-trigger" onClick={handleStartEditLocation}>
+                      Editar
+                    </button>
+                  </p>
+                )}
 
                 {/* Breve descripción del usuario, en el mismo lugar donde el
                     coach tiene ubicación y rol, antes de las acciones */}

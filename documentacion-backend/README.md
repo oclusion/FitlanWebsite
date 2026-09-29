@@ -211,10 +211,14 @@ POST /auth/register
   "username": "juanito",
   "password": "12345678",
   "email": "juanito@mail.com",
-  "name": "Juan"
+  "name": "Juan",
+  "country": "México",
+  "state": "Ciudad de México",
+  "city": "Cuauhtémoc"
 }
 ```
 > El rol asignado siempre es `ROLE_USER`. No es posible registrarse con `ROLE_ADMIN` ni `ROLE_COACH`.
+> `country`, `state` y `city` son opcionales — si no se envían, el usuario queda sin ubicación. Se persisten desde el momento del registro, antes de que la cuenta esté activa.
 
 **Response `201`:**
 ```json
@@ -431,6 +435,40 @@ Authorization: Bearer <token de admin>
 
 ---
 
+### Eliminar usuario (admin)
+Borra permanentemente una cuenta y todos sus datos asociados. No se puede deshacer.
+
+```
+DELETE /users/5
+Authorization: Bearer <token de admin>
+```
+
+**Response `204`:** sin cuerpo.
+
+**Errores:**
+
+| Código | Mensaje | Causa |
+|---|---|---|
+| `404` | `"Usuario no encontrado..."` | ID inexistente |
+| `400` | `"No se puede eliminar una cuenta de administrador."` | El usuario tiene `ROLE_ADMIN` |
+
+**Datos eliminados en cascada:**
+1. Logs de sesiones completadas
+2. Inscripciones a trainings
+3. Suscripciones (Stripe y manuales)
+4. Sesiones JWT activas
+5. Tokens de dispositivo (push notifications)
+6. Notificaciones
+7. Preferencias de notificación
+8. Cuentas sociales vinculadas (Facebook, Apple)
+9. Tokens de verificación de email / reset de contraseña
+10. Mensajes y conversaciones
+11. El usuario
+
+> Usar para limpiar cuentas de prueba. En producción, preferir **Suspender** para conservar historial.
+
+---
+
 ### Listar todos los usuarios (admin)
 Devuelve todos los usuarios registrados en el sistema, independientemente de su rol.
 
@@ -485,6 +523,8 @@ Authorization: Bearer <token>
     "instagram_url": "https://instagram.com/juanperez",
     "facebook_url": "https://facebook.com/juanperez",
     "tiktok_url": "https://tiktok.com/@juanperez",
+    "country": "México",
+    "city": "Ciudad de México",
     "is_following": true,
     "trainings": [
       {
@@ -556,6 +596,9 @@ Authorization: Bearer <token>
   "instagram_url": "https://instagram.com/juanperez",
   "facebook_url": "https://facebook.com/juanperez",
   "tiktok_url": "https://tiktok.com/@juanperez",
+  "country": "México",
+  "state": "Ciudad de México",
+  "city": "Cuauhtémoc",
   "roles": ["ROLE_USER"],
   "active": true
 }
@@ -580,7 +623,10 @@ Authorization: Bearer <token>
   "banner_image_url": "https://...",
   "instagram_url": "https://instagram.com/juanperez",
   "facebook_url": "https://facebook.com/juanperez",
-  "tiktok_url": "https://tiktok.com/@juanperez"
+  "tiktok_url": "https://tiktok.com/@juanperez",
+  "country": "México",
+  "state": "Ciudad de México",
+  "city": "Cuauhtémoc"
 }
 ```
 
@@ -597,6 +643,9 @@ Authorization: Bearer <token>
   "instagram_url": "https://instagram.com/juanperez",
   "facebook_url": "https://facebook.com/juanperez",
   "tiktok_url": "https://tiktok.com/@juanperez",
+  "country": "México",
+  "state": "Ciudad de México",
+  "city": "Cuauhtémoc",
   "roles": ["ROLE_USER"],
   "active": true
 }
@@ -622,12 +671,15 @@ Authorization: Bearer <token de admin>
   "instagram_url": "https://instagram.com/juanperez",
   "facebook_url": "https://facebook.com/juanperez",
   "tiktok_url": "https://tiktok.com/@juanperez",
+  "country": "México",
+  "state": "Ciudad de México",
+  "city": "Cuauhtémoc",
   "roles": ["ROLE_USER", "ROLE_COACH"]
 }
 ```
 
 > Todos los campos son opcionales — solo se actualizan los que se incluyan. `username` debe ser único. No se puede asignar `ROLE_ADMIN` mediante este endpoint.
-> `profile_image_url`, `instagram_url`, `facebook_url` y `tiktok_url` siempre se sobreescriben con el valor enviado — envía `null` para borrarlos.
+> `profile_image_url`, `instagram_url`, `facebook_url`, `tiktok_url`, `country`, `state` y `city` siempre se sobreescriben con el valor enviado — envía `null` para borrarlos.
 
 **Response `200` (ambos endpoints):**
 ```json
@@ -642,6 +694,9 @@ Authorization: Bearer <token de admin>
   "instagram_url": "https://instagram.com/juanperez",
   "facebook_url": "https://facebook.com/juanperez",
   "tiktok_url": "https://tiktok.com/@juanperez",
+  "country": "México",
+  "state": "Ciudad de México",
+  "city": "Cuauhtémoc",
   "roles": ["ROLE_USER", "ROLE_COACH"],
   "active": true
 }
@@ -745,6 +800,47 @@ Sin `Authorization`. Devuelve info del training para páginas públicas comparti
 | POST | `/training` | ADMIN |
 | PUT | `/training/{id}` | ADMIN |
 | DELETE | `/training/{id}` | ADMIN |
+| GET | `/training/{id}/notify/subscribers` | ADMIN |
+| POST | `/training/{id}/notify` | ADMIN |
+
+### Notificar nuevo curso (admin)
+
+Estos dos endpoints permiten enviar el email `nuevo-curso.html` a suscriptores activos desde el panel admin. El botón de notificación aparece en la fila de cada training con estado `PUBLISHED`.
+
+#### Listar suscriptores activos
+Devuelve todos los usuarios con suscripción `ACTIVE` o `TRIALING`.
+
+```
+GET /training/{id}/notify/subscribers
+Authorization: Bearer <admin-token>
+```
+
+**Response `200`:**
+```json
+[
+  { "id": 2, "name": "Juan Pérez", "email": "juan@mail.com" },
+  { "id": 5, "name": "María López", "email": "maria@mail.com" }
+]
+```
+
+#### Enviar email de nuevo curso
+Envía el email `nuevo-curso.html` a los usuarios indicados. El enlace en el email apunta a `{APP_FRONTEND_URL}/open?target=training&id={id}`, que debe implementarse como redirect al deep link `fitlan://training/{id}` con fallback al website.
+
+```
+POST /training/{id}/notify
+Authorization: Bearer <admin-token>
+Content-Type: application/json
+{ "userIds": [2, 5, 8] }
+```
+
+**Response `200`:**
+```json
+{ "notified": 3 }
+```
+
+> El envío es asíncrono (`@Async`) — la respuesta no espera a que los correos salgan. Solo se envía a usuarios en `userIds` que además tengan suscripción activa.
+
+---
 
 ### Paginación (opcional)
 
@@ -1795,7 +1891,7 @@ Todos los endpoints de historial requieren `Authorization: Bearer <user_token o 
 
 ### Notificaciones programadas (automáticas)
 
-Cuatro tareas cron que corren en zona horaria **America/Mexico_City (CDMX)**:
+Cinco tareas cron que corren en zona horaria **America/Mexico_City (CDMX)**:
 
 | Tarea | `task` | Horario predeterminado | Tipo | Criterio | `data` en la app |
 |---|---|---|---|---|---|
@@ -1803,6 +1899,7 @@ Cuatro tareas cron que corren en zona horaria **America/Mexico_City (CDMX)**:
 | Logro semanal | `WEEKLY_ACHIEVEMENT` | Lunes 9:00 AM | `WEEKLY_ACHIEVEMENT` | Completaron ≥ 5 sesiones distintas en los últimos 7 días | _(ninguno)_ |
 | Racha activa | `STREAK` | Todos los días 8:00 AM | `STREAK` | Racha exacta en hito (3, 7, 14 o 30 días consecutivos) | _(ninguno)_ |
 | Suscripción por vencer | `SUBSCRIPTION_EXPIRY` | Todos los días 10:00 AM | `SUBSCRIPTION_EXPIRING` | Suscripciones `ACTIVE`/`TRIALING` que vencen en exactamente 7 días **o** en menos de 24 h — se envían dos notificaciones con copy distinto | `{ screen: "subscription" }` |
+| Expiración de suscripciones manuales | _(interno, sin notificación)_ | Todos los días 1:00 AM | — | Suscripciones `ACTIVE`/`TRIALING` sin `stripe_subscription_id` cuyo `current_period_end` ya pasó → se marcan `CANCELED` automáticamente | — |
 
 Los horarios son **configurables desde el CMS** (pestaña "Horarios") y se aplican inmediatamente sin reiniciar el servidor. La configuración se persiste en la tabla `notification_schedule_configs`.
 
@@ -2019,7 +2116,7 @@ GET /content/help-support
 **Response `200`:**
 ```json
 {
-  "contact_email": "soporte@fitlanacademy.mx",
+  "contact_email": "soporte@fitlan.fit",
   "whatsapp_url": "https://wa.me/525500000000",
   "topics": [
     { "id": 1, "title": "Problemas para iniciar sesión", "body": "..." },
@@ -2058,7 +2155,7 @@ GET /content/about
   "app_version": "1.0.0",
   "mission": "Conectar a personas con los mejores entrenadores...",
   "description": "Fitlán es una plataforma de fitness online...",
-  "website_url": "https://fitlanacademy.mx",
+  "website_url": "https://fitlan.fit",
   "social": {
     "instagram_url": "https://instagram.com/fitlanacademy",
     "tiktok_url": "https://tiktok.com/@fitlanacademy"
@@ -2125,18 +2222,56 @@ axios.interceptors.response.use(
 
 ## Email
 
-El backend envía emails transaccionales vía **Mailtrap HTTP API** (sandbox para dev/testing). El envío es **asíncrono** — la respuesta HTTP nunca espera a que el correo salga.
+El backend envía emails transaccionales vía **Mailtrap HTTP API**. El envío es **asíncrono** (`@Async`) — la respuesta HTTP nunca espera a que el correo salga.
+
+### Templates HTML
+
+Los templates están en `src/main/resources/templates/email/` y se cargan desde el classpath en tiempo de ejecución. Las variables se reemplazan con `String.replace()` sobre tokens `{{TOKEN}}`.
+
+| Archivo | Trigger | Variables |
+|---|---|---|
+| `verificacion.html` | `POST /auth/register` — al registrarse | `{{FNAME}}`, `{{VERIFY_URL}}`, `{{SERVER_URL}}`, `{{CURRENT_YEAR}}` |
+| `bienvenida.html` | `GET /auth/verify-email` — al activar la cuenta | `{{FNAME}}`, `{{EXPLORE_URL}}`, `{{SERVER_URL}}`, `{{CURRENT_YEAR}}` |
+| `recuperar-contrasena.html` | `POST /auth/forgot-password` | `{{FNAME}}`, `{{RESET_URL}}`, `{{RESET_EXPIRY}}`, `{{SERVER_URL}}`, `{{CURRENT_YEAR}}` |
+| `confirmacion-suscripcion.html` | Webhook `customer.subscription.created` — suscripción nueva ACTIVE | `{{FNAME}}`, `{{PLAN_NAME}}`, `{{PLAN_DISCIPLINES}}`, `{{PLAN_PRICE}}`, `{{PLAN_INTERVAL}}`, `{{START_DATE}}`, `{{NEXT_BILLING_DATE}}`, `{{ORDER_ID}}`, `{{DASHBOARD_URL}}`, `{{MANAGE_URL}}`, `{{SERVER_URL}}`, `{{CURRENT_YEAR}}` |
+| `renovacion-suscripcion.html` | Webhook `invoice.payment_succeeded` con `billing_reason == "subscription_cycle"` | `{{FNAME}}`, `{{PLAN_NAME}}`, `{{CHARGE_DATE}}`, `{{PERIOD_START}}`, `{{PERIOD_END}}`, `{{CARD_INFO}}`, `{{INVOICE_ID}}`, `{{NEXT_BILLING_DATE}}`, `{{PLAN_INTERVAL}}`, `{{SUBTOTAL}}`, `{{TAX}}`, `{{TOTAL}}`, `{{INVOICE_URL}}`, `{{MANAGE_URL}}`, `{{SERVER_URL}}`, `{{CURRENT_YEAR}}` |
+| `nuevo-curso.html` | `POST /training/{id}/notify` — envío manual desde el panel admin | `{{FNAME}}`, `{{COURSE_TITLE}}`, `{{COURSE_URL}}`, `{{COURSE_IMAGE_URL}}`, `{{COURSE_DISCIPLINE}}`, `{{COURSE_INSTRUCTOR}}`, `{{COURSE_LEVEL}}`, `{{COURSE_DURATION}}`, `{{COURSE_DESCRIPTION}}`, `{{SERVER_URL}}`, `{{CURRENT_YEAR}}` |
+
+Los templates incluyen:
+- Logo e imagen banner servidos desde `{{SERVER_URL}}/email/assets/` (ruta pública, sin auth)
+- Dark mode vía `@media (prefers-color-scheme: dark)`
+- Compatibilidad Outlook (`<!--[if mso]>`)
+- Responsive a 620 px
+
+> Los assets del email (`/email/assets/**`) están excluidos de la autenticación de Spring Security para que los clientes de correo puedan cargar las imágenes.
+
+### Entornos
+
+| Entorno | API URL | Comportamiento |
+|---|---|---|
+| Local | `https://sandbox.api.mailtrap.io/api/send/{inbox_id}` | Los correos caen en el inbox de testing de Mailtrap (no llegan a emails reales) |
+| Prod (Railway) | `https://send.api.mailtrap.io/api/send` | Envío real al destinatario |
+
+### Variables de entorno necesarias
 
 | Variable | Descripción |
 |---|---|
-| `MAILTRAP_API_TOKEN` | Token de API de Mailtrap (Settings → API Tokens) |
-| `MAILTRAP_INBOX_ID` | ID numérico del inbox (visible en la URL: `mailtrap.io/inboxes/{id}`) |
-| `APP_FRONTEND_URL` | URL base del website (ej. `https://mi-website.com`). Se usa para los links de verificación de email y reset de contraseña en los correos. |
+| `MAILTRAP_API_TOKEN` | Token de API (Mailtrap → API Tokens) |
+| `APP_SERVER_URL` | URL pública del backend (ej. `https://fitlan-production.up.railway.app`). Se usa para construir las URLs de los assets del email. |
+| `APP_FRONTEND_URL` | URL base del website (ej. `https://fitlan.fit`). Se usa para los links de los correos (reset de contraseña, explorar entrenamientos). |
 
-**Local (`application.properties`):** `mailtrap.api.token` y `mailtrap.api.inbox-id` directamente.
-**Prod (Railway):** variables de entorno `MAILTRAP_API_TOKEN`, `MAILTRAP_INBOX_ID` y `APP_FRONTEND_URL`.
+### Deliverability / Spam
 
-> El envío usa HTTPS (puerto 443) — no depende de puertos SMTP, por lo que funciona desde cualquier plataforma cloud.
+Para evitar que los correos caigan en spam, configurar en Mailtrap → **Sending → Sending Domains**. Los registros DNS de `fitlan.fit` están configurados en Cloudflare:
+
+| Tipo | Nombre | Valor | Estado |
+|---|---|---|---|
+| TXT | `fitlan.fit` | `v=spf1 include:_spf.mailtrap.io ~all` | ✅ Activo |
+| TXT | `rwmt1._domainkey.fitlan.fit` | *(clave DKIM de Mailtrap)* | ✅ Activo |
+| TXT | `rwmt2._domainkey.fitlan.fit` | *(clave DKIM de Mailtrap)* | ✅ Activo |
+| TXT | `_dmarc.fitlan.fit` | `v=DMARC1; p=none; ...` | ✅ Activo |
+
+El dominio aparece como **Verified** en Mailtrap → Sending → Sending Domains. Sin estos registros, Hotmail y Gmail marcarán los correos como spam.
 
 ---
 
@@ -2151,7 +2286,7 @@ Los orígenes permitidos se configuran vía la variable de entorno `CORS_ALLOWED
 
 Al agregar el dominio público del website, añadirlo a la lista separado por coma:
 ```
-CORS_ALLOWED_ORIGINS=https://considerate-mercy-production-fb32.up.railway.app,https://fitlan.mx,http://localhost:*
+CORS_ALLOWED_ORIGINS=https://considerate-mercy-production-fb32.up.railway.app,https://fitlan.fit,http://localhost:*
 ```
 
 **Métodos permitidos:** `GET, POST, PUT, PATCH, DELETE, OPTIONS`. Los WebSockets (`/ws/**`, `/ws-native/**`) aceptan cualquier origen independientemente de esta variable (necesario para clientes móviles).
@@ -2179,11 +2314,11 @@ Disponible en `http://localhost:5173`. Requiere que el backend esté corriendo e
 |---|---|
 | `/` | Dashboard con métricas globales y gráfico por coach |
 | `/coaches` | Tarjetas por coach con métricas detalladas por training |
-| `/trainings` | CRUD de trainings con filtro por estado (DRAFT / PUBLISHED). Descripción opcional. |
+| `/trainings` | CRUD de trainings con filtro por estado (DRAFT / PUBLISHED). Descripción opcional. Los trainings en estado `PUBLISHED` muestran un botón de email (✉) que abre un diálogo para seleccionar suscriptores activos y enviarles el correo de nuevo curso. |
 | `/sessions` | CRUD de sesiones con filtro por training, ordenadas por `display_order`. Descripción opcional. |
 | `/steps` | CRUD de steps con filtro en cascada training → sesión. Incluye editor de ejercicios y descripción opcional. |
 | `/categories` | CRUD de categorías |
-| `/users` | Gestión de usuarios — editar datos y roles, suspender y activar |
+| `/users` | Gestión de usuarios — editar datos y roles, suspender y activar. Incluye columna Ubicación y selects en cascada País → Estado → Ciudad con datos de `country-state-city`. |
 | `/subscriptions` | Gestión de suscripciones — ver plan activo de cada usuario, asignar o cambiar plan, quitar suscripción |
 
 > Todos los filtros se persisten en la URL (`?status=PUBLISHED`, `?training=1&session=2`), por lo que sobreviven al refresco de página y se pueden compartir como enlace.
@@ -2209,7 +2344,7 @@ Las suscripciones se gestionan con **Stripe**. El backend recibe eventos vía we
 
 **Configurar el webhook en Stripe:**
 - URL: `https://fitlan-production.up.railway.app/api/v1/stripe/webhook`
-- Eventos: `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.payment_failed`
+- Eventos: `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.payment_failed`, `invoice.payment_succeeded`
 
 **Configurar planes:** cada plan en la BD necesita su `stripe_price_id` (se crea en Stripe → Catálogo de productos):
 ```sql
@@ -2455,12 +2590,13 @@ Stripe-Signature: t=...,v1=...
 
 Eventos que procesa:
 
-| Evento Stripe | Acción en BD |
-|---|---|
-| `customer.subscription.created` | Crea o actualiza la suscripción del usuario |
-| `customer.subscription.updated` | Actualiza estado, fechas y `cancel_at_period_end` |
-| `customer.subscription.deleted` | Marca la suscripción como `CANCELED` |
-| `invoice.payment_failed` | Marca la suscripción como `PAST_DUE` |
+| Evento Stripe | Acción en BD | Email enviado |
+|---|---|---|
+| `customer.subscription.created` | Crea o actualiza la suscripción del usuario | `confirmacion-suscripcion.html` (solo si queda en estado `ACTIVE`) |
+| `customer.subscription.updated` | Actualiza estado, fechas y `cancel_at_period_end` | — |
+| `customer.subscription.deleted` | Marca la suscripción como `CANCELED` | — |
+| `invoice.payment_failed` | Marca la suscripción como `PAST_DUE` | — |
+| `invoice.payment_succeeded` | Solo cuando `billing_reason == "subscription_cycle"` (renovación, no cobro inicial) — actualiza `current_period_end` | `renovacion-suscripcion.html` con detalle de cargo, tarjeta y número de recibo |
 
 ---
 
@@ -2501,6 +2637,17 @@ Authorization: Bearer <token de admin>
 Crea una nueva entrada de suscripción para el usuario. Al ser la más reciente, reemplaza la vista anterior en `GET /admin/subscriptions`.
 
 **Quitar suscripción desde el panel:** el frontend envía `status: CANCELED` con `current_period_end` en el pasado (ayer en hora local). `CANCELED` solo da acceso cuando `current_period_end > now`; usar una fecha pasada garantiza revocación inmediata sin importar diferencias de zona horaria. Esto es lo que ocurre al seleccionar "Sin suscripción" en el dialog de `/subscriptions`.
+
+**Expiración automática de suscripciones manuales:** las suscripciones asignadas desde el CMS (sin `stripe_subscription_id`) con status `ACTIVE` o `TRIALING` se marcan automáticamente como `CANCELED` a las **01:00 AM CDMX** del día siguiente a su `current_period_end`. A partir de ese momento el usuario pierde acceso. Las notificaciones de aviso (`SUBSCRIPTION_EXPIRING`) se envían 7 días antes y menos de 24 h antes, igual que para suscripciones de Stripe.
+
+| Momento | Evento |
+|---|---|
+| 7 días antes de `current_period_end` | Push: "Tu suscripción vence en 7 días" |
+| < 24 h antes de `current_period_end` | Push: "Tu suscripción vence mañana" |
+| `current_period_end` + hasta 01:00 AM CDMX | El cron marca status = `CANCELED` |
+| A partir de las 01:00 AM | Login móvil → `401`; `GET /subscriptions/me` → `404` |
+
+> Las suscripciones de Stripe **no** son afectadas por este cron — Stripe actualiza el status directamente vía webhook.
 
 ```
 POST /admin/subscriptions

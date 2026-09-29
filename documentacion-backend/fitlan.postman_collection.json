@@ -2499,7 +2499,7 @@
         },
         {
           "name": "Asignar suscripción (admin)",
-          "description": "Crea una nueva entrada de suscripción para el usuario. Al ser la más reciente, reemplaza la vista en GET /admin/subscriptions y determina el acceso en login y GET /subscriptions/me.\n\nplan: LITE | BASIC | PRO\nstatus: ACTIVE | TRIALING | PAST_DUE | CANCELED | UNPAID | INCOMPLETE | INCOMPLETE_EXPIRED\nFechas en formato ISO 8601 sin zona horaria: yyyy-MM-ddTHH:mm:ss",
+          "description": "Crea una nueva entrada de suscripción para el usuario. Al ser la más reciente, reemplaza la vista en GET /admin/subscriptions y determina el acceso en login y GET /subscriptions/me.\n\nplan: LITE | BASIC | PRO\nstatus: ACTIVE | TRIALING | PAST_DUE | CANCELED | UNPAID | INCOMPLETE | INCOMPLETE_EXPIRED\nFechas en formato ISO 8601 sin zona horaria: yyyy-MM-ddTHH:mm:ss\n\nEXPIRACIÓN AUTOMÁTICA (suscripciones manuales):\nLas suscripciones sin stripe_subscription_id (asignadas desde el CMS) con status ACTIVE o TRIALING\nse marcan automáticamente como CANCELED a las 01:00 AM CDMX del día siguiente a su current_period_end.\n\nTimeline para una suscripción manual que vence el 15 oct:\n  8 oct  → Push \"Tu suscripción vence en 7 días\"\n  14 oct → Push \"Tu suscripción vence mañana\"\n  16 oct 01:00 AM → status = CANCELED (cron automático)\n  A partir de ese momento → login móvil 401, /subscriptions/me 404\n\nLas suscripciones de Stripe NO son afectadas por este cron — Stripe las gestiona vía webhook.",
           "request": {
             "method": "POST",
             "url": "{{base_url}}/admin/subscriptions",

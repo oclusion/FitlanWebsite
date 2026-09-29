@@ -13,6 +13,7 @@
   "dependencies": {
     "@stomp/stompjs": "^7.3.0",
     "bootstrap": "^5.3.8",
+    "country-state-city": "^3.2.1",
     "express": "^5.2.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

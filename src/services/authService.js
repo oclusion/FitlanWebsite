@@ -12,9 +12,11 @@ const persistSession = (data) => {
 const authService = {
   // A diferencia de la app móvil (solo login), acá sí se puede crear cuenta nueva.
   // El backend deja la cuenta con active=false hasta verificar el email — no
-  // devuelve token todavía, hay que loguear después de verificar.
-  register: (username, password, email, name) =>
-    api.post("/auth/register", { username, password, email, name }),
+  // devuelve token todavía, hay que loguear después de verificar. country/state/city
+  // son opcionales y se persisten desde el registro (no hay forma de setearlos
+  // después: sin token válido hasta verificar el email + loguear).
+  register: ({ username, password, email, name, country, state, city }) =>
+    api.post("/auth/register", { username, password, email, name, country, state, city }),
 
   verifyEmail: (token) => api.get(`/auth/verify-email?token=${encodeURIComponent(token)}`),
 

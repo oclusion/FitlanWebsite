@@ -22,7 +22,6 @@ const EXPERIENCE_CLAMP_CHARS = 280;
 // TODO: quitar cuando el backend mande estos campos
 const PLACEHOLDERS = {
   quote: "Frase del instructor",
-  location: "Ciudad, País",
   role: "Instructor de Yoga",
   languages: [
     { name: "Español", level: "Nativo" },
@@ -93,6 +92,8 @@ const CoachProfile = () => {
   }
 
   const hasSocial = coach.instagram_url || coach.facebook_url || coach.tiktok_url;
+  // Solo ciudad + país (sin estado) — GET /users/coaches[/id] no lo expone.
+  const location = [coach.city, coach.country].filter(Boolean).join(", ");
 
   // Campos nuevos (todos opcionales; si no vienen del backend, el bloque no se pinta)
   const languages = coach.languages ?? [];     // [{ name, level }]
@@ -138,9 +139,9 @@ const CoachProfile = () => {
             <div className="col-lg-7">
               <div className="coach-identity text-center text-md-start">
                 <h1 className="profile-name">{coach.name}</h1>
-                {coach.location ? (
+                {location ? (
                   <p className="coach-location">
-                    <IoLocationOutline aria-hidden="true" /> {coach.location}
+                    <IoLocationOutline aria-hidden="true" /> {location}
                   </p>
                 ) : null}
                 {coach.role ? <p className="coach-role">{coach.role}</p> : null}

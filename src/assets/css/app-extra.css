@@ -1083,6 +1083,33 @@ button.step {
     gap: 12px;
 }
 
+/* Selects de País/Estado/Ciudad al editar la ubicación en /cuenta — apilados
+   y angostos, centrados en mobile igual que el resto de .coach-identity. */
+.account-location-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 320px;
+    margin: 0 auto 12px;
+}
+
+@media (min-width: 768px) {
+    .account-location-edit {
+        margin-left: 0;
+    }
+}
+
+.account-location-edit-trigger {
+    padding: 0;
+    border: none;
+    background: none;
+    color: #5b6fc3;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 /* CoachProfile: cabecera centrada — foto arriba y nombre / descripción / follow
    apilados y centrados debajo (la maqueta los ponía lado a lado, alineados a la
    izquierda). También se centran las redes y la grilla de entrenamientos. */

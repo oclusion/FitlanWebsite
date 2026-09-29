@@ -3,14 +3,17 @@ import { Link, Navigate } from "react-router-dom";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import authService from "../services/authService";
 import { useAuth } from "../context/AuthContext";
+import LocationSelect from "../components/LocationSelect";
 import logoWhite from "../assets/img/fitlan-white.svg";
 
 // POST /auth/register (ver README backend) — la cuenta queda con active=false
 // hasta verificar el email, no devuelve token. A diferencia de la app móvil
-// (solo login), el registro vive únicamente acá.
+// (solo login), el registro vive únicamente acá. country/state/city son
+// opcionales — se mandan tal cual estén (o vacíos) al submit, sin validarlos
+// como obligatorios, a diferencia de los demás campos.
 const Register = () => {
   const { isAuthenticated } = useAuth();
-  const [form, setForm] = useState({ name: "", username: "", email: "", password: "" });
+  const [form, setForm] = useState({ name: "", username: "", email: "", password: "", country: "", state: "", city: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -35,7 +38,7 @@ const Register = () => {
     setLoading(true);
     setError(null);
     try {
-      await authService.register(form.username, form.password, form.email, form.name);
+      await authService.register(form);
       setDone(true);
     } catch (err) {
       // Validación por campo del backend (400 con { errors: { campo: mensaje } }) no
@@ -92,6 +95,12 @@ const Register = () => {
                 {showPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
               </button>
             </div>
+
+            <LocationSelect
+              value={form}
+              onChange={(next) => setForm((prev) => ({ ...prev, ...next }))}
+              idPrefix="register"
+            />
 
             {error ? <div className="alert-box"><p>{error}</p></div> : null}
 
