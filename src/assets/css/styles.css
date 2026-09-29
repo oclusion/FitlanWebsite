@@ -1224,7 +1224,7 @@ main {
 
 .coach-hero {
     min-height: 200px;
-    padding: 40px 0 68px 0;
+    padding: 40px 0 128px 0;
 }
 
 .user-hero {
@@ -1236,7 +1236,6 @@ main {
 /* ======================================== SM — SMALL DEVICES 576px+ ======================================== */
 
 @media (min-width: 576px) {
-
 
 
 }
