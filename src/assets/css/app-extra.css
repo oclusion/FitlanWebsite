@@ -1125,6 +1125,45 @@ button.step {
     cursor: pointer;
 }
 
+/* Capa de cámara sobre la foto de perfil en /cuenta. No un badge en una
+   esquina: .profile-photo-wrapper es un círculo con overflow:hidden (border-
+   radius:50%), así que cualquier cosa posicionada sobre el borde queda
+   recortada — casi todo el botón desaparecía, dejando solo una puntita
+   visible. Un overlay a inset:0 se queda adentro del mismo círculo recortado,
+   sin ese problema — mismo patrón que Instagram/Facebook para cambiar foto. */
+.account-photo-edit {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.55);
+    color: #ffffff;
+    font-size: 32px;
+    cursor: pointer;
+    /* Oculto por defecto — con el placeholder de iniciales, un overlay
+       siempre visible tapaba las letras. Sigue clickeable en toda su área
+       aunque no se vea (el <label> cubre el círculo entero), así que en
+       touch (sin :hover) el tap para elegir foto funciona igual. */
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.profile-photo-wrapper:hover .account-photo-edit,
+.account-photo-edit:focus-within {
+    opacity: 1;
+}
+
+.account-photo-edit--loading {
+    opacity: 1;
+    cursor: default;
+}
+
+.account-photo-error {
+    max-width: 320px;
+}
+
 /* CoachProfile: cabecera centrada — foto arriba y nombre / descripción / follow
    apilados y centrados debajo (la maqueta los ponía lado a lado, alineados a la
    izquierda). También se centran las redes y la grilla de entrenamientos. */

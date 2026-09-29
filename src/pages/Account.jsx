@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { IoLocationOutline } from "react-icons/io5";
+import { IoLocationOutline, IoCameraOutline } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ConfirmModal from "../components/ConfirmModal";
 import LocationSelect from "../components/LocationSelect";
 import userService from "../services/userService";
+import fileService from "../services/fileService";
 import subscriptionService, {
   hasSubscriptionAccess,
   subscriptionStatusMeta,
@@ -31,6 +32,8 @@ const Account = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [openingPortal, setOpeningPortal] = useState(false);
   const [portalError, setPortalError] = useState("");
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState("");
   const [editingName, setEditingName] = useState(false);
   const [nameForm, setNameForm] = useState("");
   const [savingName, setSavingName] = useState(false);
@@ -99,6 +102,27 @@ const Account = () => {
     state: user?.state ?? null,
     city: user?.city ?? null,
   });
+
+  // POST /files/upload sube el archivo y devuelve { key, url } — el key se
+  // reenvía en el campo profile_image_url al actualizar el usuario (así lo
+  // documenta el backend: ese campo acepta el key crudo, no una URL real).
+  const handlePhotoChange = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = ""; // permite volver a elegir el mismo archivo después
+    if (!file) return;
+    setPhotoError("");
+    setUploadingPhoto(true);
+    try {
+      const { key } = await fileService.upload(file);
+      const data = await userService.updateMe({ ...currentLocationPayload(), profile_image_url: key });
+      setUser((prev) => ({ ...prev, ...data }));
+    } catch (error) {
+      console.log("No se pudo actualizar la foto de perfil", error);
+      setPhotoError(error.error || "No se pudo subir la imagen. Intenta de nuevo.");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
 
   const handleStartEditName = () => {
     setNameForm(user?.name ?? "");
@@ -220,7 +244,17 @@ const Account = () => {
             ) : (
               <div className="profile-photo profile-photo-placeholder">{getInitials(user?.name)}</div>
             )}
+            <label
+              className={`account-photo-edit${uploadingPhoto ? " account-photo-edit--loading" : ""}`}
+              aria-label="Cambiar foto de perfil"
+            >
+              <IoCameraOutline aria-hidden="true" />
+              <input type="file" accept="image/*" onChange={handlePhotoChange} disabled={uploadingPhoto} hidden />
+            </label>
           </div>
+          {photoError ? (
+            <div className="alert-box account-photo-error mb-3 mx-auto"><p>{photoError}</p></div>
+          ) : null}
 
           <div className="row gx-lg-5 gy-4">
 

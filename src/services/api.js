@@ -22,8 +22,12 @@ const clearToken = () => {
 };
 
 const request = async (endpoint, options = {}) => {
+  // FormData (subida de archivos) arma su propio Content-Type con boundary —
+  // si lo forzamos a application/json acá, el backend no puede parsear el
+  // multipart. Dejar que el navegador lo setee solo en ese caso.
+  const isFormData = options.body instanceof FormData;
   const headers = {
-    "Content-Type": "application/json",
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...CLIENT_HEADER,
     ...(_token ? { Authorization: `Bearer ${_token}` } : {}),
     ...options.headers,
@@ -69,6 +73,10 @@ const api = {
 
   delete: (endpoint, options) =>
     request(endpoint, { method: "DELETE", ...options }),
+
+  // body es un FormData (subida de archivos, POST /files/upload) — nunca JSON.
+  upload: (endpoint, formData, options) =>
+    request(endpoint, { method: "POST", body: formData, ...options }),
 
   setToken,
   clearToken,
