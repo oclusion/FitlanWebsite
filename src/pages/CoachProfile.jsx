@@ -150,7 +150,7 @@ const CoachProfile = () => {
 
                 <div className="coach-actions-row d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
                   <button className="follow-button" type="button" onClick={handleToggleFollow} disabled={followLoading}>
-                    {isFollowing ? "Siguiendo" : "Follow"}
+                    {isFollowing ? "Siguiendo" : "Seguir"}
                   </button>
                   <button className="follow-button chat-button" type="button" onClick={handleOpenChat} disabled={startingChat}>
                     <IoChatbubbleEllipsesOutline />
