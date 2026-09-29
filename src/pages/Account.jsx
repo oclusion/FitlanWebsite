@@ -121,7 +121,7 @@ const Account = () => {
                 <h5 className="coach-label" id="account-subscription-title">Suscripción</h5>
                 {hasActiveSubscription ? (
                   <>
-                    <p>Plan {subscription.plan_display_name}</p>
+                    <p>{subscription.plan_display_name}</p>
                     <p className={`plan-status plan-status--${subscriptionStatusMeta(subscription).modifier}`}>
                       {subscriptionStatusMeta(subscription).label}
                     </p>
