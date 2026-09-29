@@ -7,6 +7,7 @@ import ConfirmModal from "../components/ConfirmModal";
 import LocationSelect from "../components/LocationSelect";
 import userService from "../services/userService";
 import fileService from "../services/fileService";
+import enrollmentService from "../services/enrollmentService";
 import subscriptionService, {
   hasSubscriptionAccess,
   subscriptionStatusMeta,
@@ -16,18 +17,10 @@ import { useAuth } from "../context/AuthContext";
 import { getInitials } from "../utils/initials";
 import { assetUrl } from "../utils/assetUrl";
 
-// TODO: quitar cuando el backend mande estos campos
-const PLACEHOLDERS = {
-  trainings: [
-    { id: "placeholder-1", title: "Yoga para principiantes" },
-    { id: "placeholder-2", title: "Box: fundamentos" },
-    { id: "placeholder-3", title: "Vinyasa flow" },
-  ],
-};
-
 const Account = () => {
   const { logout } = useAuth();
   const [user, setUser] = useState(null);
+  const [enrollments, setEnrollments] = useState([]);
   const [subscription, setSubscription] = useState(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [openingPortal, setOpeningPortal] = useState(false);
@@ -53,7 +46,7 @@ const Account = () => {
 
   useEffect(() => {
     userService.getMe()
-      .then((data) => setUser({ ...(import.meta.env.DEV ? PLACEHOLDERS : {}), ...data })) // TODO: quitar cuando el backend mande estos campos
+      .then(setUser)
       .catch((error) => console.log("No se pudo cargar el perfil", error));
     subscriptionService.getMySubscription()
       .then(setSubscription)
@@ -61,6 +54,9 @@ const Account = () => {
         if (error.status !== 404) console.log("No se pudo cargar la suscripción", error);
         setSubscription(null);
       });
+    enrollmentService.getMyEnrollments()
+      .then(setEnrollments)
+      .catch((error) => console.log("No se pudieron cargar los entrenamientos", error));
   }, []);
 
   const hasActiveSubscription = hasSubscriptionAccess(subscription);
@@ -85,8 +81,11 @@ const Account = () => {
     }
   };
 
-  // TODO backend: user.trainings = entrenamientos que el usuario ha tomado (mismo shape que coach.trainings)
-  const trainings = user?.trainings ?? [];
+  // GET /enrollments/me — inscripciones reales del usuario, con link al entrenamiento.
+  const trainings = enrollments.map((enrollment) => ({
+    id: enrollment.training_id,
+    title: enrollment.training_title,
+  }));
   const location = [user?.city, user?.state, user?.country].filter(Boolean).join(", ");
   // motto (la "frase" del banner en CoachProfile.jsx) solo aplica a coaches.
   const isCoach = user?.roles?.includes("ROLE_COACH") ?? false;
@@ -446,7 +445,9 @@ const Account = () => {
                   <ul className="coach-chip-list">
                     {trainings.map((training) => (
                       <li key={training.id}>
-                        <span className="coach-chip">{training.title}</span>
+                        <Link to={`/entrenamiento/${training.id}`} className="coach-chip">
+                          {training.title}
+                        </Link>
                       </li>
                     ))}
                   </ul>
