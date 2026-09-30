@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { IoLocationOutline, IoCameraOutline, IoCloseOutline } from "react-icons/io5";
+import {
+  IoLocationOutline,
+  IoCameraOutline,
+  IoCloseOutline,
+  IoLogoInstagram,
+  IoLogoFacebook,
+  IoLogoTiktok,
+} from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ConfirmModal from "../components/ConfirmModal";
@@ -50,6 +57,10 @@ const Account = () => {
   const [savingCertification, setSavingCertification] = useState(false);
   const [certificationError, setCertificationError] = useState("");
   const [deletingCertificationId, setDeletingCertificationId] = useState(null);
+  const [editingSocial, setEditingSocial] = useState(false);
+  const [socialForm, setSocialForm] = useState({ instagram_url: "", facebook_url: "", tiktok_url: "" });
+  const [savingSocial, setSavingSocial] = useState(false);
+  const [socialError, setSocialError] = useState("");
 
   useEffect(() => {
     userService.getMe()
@@ -107,16 +118,22 @@ const Account = () => {
       .catch((error) => console.log("No se pudieron cargar las certificaciones", error));
   }, [isCoach]);
 
-  // country/state/city (junto con profile_image_url/instagram_url/facebook_url/
-  // tiktok_url) son especiales en PUT /users/me: a diferencia del resto de los
-  // campos, "no incluirlos" y "mandarlos null" es lo mismo para el backend —
-  // se borran igual (ver README backend, nota en "Actualizar perfil propio").
-  // Por eso CUALQUIER guardado (no solo el de ubicación) tiene que reenviar
-  // los valores actuales acá, o se pierden.
-  const currentLocationPayload = () => ({
+  // country/state/city/profile_image_url/instagram_url/facebook_url/tiktok_url
+  // son especiales en PUT /users/me: a diferencia del resto de los campos, "no
+  // incluirlos" y "mandarlos null" es lo mismo para el backend — se borran
+  // igual (ver README backend, nota en "Actualizar perfil propio"). Por eso
+  // CUALQUIER guardado en esta pantalla (no solo el del campo que se está
+  // editando) tiene que reenviar los valores actuales de TODOS estos campos,
+  // o se pierden. profile_image_url va como profile_image_key: ese campo
+  // acepta el key crudo al escribir, no la URL firmada que devuelve el GET.
+  const currentProtectedFieldsPayload = () => ({
     country: user?.country ?? null,
     state: user?.state ?? null,
     city: user?.city ?? null,
+    profile_image_url: user?.profile_image_key ?? null,
+    instagram_url: user?.instagram_url ?? null,
+    facebook_url: user?.facebook_url ?? null,
+    tiktok_url: user?.tiktok_url ?? null,
   });
 
   // toCompressedJpeg() redimensiona/recodifica antes de subir — evita fotos
@@ -133,7 +150,7 @@ const Account = () => {
     try {
       const compressed = await toCompressedJpeg(file);
       const { key } = await fileService.upload(compressed);
-      const data = await userService.updateMe({ ...currentLocationPayload(), profile_image_url: key });
+      const data = await userService.updateMe({ ...currentProtectedFieldsPayload(), profile_image_url: key });
       setUser((prev) => ({ ...prev, ...data }));
     } catch (error) {
       console.log("No se pudo actualizar la foto de perfil", error);
@@ -159,7 +176,7 @@ const Account = () => {
     setNameError("");
     setSavingName(true);
     try {
-      const data = await userService.updateMe({ ...currentLocationPayload(), name: nameForm.trim() });
+      const data = await userService.updateMe({ ...currentProtectedFieldsPayload(), name: nameForm.trim() });
       setUser((prev) => ({ ...prev, ...data }));
       setEditingName(false);
     } catch (error) {
@@ -184,6 +201,7 @@ const Account = () => {
     setSavingLocation(true);
     try {
       const data = await userService.updateMe({
+        ...currentProtectedFieldsPayload(),
         country: locationForm.country || null,
         state: locationForm.state || null,
         city: locationForm.city || null,
@@ -208,7 +226,7 @@ const Account = () => {
     setDescriptionError("");
     setSavingDescription(true);
     try {
-      const data = await userService.updateMe({ ...currentLocationPayload(), description: descriptionForm || null });
+      const data = await userService.updateMe({ ...currentProtectedFieldsPayload(), description: descriptionForm || null });
       setUser((prev) => ({ ...prev, ...data }));
       setEditingDescription(false);
     } catch (error) {
@@ -230,7 +248,7 @@ const Account = () => {
     setMottoError("");
     setSavingMotto(true);
     try {
-      const data = await userService.updateMe({ ...currentLocationPayload(), motto: mottoForm || null });
+      const data = await userService.updateMe({ ...currentProtectedFieldsPayload(), motto: mottoForm || null });
       setUser((prev) => ({ ...prev, ...data }));
       setEditingMotto(false);
     } catch (error) {
@@ -277,6 +295,38 @@ const Account = () => {
       console.log("No se pudo eliminar la certificación", error);
     } finally {
       setDeletingCertificationId(null);
+    }
+  };
+
+  const hasSocial = user?.instagram_url || user?.facebook_url || user?.tiktok_url;
+
+  const handleStartEditSocial = () => {
+    setSocialForm({
+      instagram_url: user?.instagram_url ?? "",
+      facebook_url: user?.facebook_url ?? "",
+      tiktok_url: user?.tiktok_url ?? "",
+    });
+    setSocialError("");
+    setEditingSocial(true);
+  };
+
+  const handleSaveSocial = async () => {
+    setSocialError("");
+    setSavingSocial(true);
+    try {
+      const data = await userService.updateMe({
+        ...currentProtectedFieldsPayload(),
+        instagram_url: socialForm.instagram_url.trim() || null,
+        facebook_url: socialForm.facebook_url.trim() || null,
+        tiktok_url: socialForm.tiktok_url.trim() || null,
+      });
+      setUser((prev) => ({ ...prev, ...data }));
+      setEditingSocial(false);
+    } catch (error) {
+      console.log("No se pudieron actualizar las redes sociales", error);
+      setSocialError(error.error || "No se pudo guardar. Intenta de nuevo.");
+    } finally {
+      setSavingSocial(false);
     }
   };
 
@@ -574,6 +624,80 @@ const Account = () => {
                     <button type="button" className="account-edit-trigger" onClick={handleStartAddCertification}>
                       + Agregar certificación
                     </button>
+                  )}
+                </section>
+              ) : null}
+
+              {/* Redes sociales — solo coaches; se muestran en CoachProfile.jsx
+                  bajo "Sígueme en:", ahí de solo lectura. */}
+              {isCoach ? (
+                <section className="coach-aside-group profile-social">
+                  <h5 className="coach-label">Redes sociales</h5>
+                  {editingSocial ? (
+                    <div className="account-description-edit">
+                      <input
+                        type="url"
+                        className="form-control"
+                        value={socialForm.instagram_url}
+                        onChange={(event) => setSocialForm((prev) => ({ ...prev, instagram_url: event.target.value }))}
+                        placeholder="URL de Instagram"
+                      />
+                      <input
+                        type="url"
+                        className="form-control"
+                        value={socialForm.facebook_url}
+                        onChange={(event) => setSocialForm((prev) => ({ ...prev, facebook_url: event.target.value }))}
+                        placeholder="URL de Facebook"
+                      />
+                      <input
+                        type="url"
+                        className="form-control"
+                        value={socialForm.tiktok_url}
+                        onChange={(event) => setSocialForm((prev) => ({ ...prev, tiktok_url: event.target.value }))}
+                        placeholder="URL de TikTok"
+                      />
+                      {socialError ? <div className="alert-box mb-3"><p>{socialError}</p></div> : null}
+                      <div className="d-flex flex-wrap gap-2 mb-3">
+                        <button type="button" className="btn btn-light" onClick={handleSaveSocial} disabled={savingSocial}>
+                          {savingSocial ? "Guardando..." : "Guardar"}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-outline-light"
+                          onClick={() => setEditingSocial(false)}
+                          disabled={savingSocial}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {hasSocial ? (
+                        <div className="d-flex gap-2 mb-2">
+                          {user?.instagram_url ? (
+                            <a href={user.instagram_url} className="social-icon" target="_blank" rel="noreferrer">
+                              <IoLogoInstagram />
+                            </a>
+                          ) : null}
+                          {user?.facebook_url ? (
+                            <a href={user.facebook_url} className="social-icon" target="_blank" rel="noreferrer">
+                              <IoLogoFacebook />
+                            </a>
+                          ) : null}
+                          {user?.tiktok_url ? (
+                            <a href={user.tiktok_url} className="social-icon" target="_blank" rel="noreferrer">
+                              <IoLogoTiktok />
+                            </a>
+                          ) : null}
+                        </div>
+                      ) : (
+                        <p className="mb-2">Sin redes sociales</p>
+                      )}
+                      <button type="button" className="account-edit-trigger" onClick={handleStartEditSocial}>
+                        Editar
+                      </button>
+                    </>
                   )}
                 </section>
               ) : null}
