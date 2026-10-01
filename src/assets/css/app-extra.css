@@ -1155,6 +1155,22 @@ button.step {
     cursor: pointer;
 }
 
+/* Variante ícono (lápiz) para "Editar" junto al nombre/ubicación/frase/
+   descripción/redes sociales — más compacto que el texto subrayado, "+
+   Agregar certificación" se queda con el estilo de texto de arriba. */
+.account-edit-trigger--icon {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    font-size: 1.125rem;
+    text-decoration: none;
+}
+
+.account-edit-trigger--icon:hover,
+.account-edit-trigger--icon:focus-visible {
+    color: #3f52a3;
+}
+
 /* Capa de cámara sobre la foto de perfil en /cuenta. No un badge en una
    esquina: .profile-photo-wrapper es un círculo con overflow:hidden (border-
    radius:50%), así que cualquier cosa posicionada sobre el borde queda

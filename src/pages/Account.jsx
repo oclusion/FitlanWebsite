@@ -7,6 +7,7 @@ import {
   IoLogoInstagram,
   IoLogoFacebook,
   IoLogoTiktok,
+  IoCreateOutline,
 } from "react-icons/io5";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -396,8 +397,13 @@ const Account = () => {
                 ) : (
                   <h1 className="profile-name">
                     {user?.name}{" "}
-                    <button type="button" className="account-edit-trigger" onClick={handleStartEditName}>
-                      Editar
+                    <button
+                      type="button"
+                      className="account-edit-trigger account-edit-trigger--icon"
+                      onClick={handleStartEditName}
+                      aria-label="Editar nombre"
+                    >
+                      <IoCreateOutline aria-hidden="true" />
                     </button>
                   </h1>
                 )}
@@ -428,8 +434,13 @@ const Account = () => {
                 ) : (
                   <p className="coach-location">
                     <IoLocationOutline aria-hidden="true" /> {location || "Sin ubicación"}{" "}
-                    <button type="button" className="account-edit-trigger" onClick={handleStartEditLocation}>
-                      Editar
+                    <button
+                      type="button"
+                      className="account-edit-trigger account-edit-trigger--icon"
+                      onClick={handleStartEditLocation}
+                      aria-label="Editar ubicación"
+                    >
+                      <IoCreateOutline aria-hidden="true" />
                     </button>
                   </p>
                 )}
@@ -466,8 +477,13 @@ const Account = () => {
                   ) : (
                     <p className="profile-text mx-auto mx-md-0">
                       {user?.motto ? `“${user.motto}”` : "Sin frase"}{" "}
-                      <button type="button" className="account-edit-trigger" onClick={handleStartEditMotto}>
-                        Editar
+                      <button
+                        type="button"
+                        className="account-edit-trigger account-edit-trigger--icon"
+                        onClick={handleStartEditMotto}
+                        aria-label="Editar frase"
+                      >
+                        <IoCreateOutline aria-hidden="true" />
                       </button>
                     </p>
                   )
@@ -503,8 +519,13 @@ const Account = () => {
                 ) : (
                   <p className="profile-text mx-auto mx-md-0">
                     {user?.description || "Sin descripción"}{" "}
-                    <button type="button" className="account-edit-trigger" onClick={handleStartEditDescription}>
-                      Editar
+                    <button
+                      type="button"
+                      className="account-edit-trigger account-edit-trigger--icon"
+                      onClick={handleStartEditDescription}
+                      aria-label="Editar descripción"
+                    >
+                      <IoCreateOutline aria-hidden="true" />
                     </button>
                   </p>
                 )}
@@ -694,8 +715,13 @@ const Account = () => {
                       ) : (
                         <p className="mb-2">Sin redes sociales</p>
                       )}
-                      <button type="button" className="account-edit-trigger" onClick={handleStartEditSocial}>
-                        Editar
+                      <button
+                        type="button"
+                        className="account-edit-trigger account-edit-trigger--icon"
+                        onClick={handleStartEditSocial}
+                        aria-label="Editar redes sociales"
+                      >
+                        <IoCreateOutline aria-hidden="true" />
                       </button>
                     </>
                   )}
