@@ -215,7 +215,11 @@ const StepPlayer = () => {
           <div className="row">
             <div className="col-12">
               {/* El video ocupa el lugar de la imagen del hero */}
-              <section className="training-hero">
+              {/* Sin menú contextual en todo el hero: así el clic derecho no ofrece
+                  "Guardar video como…" ni "Copiar dirección del video", ni sobre el
+                  overlay de play. Es disuasión, no protección: la URL sigue visible en
+                  las herramientas de desarrollador. */}
+              <section className="training-hero" onContextMenu={(event) => event.preventDefault()}>
                 {activeStep.video_url ? (
                   <video
                     ref={videoRef}
@@ -226,6 +230,11 @@ const StepPlayer = () => {
                     onPause={() => setIsPlaying(false)}
                     onEnded={handleVideoEnded}
                     controls={isPlaying}
+                    // Quita "Descargar" del menú de los controles nativos y las salidas a
+                    // otra ventana o dispositivo (picture-in-picture, Cast/AirPlay).
+                    controlsList="nodownload noremoteplayback"
+                    disablePictureInPicture
+                    disableRemotePlayback
                     playsInline
                   />
                 ) : (
