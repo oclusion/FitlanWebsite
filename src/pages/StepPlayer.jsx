@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { IoPlay, IoShareSocialOutline, IoTimeOutline, IoCheckmarkCircleOutline } from "react-icons/io5";
 import Header from "../components/Header";
@@ -31,8 +31,13 @@ const formatTimer = (seconds) => {
 // el evento `ended` del video — homologado con StepPlayerScreen (que escucha
 // el evento nativo `playToEnd`) — no al entrar al step: si no, cualquier
 // step quedaría "completado" con solo navegarlo, sin ver el video. Se manda
-// la duración real del video (no la nominal del step). Steps sin video no
+// el tiempo realmente reproducido (no la duración nominal del step). Steps sin video no
 // se marcan por esta vía (igual que en la app).
+//
+// Si el usuario deja el video sin terminarlo (cambia de step, sale de la página
+// o cierra la pestaña) se mandan los segundos realmente reproducidos a
+// recordWatchTime, que suma a las métricas del coach sin completar la sesión.
+// El contador ignora saltos de más de 2 s, así que adelantar no infla nada.
 const StepPlayer = () => {
   const { trainingId, sessionId, stepId } = useParams();
   const navigate = useNavigate();
@@ -42,6 +47,8 @@ const StepPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [videoEnded, setVideoEnded] = useState(false);
+  const watchedSecondsRef = useRef(0);
+  const lastTimeRef = useRef(0);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
 
@@ -63,15 +70,58 @@ const StepPlayer = () => {
   const steps = [...(session?.steps ?? [])].sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
   const activeStep = steps.find((s) => String(s.id) === String(stepId));
 
+  // Registra los segundos vistos aún no enviados. `keepalive` deja terminar el
+  // request aunque la pestaña se esté cerrando.
+  const flushWatchTime = useCallback(() => {
+    const seconds = Math.floor(watchedSecondsRef.current);
+    if (seconds < 1) return;
+    watchedSecondsRef.current -= seconds;
+    enrollmentService.recordWatchTime(trainingId, sessionId, seconds, { keepalive: true })
+      .catch((error) => console.log("No se pudieron registrar los segundos vistos", error));
+  }, [trainingId, sessionId]);
+
   useEffect(() => {
     setIsPlaying(false);
     setCurrentTime(0);
     setVideoEnded(false);
-  }, [stepId]);
+    watchedSecondsRef.current = 0;
+    lastTimeRef.current = 0;
+    // Al cambiar de step o salir de la página, se envía lo visto del step anterior.
+    return () => flushWatchTime();
+  }, [stepId, flushWatchTime]);
+
+  // Cerrar la pestaña o mandarla a segundo plano no desmonta el componente.
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") flushWatchTime();
+    };
+    window.addEventListener("pagehide", flushWatchTime);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      window.removeEventListener("pagehide", flushWatchTime);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [flushWatchTime]);
+
+  const handleTimeUpdate = (event) => {
+    const video = event.target;
+    const delta = video.currentTime - lastTimeRef.current;
+    if (!video.paused && delta > 0 && delta <= 2) {
+      watchedSecondsRef.current += delta;
+    }
+    lastTimeRef.current = video.currentTime;
+    setCurrentTime(video.currentTime);
+  };
 
   const handleVideoEnded = () => {
     setVideoEnded(true);
-    const watchedSeconds = Math.round(videoRef.current?.duration || activeStep.duration_seconds || 0);
+    const duration = videoRef.current?.duration || activeStep.duration_seconds || 0;
+    const remaining = duration - lastTimeRef.current;
+    if (remaining > 0 && remaining <= 2) watchedSecondsRef.current += remaining;
+    lastTimeRef.current = duration;
+    // Tiempo realmente reproducido; la duración solo como respaldo si el contador quedó en 0.
+    const watchedSeconds = Math.round(watchedSecondsRef.current) || Math.round(duration);
+    watchedSecondsRef.current = 0;
     enrollmentService.completeSession(trainingId, sessionId, watchedSeconds)
       .catch((error) => console.log("No se pudo registrar la sesión completada", error));
   };
@@ -171,7 +221,7 @@ const StepPlayer = () => {
                     ref={videoRef}
                     className="training-hero-video"
                     src={assetUrl(activeStep.video_url, activeStep.video_key)}
-                    onTimeUpdate={(event) => setCurrentTime(event.target.currentTime)}
+                    onTimeUpdate={handleTimeUpdate}
                     onPlay={() => setIsPlaying(true)}
                     onPause={() => setIsPlaying(false)}
                     onEnded={handleVideoEnded}
