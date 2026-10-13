@@ -79,6 +79,48 @@ const buildTrainingMetaHtml = (training, pageUrl) => {
 
 const app = express();
 
+// Universal Links (iOS) y App Links (Android): con estos dos archivos el sistema abre la app
+// instalada al tocar un link https://fitlan.fit/entrenamiento-publico/:id (p. ej. desde
+// WhatsApp) en vez del navegador. Sin la app instalada el link sigue abriendo este sitio.
+// Ambos deben servirse como JSON, en esta ruta exacta y sin redirecciones.
+const IOS_APP_ID = process.env.IOS_APP_ID || "9RFY598MXP.com.oclusion.fitlan"; // <Team ID>.<bundle id>
+const ANDROID_PACKAGE = process.env.ANDROID_PACKAGE || "com.oclusion.fitlan";
+// SHA-256 del certificado con que se firma la app Android (keystore de EAS). Si se publica en
+// Google Play con App Signing, agregar también la huella de Play Console, separadas por coma.
+const ANDROID_CERT_SHA256 = (process.env.ANDROID_CERT_SHA256 ||
+  "61:2E:7F:37:16:09:7F:90:25:2E:7B:21:EE:BD:63:75:DD:73:D3:20:A1:26:82:5F:B1:6F:0A:D9:81:01:5C:05")
+  .split(",").map((f) => f.trim()).filter(Boolean);
+const APP_LINK_PATH = "/entrenamiento-publico/*";
+
+app.get("/.well-known/apple-app-site-association", (_req, res) => {
+  res.json({
+    applinks: {
+      details: [
+        {
+          appIDs: [IOS_APP_ID],
+          components: [{ "/": APP_LINK_PATH }],
+          // Formato anterior (iOS 12 y previos).
+          appID: IOS_APP_ID,
+          paths: [APP_LINK_PATH],
+        },
+      ],
+    },
+  });
+});
+
+app.get("/.well-known/assetlinks.json", (_req, res) => {
+  res.json([
+    {
+      relation: ["delegate_permission/common.handle_all_urls"],
+      target: {
+        namespace: "android_app",
+        package_name: ANDROID_PACKAGE,
+        sha256_cert_fingerprints: ANDROID_CERT_SHA256,
+      },
+    },
+  ]);
+});
+
 app.get("/entrenamiento-publico/:id", async (req, res, next) => {
   const userAgent = req.get("user-agent") || "";
   if (!BOT_USER_AGENT.test(userAgent)) return next(); // visitante real → SPA normal, React arma la página
