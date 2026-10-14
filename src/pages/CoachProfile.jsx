@@ -13,7 +13,7 @@ import Footer from "../components/Footer";
 import coachService from "../services/coachService";
 import conversationService from "../services/conversationService";
 import { getInitials } from "../utils/initials";
-import { assetUrl } from "../utils/assetUrl";
+import { assetUrl, imageUrl } from "../utils/assetUrl";
 import TrainingCard from "../components/TrainingCard";
 
 // A partir de este largo, la descripción se recorta a 5 líneas con "Leer más".
@@ -126,7 +126,7 @@ const CoachProfile = () => {
           <div className="profile-photo-wrapper">
             {coach.profile_image_url ? (
               <img
-                src={assetUrl(coach.profile_image_url, coach.profile_image_key)}
+                src={imageUrl(coach, "profile_image_url", "md")}
                 alt={coach.name}
                 className="profile-photo"
               />

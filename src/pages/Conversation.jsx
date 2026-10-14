@@ -6,7 +6,7 @@ import conversationService from "../services/conversationService";
 import chatSocketService from "../services/chatSocketService";
 import authService from "../services/authService";
 import { getInitials } from "../utils/initials";
-import { assetUrl } from "../utils/assetUrl";
+import { imageUrl } from "../utils/assetUrl";
 import { parseServerDate } from "../utils/parseServerDate";
 
 const PAGE_SIZE = 50;
@@ -74,6 +74,7 @@ const Conversation = () => {
           setContact({
             name: conversation.other_name,
             profile_image_url: conversation.other_profile_image_url,
+            profile_image_url_sm: conversation.other_profile_image_url_sm,
             profile_image_key: conversation.other_profile_image_key,
           });
         }
@@ -180,7 +181,7 @@ const Conversation = () => {
               {contact.profile_image_url ? (
                 <img
                   className="conversation-header-avatar"
-                  src={assetUrl(contact.profile_image_url, contact.profile_image_key)}
+                  src={imageUrl(contact, "profile_image_url", "sm")}
                   alt={contact.name}
                 />
               ) : (

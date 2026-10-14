@@ -8,7 +8,7 @@ import chatSocketService from "../services/chatSocketService";
 import authService from "../services/authService";
 import ConversationRowSkeleton from "../components/ConversationRowSkeleton";
 import { getInitials } from "../utils/initials";
-import { assetUrl } from "../utils/assetUrl";
+import { imageUrl } from "../utils/assetUrl";
 import { parseServerDate } from "../utils/parseServerDate";
 
 const formatMessageTime = (isoString) => {
@@ -74,7 +74,7 @@ const Messages = () => {
                   {item.other_profile_image_url ? (
                     <img
                       className="conversation-avatar"
-                      src={assetUrl(item.other_profile_image_url, item.other_profile_image_key)}
+                      src={imageUrl(item, "other_profile_image_url", "sm")}
                       alt={item.other_name}
                     />
                   ) : (

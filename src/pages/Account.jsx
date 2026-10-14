@@ -23,7 +23,7 @@ import subscriptionService, {
 } from "../services/subscriptionService";
 import { useAuth } from "../context/AuthContext";
 import { getInitials } from "../utils/initials";
-import { assetUrl } from "../utils/assetUrl";
+import { imageUrl } from "../utils/assetUrl";
 import { toCompressedJpeg } from "../utils/imageCompress";
 
 const Account = () => {
@@ -346,7 +346,7 @@ const Account = () => {
           <div className="profile-photo-wrapper">
             {user?.profile_image_url ? (
               <img
-                src={assetUrl(user.profile_image_url, user.profile_image_key)}
+                src={imageUrl(user, "profile_image_url", "md")}
                 alt={user.name}
                 className="profile-photo"
               />

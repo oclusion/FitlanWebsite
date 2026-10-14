@@ -113,10 +113,7 @@ const Steps = () => {
             <div className="col-12">
               <section className="training-hero">
                 <ResponsiveImage
-                  url={session.image_url}
-                  imageKey={session.image_key}
-                  landscapeUrl={session.image_landscape_url}
-                  landscapeKey={session.image_landscape_key}
+                  item={session}
                   alt={session.title}
                   className="training-hero-image"
                 />
@@ -185,10 +182,8 @@ const Steps = () => {
                     {step.image_url || step.image_landscape_url ? (
                       <ResponsiveImage
                         className="step-card-image"
-                        url={step.image_url}
-                        imageKey={step.image_key}
-                        landscapeUrl={step.image_landscape_url}
-                        landscapeKey={step.image_landscape_key}
+                        item={step}
+                        size="sm"
                         alt={step.title}
                       />
                     ) : (

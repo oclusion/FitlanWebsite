@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 import trainingService from "../services/trainingService";
 import { formatDifficultyShort, formatDuration } from "../utils/format";
 import { getInitials } from "../utils/initials";
-import { assetUrl } from "../utils/assetUrl";
+import { imageUrl } from "../utils/assetUrl";
 import ResponsiveImage from "../components/ResponsiveImage";
 import TrainingHeroSkeleton from "../components/TrainingHeroSkeleton";
 
@@ -72,10 +72,7 @@ const PublicTraining = () => {
             <div className="col-12">
               <section className="training-hero">
                 <ResponsiveImage
-                  url={training.image_url}
-                  imageKey={training.image_key}
-                  landscapeUrl={training.image_landscape_url}
-                  landscapeKey={training.image_landscape_key}
+                  item={training}
                   alt={training.title}
                   className="training-hero-image"
                 />
@@ -104,7 +101,7 @@ const PublicTraining = () => {
                   {training.coach.profile_image_url ? (
                     <img
                       className="public-training-coach-avatar"
-                      src={assetUrl(training.coach.profile_image_url, training.coach.profile_image_key)}
+                      src={imageUrl(training.coach, "profile_image_url", "sm")}
                       alt={training.coach.name}
                     />
                   ) : (

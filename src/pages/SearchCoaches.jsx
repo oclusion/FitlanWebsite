@@ -7,7 +7,7 @@ import coachService from "../services/coachService";
 import conversationService from "../services/conversationService";
 import CoachRowSkeleton from "../components/CoachRowSkeleton";
 import { getInitials } from "../utils/initials";
-import { assetUrl } from "../utils/assetUrl";
+import { imageUrl } from "../utils/assetUrl";
 
 // Puerto de SearchCoachesScreen (rn-starter) — buscador para arrancar una
 // conversación nueva con un coach.
@@ -94,7 +94,7 @@ const SearchCoaches = () => {
                   {coach.profile_image_url ? (
                     <img
                       className="coach-search-avatar"
-                      src={assetUrl(coach.profile_image_url, coach.profile_image_key)}
+                      src={imageUrl(coach, "profile_image_url", "sm")}
                       alt={coach.name}
                     />
                   ) : (

@@ -46,3 +46,14 @@ export const assetUrl = (url, key) => {
   if (url) byKey.set(key, url);
   return url ?? cached;
 };
+
+// URL del tamaño adecuado de una imagen del backend: "sm" (320 px) para avatares y miniaturas,
+// "md" (800 px) para tarjetas, o sin tamaño para la principal (1600 px, portadas). Las imágenes
+// subidas antes de que existieran los tamaños no traen `<campo>_sm`/`_md` y usan la principal.
+// Cada tamaño se memoiza con su propio key para no mezclar la miniatura con la portada.
+export const imageUrl = (item, field, size) => {
+  const key = item?.[field.replace(/_url$/, "_key")];
+  const sized = size ? item?.[`${field}_${size}`] : null;
+  if (sized) return assetUrl(sized, key ? `${key}_${size}` : undefined);
+  return assetUrl(item?.[field], key);
+};

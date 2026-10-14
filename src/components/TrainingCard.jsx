@@ -20,10 +20,8 @@ const TrainingCard = ({ training }) => {
         {training.image_url || training.image_landscape_url ? (
           <ResponsiveImage
             className="feed-card-img"
-            url={training.image_url}
-            imageKey={training.image_key}
-            landscapeUrl={training.image_landscape_url}
-            landscapeKey={training.image_landscape_key}
+            item={training}
+            size="md"
             alt={training.title}
           />
         ) : (
